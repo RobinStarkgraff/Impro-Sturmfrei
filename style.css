@@ -1,20 +1,26 @@
 :root {
-  --main: #93bdd7;
-  --light: #ffffff;
-  --soft: #f5f7fa;
-  --dark: #002d4d;
-  --accent: #6b1919;
+  --main: #93bdd7;     /* dein helles Blau */
+  --dark: #002d4d;     /* dunkel Blau */
+  --accent: #6b1919;   /* rot Akzent */
+  --light: #f5f7fa;    /* leichtes hell */
+  --warm: #fff9d3;     /* dein Gelb (sparsam!) */
 }
 
-/* GENERAL */
+/* =========================
+   BASIC
+========================= */
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: var(--light);
+  background: var(--main);
   color: var(--dark);
 }
 
-/* NAV */
+/* =========================
+   NAV
+========================= */
+
 .nav {
   display: flex;
   justify-content: space-between;
@@ -29,20 +35,23 @@ body {
   text-decoration: none;
 }
 
-/* HERO */
+/* =========================
+   HERO
+========================= */
+
 .hero {
   padding: 80px 20px;
   text-align: center;
-  background: var(--soft);
+  background: var(--warm);
+  color: var(--dark);
 }
 
 .hero h1 {
-  font-size: 28px;
+  font-size: 26px;
 }
 
 .hero h2 {
-  font-size: 46px;
-  margin-bottom: 20px;
+  font-size: 44px;
 }
 
 /* BUTTONS */
@@ -63,33 +72,44 @@ body {
   color: var(--accent);
 }
 
-/* SECTIONS */
+/* =========================
+   SECTIONS
+========================= */
+
 section {
   padding: 60px 20px;
   max-width: 1100px;
   margin: auto;
+  background: var(--main);
 }
 
-/* CENTER TEXT */
+h2 {
+  color: var(--dark);
+}
+
 .center {
   text-align: center;
 }
 
-/* SHOW CARD */
+/* =========================
+   SHOW CARDS
+========================= */
+
 .show {
-  background: var(--soft);
+  background: var(--light);
   border-radius: 20px;
   padding: 20px;
   margin-bottom: 40px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 /* =========================
-   SWIPE / INSTAGRAM STYLE
+   SWIPE (KRITISCH FIX)
 ========================= */
 
 .slider {
   display: flex;
-  flex-direction: row;
+  flex-wrap: nowrap;
   overflow-x: auto;
   gap: 12px;
   scroll-snap-type: x mandatory;
@@ -100,37 +120,40 @@ section {
 /* 4:5 INSTAGRAM FORMAT */
 .slider img {
   flex: 0 0 auto;
-  width: 260px;
-  height: 325px;
+  width: 220px;
+  height: 275px;
   object-fit: cover;
   object-position: top;
-  border-radius: 16px;
+  border-radius: 14px;
   scroll-snap-align: start;
 }
 
-/* SCROLLBAR HIDE */
+/* scrollbar ausblenden */
 .slider::-webkit-scrollbar {
   display: none;
 }
 
-/* GROUP IMAGES (5:4 LANDSCAPE) */
+/* =========================
+   GROUP (5:4)
+========================= */
+
 .group-slider {
   display: flex;
   overflow-x: auto;
   gap: 12px;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
 }
 
 .group-slider img {
-  width: 300px;
-  height: 240px;
+  width: 280px;
+  height: 220px;
   object-fit: cover;
-  border-radius: 16px;
-  scroll-snap-align: start;
+  border-radius: 14px;
 }
 
-/* FOOTER */
+/* =========================
+   FOOTER
+========================= */
+
 footer {
   text-align: center;
   padding: 40px;
