@@ -1,32 +1,30 @@
 :root {
-  --main: #93bdd7;     /* dein helles Blau */
-  --dark: #002d4d;     /* dunkel Blau */
-  --accent: #6b1919;   /* rot Akzent */
-  --light: #f5f7fa;    /* leichtes hell */
-  --warm: #fff9d3;     /* dein Gelb (sparsam!) */
+  --bg: #001f33;
+  --main: #93bdd7;
+  --light: #ffffff;
+  --card: #f5f7fa;
+  --dark: #001522;
+  --accent: #6b1919;
+  --glow: #fff9d3;
 }
-
-/* =========================
-   BASIC
-========================= */
 
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: var(--main);
-  color: var(--dark);
+  background: linear-gradient(180deg, #001f33, #003a5c);
+  color: white;
 }
 
-/* =========================
-   NAV
-========================= */
-
+/* NAV */
 .nav {
   display: flex;
   justify-content: space-between;
   padding: 20px 40px;
-  background: var(--dark);
+  background: rgba(0, 21, 34, 0.8);
+  backdrop-filter: blur(10px);
   color: white;
+  position: sticky;
+  top: 0;
 }
 
 .nav a {
@@ -35,128 +33,112 @@ body {
   text-decoration: none;
 }
 
-/* =========================
-   HERO
-========================= */
-
+/* HERO (BÜHNE) */
 .hero {
-  padding: 80px 20px;
+  padding: 100px 20px;
   text-align: center;
-  background: var(--warm);
-  color: var(--dark);
 }
 
 .hero h1 {
-  font-size: 26px;
+  font-size: 22px;
+  opacity: 0.8;
 }
 
 .hero h2 {
-  font-size: 44px;
+  font-size: 54px;
+  margin: 10px 0;
+}
+
+.hero p {
+  max-width: 700px;
+  margin: auto;
+  opacity: 0.9;
 }
 
 /* BUTTONS */
 .btn {
-  padding: 12px 20px;
+  padding: 12px 22px;
   border-radius: 30px;
   text-decoration: none;
   display: inline-block;
+  margin-top: 20px;
 }
 
 .primary {
   background: var(--accent);
   color: white;
+  box-shadow: 0 10px 30px rgba(107,25,25,0.4);
 }
 
 .ghost {
-  border: 2px solid var(--accent);
-  color: var(--accent);
+  border: 1px solid white;
+  color: white;
 }
 
-/* =========================
-   SECTIONS
-========================= */
-
+/* SECTIONS */
 section {
-  padding: 60px 20px;
+  padding: 80px 20px;
   max-width: 1100px;
   margin: auto;
-  background: var(--main);
 }
 
-h2 {
-  color: var(--dark);
+/* CARDS */
+.show {
+  background: rgba(255,255,255,0.08);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 40px;
+  backdrop-filter: blur(8px);
 }
 
+/* CENTER */
 .center {
   text-align: center;
 }
 
-/* =========================
-   SHOW CARDS
-========================= */
-
-.show {
-  background: var(--light);
-  border-radius: 20px;
-  padding: 20px;
-  margin-bottom: 40px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-/* =========================
-   SWIPE (KRITISCH FIX)
-========================= */
+/* =======================
+   SWIPE (PREMIUM)
+======================= */
 
 .slider {
   display: flex;
-  flex-wrap: nowrap;
   overflow-x: auto;
-  gap: 12px;
+  gap: 14px;
   scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
   padding-bottom: 10px;
 }
 
-/* 4:5 INSTAGRAM FORMAT */
 .slider img {
   flex: 0 0 auto;
   width: 220px;
-  height: 275px;
+  height: 300px; /* 4:5 cinematic */
   object-fit: cover;
-  object-position: top;
-  border-radius: 14px;
-  scroll-snap-align: start;
+  border-radius: 18px;
+  scroll-snap-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
 }
 
-/* scrollbar ausblenden */
 .slider::-webkit-scrollbar {
   display: none;
 }
 
-/* =========================
-   GROUP (5:4)
-========================= */
-
+/* GROUP */
 .group-slider {
   display: flex;
   overflow-x: auto;
-  gap: 12px;
+  gap: 14px;
 }
 
 .group-slider img {
-  width: 280px;
+  width: 300px;
   height: 220px;
   object-fit: cover;
-  border-radius: 14px;
+  border-radius: 18px;
 }
 
-/* =========================
-   FOOTER
-========================= */
-
+/* FOOTER */
 footer {
   text-align: center;
-  padding: 40px;
-  background: var(--dark);
-  color: white;
+  padding: 50px;
+  background: rgba(0,0,0,0.3);
 }
