@@ -1,14 +1,16 @@
 :root {
   --main: #93bdd7;
-  --light: #fff9d3;
+  --light: #ffffff;
+  --soft: #f5f7fa;
   --dark: #002d4d;
   --accent: #6b1919;
 }
 
+/* GENERAL */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: var(--main);
+  background: var(--light);
   color: var(--dark);
 }
 
@@ -29,8 +31,9 @@ body {
 
 /* HERO */
 .hero {
-  padding: 80px 40px;
-  background: var(--light);
+  padding: 80px 20px;
+  text-align: center;
+  background: var(--soft);
 }
 
 .hero h1 {
@@ -38,18 +41,15 @@ body {
 }
 
 .hero h2 {
-  font-size: 48px;
+  font-size: 46px;
+  margin-bottom: 20px;
 }
 
-.buttons {
-  margin-top: 20px;
-}
-
+/* BUTTONS */
 .btn {
   padding: 12px 20px;
   border-radius: 30px;
   text-decoration: none;
-  margin-right: 10px;
   display: inline-block;
 }
 
@@ -65,51 +65,75 @@ body {
 
 /* SECTIONS */
 section {
-  padding: 60px;
+  padding: 60px 20px;
+  max-width: 1100px;
+  margin: auto;
 }
 
-/* SHOWS */
-.show {
-  background: var(--light);
-  padding: 20px;
-  margin-bottom: 30px;
-  border-radius: 20px;
-}
-
+/* CENTER TEXT */
 .center {
   text-align: center;
 }
 
-/* SHOW CONTAINER */
+/* SHOW CARD */
 .show {
+  background: var(--soft);
+  border-radius: 20px;
+  padding: 20px;
   margin-bottom: 40px;
 }
 
-/* INSTAGRAM STYLE SWIPE */
+/* =========================
+   SWIPE / INSTAGRAM STYLE
+========================= */
+
 .slider {
   display: flex;
+  flex-direction: row;
   overflow-x: auto;
-  gap: 10px;
+  gap: 12px;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   padding-bottom: 10px;
 }
 
-/* 4:5 FORMAT (Instagram) */
+/* 4:5 INSTAGRAM FORMAT */
 .slider img {
+  flex: 0 0 auto;
   width: 260px;
   height: 325px;
   object-fit: cover;
   object-position: top;
   border-radius: 16px;
-  scroll-snap-align: center;
+  scroll-snap-align: start;
 }
+
+/* SCROLLBAR HIDE */
+.slider::-webkit-scrollbar {
+  display: none;
+}
+
+/* GROUP IMAGES (5:4 LANDSCAPE) */
+.group-slider {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.group-slider img {
+  width: 300px;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 16px;
+  scroll-snap-align: start;
 }
 
 /* FOOTER */
 footer {
-  padding: 30px;
   text-align: center;
+  padding: 40px;
   background: var(--dark);
   color: white;
 }
