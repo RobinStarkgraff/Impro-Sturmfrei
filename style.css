@@ -254,3 +254,26 @@ p {
   font-size: 21px;
   line-height: 1.7;
 }
+
+.instagram-btn {
+  display: inline-block;
+  margin-top: 40px;
+
+  background: #6b1919;
+  color: white;
+
+  padding: 18px 34px;
+
+  border-radius: 50px;
+
+  text-decoration: none;
+
+  font-size: 24px;
+  font-weight: bold;
+
+  transition: 0.3s;
+}
+
+.instagram-btn:hover {
+  transform: scale(1.04);
+}
