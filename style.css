@@ -44,9 +44,16 @@ body {
 ========================= */
 
 .hero {
-  padding: 110px 20px;
+  padding: 140px 20px 120px 20px;
   text-align: center;
-  animation: fadeIn 1.2s ease;
+  background:
+    linear-gradient(
+      180deg,
+      #fff9d3 0%,
+      #93bdd7 45%,
+      #93bdd7 100%
+    );
+  color: #002d4d;
 }
 
 .hero h1 {
@@ -55,8 +62,12 @@ body {
 }
 
 .hero h2 {
-  font-size: 52px;
-  margin: 10px 0;
+  font-size: 82px;
+  line-height: 0.95;
+  margin: 20px 0;
+  color: #002d4d;
+  text-transform: uppercase;
+  letter-spacing: -3px;
 }
 
 .hero p {
@@ -104,12 +115,13 @@ section {
 ========================= */
 
 .show {
-  background: var(--soft);
-  border-radius: 22px;
-  padding: 20px;
-  margin-bottom: 40px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 26px;
+  padding: 24px;
+  margin-bottom: 50px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
 }
 
 /* =========================
@@ -186,4 +198,17 @@ footer {
   padding: 50px;
   background: rgba(0,0,0,0.4);
   margin-top: 50px;
+}
+
+h2 {
+  font-size: 54px;
+  line-height: 1;
+  margin-bottom: 20px;
+  color: #002d4d;
+}
+
+h3 {
+  font-size: 32px;
+  margin-bottom: 10px;
+  color: #002d4d;
 }
