@@ -220,3 +220,29 @@ h3 {
   margin-bottom: 10px;
   color: #002d4d;
 }
+
+.about-layout {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.about-text {
+  flex: 1;
+  min-width: 280px;
+}
+
+.group-slider {
+  flex: 1;
+  display: flex;
+  overflow-x: auto;
+  gap: 14px;
+}
+
+.group-slider img {
+  width: 320px;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 20px;
+}
