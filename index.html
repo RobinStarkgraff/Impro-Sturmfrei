@@ -225,3 +225,27 @@ footer a {
   text-decoration: none;
   font-weight: bold;
 }
+
+<script>
+
+const photos = [
+  "images/group/1.jpg",
+  "images/group/2.jpg",
+  "images/group/3.jpg"
+];
+
+let current = 0;
+
+setInterval(() => {
+
+  current++;
+
+  if(current >= photos.length){
+    current = 0;
+  }
+
+  document.getElementById("group-photo").src = photos[current];
+
+}, 2000);
+
+</script>
