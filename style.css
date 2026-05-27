@@ -14,8 +14,16 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: linear-gradient(180deg, #001a2b, #003a5c);
-  color: white;
+  background:
+    linear-gradient(
+      180deg,
+      #fff9d3 0%,
+      #93bdd7 22%,
+      #93bdd7 65%,
+      #fff9d3 100%
+    );
+
+  color: #002d4d;
 }
 
 /* =========================
