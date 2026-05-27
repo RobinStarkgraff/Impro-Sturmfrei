@@ -277,3 +277,18 @@ p {
 .instagram-btn:hover {
   transform: scale(1.04);
 }
+
+.scroll-down {
+  display: block;
+
+  margin-top: 40px;
+
+  color: #002d4d;
+
+  text-decoration: none;
+
+  font-size: 22px;
+  font-weight: bold;
+
+  opacity: 0.8;
+}
