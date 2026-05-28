@@ -277,10 +277,12 @@ setInterval(() => {
 
     image.src = photos[current];
 
-    image.style.opacity = 1;
+    image.onload = () => {
+      image.style.opacity = 1;
+    };
 
-  }, 900);
+  }, 1400);
 
-}, 4000);
+}, 6000);
 
 </script>
