@@ -233,7 +233,7 @@ h3 {
 }
 
 .about-text {
-  /*flex: 1;*/
+  flex: 1;
   min-width: 280px;
 }
 
