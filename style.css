@@ -313,11 +313,14 @@ p {
 }
 
 .about-image img {
-  width: 430px;
-  height: 520px;
+  width: 520px;
+  aspect-ratio: 3 / 2;
   object-fit: cover;
+  object-position: center;
   border-radius: 26px;
-  transition: opacity 1.8s ease;
+  opacity: 1;
+  transition: opacity 1.5s ease-in-out;
+  display: block;
 }
 
 .about-text {
@@ -352,7 +355,7 @@ p {
 
   align-items: center;
 
-  margin-top: 45px;
+  margin-top: 60px;
 }
 
 .scroll-down {
