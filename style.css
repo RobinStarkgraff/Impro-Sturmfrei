@@ -292,6 +292,7 @@ p {
   font-size: 34px;
   line-height: 1.15;
   font-weight: bold;
+  margin: 0;
 }
 
 .about-image img {
