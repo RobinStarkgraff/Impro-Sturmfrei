@@ -344,3 +344,33 @@ p {
   padding: 12px 22px;
   font-size: 17px;
 }
+
+.hero-actions {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  margin-top: 45px;
+}
+
+.scroll-down {
+  margin-top: 22px;
+
+  font-size: 22px;
+
+  text-decoration: none;
+
+  color: #002d4d;
+
+  font-weight: bold;
+
+  opacity: 0.75;
+
+  transition: 0.3s;
+}
+
+.scroll-down:hover {
+  opacity: 1;
+}
