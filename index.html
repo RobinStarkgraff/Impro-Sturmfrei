@@ -216,26 +216,43 @@
   </a>
 
 </section>
+  
+<section id="follow">
 
+  <h2>Folgt uns</h2>
+
+  <div class="buttons">
+
+    <a class="instagram-btn"
+       href="https://www.instagram.com/impro_sturmfrei/"
+       target="_blank">
+
+       Instagram
+    </a>
+
+    <a class="instagram-btn"
+       href="https://www.eventbrite.de/o/121025991893"
+       target="_blank">
+
+       Eventbrite
+    </a>
+
+    <a class="instagram-btn"
+       href="https://www.meetup.com/sturmfrei/"
+       target="_blank">
+
+       MeetUp
+    </a>
+
+  </div>
+
+</section>
+  
 <!-- ================= FOOTER ================= -->
 <footer>
-
   <p>
-    <a href="https://www.eventbrite.de/o/121025991893" target="_blank">
-      Eventbrite
-    </a>
-
-    ·
-
-    <a href="https://www.meetup.com/sturmfrei/" target="_blank">
-      MeetUp
-    </a>
-  </p>
-
-  <p>
-    © 2026 Sturmfrei. Alles improvisiert, nichts garantiert.
-  </p>
-
+ <footer>
+  © 2026 Sturmfrei. Alles improvisiert, nichts garantiert.
 </footer>
 
 </body>
@@ -257,16 +274,26 @@ const photos = [
 
 let current = 0;
 
+const image = document.getElementById("group-photo");
+
 setInterval(() => {
 
-  current++;
+  image.style.opacity = 0;
 
-  if(current >= photos.length){
-    current = 0;
-  }
+  setTimeout(() => {
 
-  document.getElementById("group-photo").src = photos[current];
+    current++;
 
-}, 2000);
+    if(current >= photos.length){
+      current = 0;
+    }
+
+    image.src = photos[current];
+
+    image.style.opacity = 1;
+
+  }, 900);
+
+}, 4000);
 
 </script>
