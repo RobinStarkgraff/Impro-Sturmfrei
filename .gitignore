@@ -1,0 +1,13 @@
+# DevContainer — local dev environment, not part of the site
+# Recreate with: bash quick-install.sh --repo=<base-repo-url>
+.devcontainer/
+# Makefile holds only devcontainer bootstrap targets (anchored to repo root)
+/Makefile
+
+# MCP artifacts and logs
+.downloads/
+# Claude notification port files
+.claude-notify-ports/
+
+# JetBrains IDE project files
+.idea/
