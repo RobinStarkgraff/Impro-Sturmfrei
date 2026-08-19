@@ -14,6 +14,13 @@
 #   ZIEL=$HOME/opt/bin sh tools/install-node.sh
 #   SPIEGEL=https://npmmirror.com/mirrors/node sh tools/install-node.sh
 #
+# Ist der Webspace für die offiziellen Archive zu alt (GLIBC_2.28 not found),
+# gibt es Node auch für ältere glibc — dort heißen die Dateien anders, was
+# VARIANTE anhängt, und eine 'latest-v22.x'-Abkürzung kennt die Quelle nicht:
+#
+#   VARIANTE=glibc-217 SPIEGEL=https://unofficial-builds.nodejs.org/download/release \
+#     sh tools/install-node.sh v22.11.0
+#
 # Zwei Wege, es auszuführen:
 #
 #   per SSH        einmal aufrufen, fertig.
@@ -59,6 +66,11 @@ case "$(uname -m)" in
   armv7l) arch=armv7l ;;
   *) fehler "unbekannte Architektur $(uname -m) — nodejs.org hat dafür kein Archiv." ;;
 esac
+
+# Die offiziellen Archive heißen 'linux-<arch>'. unofficial-builds.nodejs.org
+# hängt dort eine Variante an — 'linux-x64-glibc-217', 'linux-x64-musl' —,
+# und genau die braucht ein Webspace, der für die offiziellen zu alt ist.
+kennung="$arch${VARIANTE:+-$VARIANTE}"
 
 if command -v curl >/dev/null 2>&1; then
   hole() { curl -fsSL "$1" -o "$2"; }
@@ -106,7 +118,7 @@ archiv=
 summe=
 while read -r zeilensumme zeilendatei; do
   case "$zeilendatei" in
-    *"-linux-$arch.tar.$endung")
+    *"-linux-$kennung.tar.$endung")
       summe=$zeilensumme
       archiv=$zeilendatei
       break
@@ -114,7 +126,7 @@ while read -r zeilensumme zeilendatei; do
   esac
 done < "$tmp/SHASUMS256.txt"
 
-[ -n "$archiv" ] || fehler "kein Archiv für linux-$arch (.tar.$endung) in dieser Reihe."
+[ -n "$archiv" ] || fehler "kein Archiv für linux-$kennung (.tar.$endung) in dieser Reihe."
 
 echo "→ hole $archiv (~30–45 MB)"
 hole "$basis/$archiv" "$tmp/$archiv" || fehler "Download von $archiv gescheitert."
@@ -180,8 +192,34 @@ fi
 
 chmod 755 "$tmp/node"
 
-"$tmp/node" --version >/dev/null 2>&1 \
-  || fehler "die Datei läuft auf diesem Webspace nicht (meist zu alte glibc). Mit einem älteren Hauptzweig versuchen: sh tools/install-node.sh 20"
+# Läuft sie hier überhaupt? Die Meldung des Systems wird gezeigt statt
+# verschluckt: "GLIBC_2.28 not found" und "Permission denied" scheitern beide
+# an dieser Stelle, verlangen aber gegensätzliche Antworten. Wer nur "geht
+# nicht" liest, probiert sonst der Reihe nach Hauptzweige durch, obwohl das
+# Home schlicht noexec ist.
+if ! meldung=$("$tmp/node" --version 2>&1); then
+  echo "FEHLER: die heruntergeladene Datei läuft auf diesem Webspace nicht." >&2
+  echo >&2
+  echo "  Das System sagt dazu:" >&2
+  echo >&2
+  echo "$meldung" >&2
+  echo >&2
+  echo "  Steht dort 'GLIBC_2.xx not found', ist der Webspace älter als die" >&2
+  echo "  offiziellen Archive. Ein älterer Hauptzweig hilft dann kaum: 18, 20," >&2
+  echo "  22 und 24 verlangen alle glibc 2.28. Was hilft, ist ein Archiv, das" >&2
+  echo "  für ältere glibc gebaut wurde — die Fassung bitte ausschreiben, diese" >&2
+  echo "  Quelle kennt kein 'latest-v22.x':" >&2
+  echo >&2
+  echo "    VARIANTE=glibc-217 \\" >&2
+  echo "    SPIEGEL=https://unofficial-builds.nodejs.org/download/release \\" >&2
+  echo "    sh tools/install-node.sh v22.11.0" >&2
+  echo >&2
+  echo "  Steht dort 'Permission denied', ist nicht die Fassung schuld: das" >&2
+  echo "  Verzeichnis ist mit noexec eingehängt, von dort startet nichts. Dann" >&2
+  echo "  hilft nur ein anderer Ort (ZIEL=...) — oder Weg b) aus tools/deploy.sh:" >&2
+  echo "  public/ wieder ins Repo nehmen und lokal bauen." >&2
+  exit 1
+fi
 
 # ------------------------------------------------------------
 # 5. Ablegen — erst daneben, dann darüber
