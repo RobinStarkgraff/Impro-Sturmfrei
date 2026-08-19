@@ -18,15 +18,9 @@
 # JetBrains IDE project files
 .idea/
 
-# Die fertige Seite. Sie entsteht aus content/, css/, js/, images/ und fonts/
-# mit `make build` — lokal wie auf dem Server. Im Repo stehen die Quellen;
-# was daraus wird, gehört nicht mit hinein.
-/public/
-
-# Zwischenstand des Deploys: tools/deploy.sh baut erst dorthin, prüft, und
-# tauscht dann gegen public/.
-/.public-neu
-/.public-alt
+# public/ steht bewusst NICHT hier: der Ordner ist die Seite selbst und
+# gehört ins Repo. Es gibt keinen Build mehr, der ihn erzeugt — was dort
+# liegt, wird ausgeliefert, und was ausgeliefert wird, liegt dort.
 
 # Protokoll von tools/deploy.sh — entsteht auf jedem Server neu und hat im
 # Repo nichts zu suchen: ein mitcommittetes Log würde netcups nächstes

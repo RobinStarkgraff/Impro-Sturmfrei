@@ -1,7 +1,7 @@
 /* ------------------------------------------------------------
    Der Vertrag zwischen JS, CSS und Markup.
 
-   Zustandsklassen stehen auch in css/, die Haken auch in index.html: wer
+   Zustandsklassen stehen auch in public/css/, die Haken in sections/: wer
    hier umbenennt, muss dort nachziehen. `make check` prüft beide Seiten.
    ------------------------------------------------------------ */
 
@@ -21,8 +21,9 @@ export const CSS_CLASS = {
   loading: "is-loading"
 };
 
-/* Attribute im Markup, an denen die Module hängen. tools/build.mjs schreibt
-   sie ins HTML, die Module suchen danach, `make check` vergleicht. */
+/* Attribute im Markup, an denen die Module hängen. Die Abschnitte in
+   sections/ schreiben sie ins HTML, die Module suchen danach, `make check`
+   vergleicht. */
 export const DATA_HOOK = {
   reveal: "data-reveal",
   slider: "data-slider",

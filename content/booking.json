@@ -2,7 +2,7 @@
   "$comment": [
     "Alles, was die Seite /buchen/ als Aufzählung zeigt: Formate, was ihr",
     "vor Ort braucht, und die häufigen Fragen. Prosa steht wie überall in",
-    "tools/build.mjs — hier steht nur, was sich wiederholt oder wächst.",
+    "sections/*.php — hier steht nur, was sich wiederholt oder wächst.",
     "",
     "!!! ACHTUNG: formats, needs und faq sind ENTWÜRFE. Dauer, Personenzahl",
     "und Antworten sind geraten und müssen von euch geprüft werden. Solange",

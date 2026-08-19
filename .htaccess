@@ -6,11 +6,15 @@
 # Docroot. Ausgeliefert werden soll aber nur public/.
 #
 # Das erledigt eine Regel, und sie erledigt beides zugleich: jede Anfrage
-# wird nach public/ umgeschrieben. Was dort nicht liegt — content/, css/,
-# js/, tools/, .git/, README.md, Makefile — ist damit nicht "gesperrt",
+# wird nach public/ umgeschrieben. Was dort nicht liegt — content/, lib/,
+# sections/, tools/, .git/, README.md, Makefile — ist damit nicht "gesperrt",
 # sondern schlicht nicht adressierbar und endet als 404. Eine Deny-Liste
 # müsste man bei jeder neuen Quelldatei nachziehen; hier gibt es nichts
 # nachzuziehen.
+#
+# Genau daran hängt die Sicherheit dieses Aufbaus: content/*.json und die
+# PHP-Dateien in lib/ und sections/ werden vom Server nie ausgeliefert und
+# nie ausgeführt, weil sie außerhalb des ausgelieferten Ordners liegen.
 #
 # Der Preis: ohne mod_rewrite greift nichts davon. Deshalb steht unten
 # trotzdem eine Notbremse für .git, und Options -Indexes verhindert, dass
@@ -18,7 +22,12 @@
 # ============================================================
 
 Options -Indexes
-DirectoryIndex index.html
+DirectoryIndex index.php index.html
+
+# Falsche Adresse: die eigene 404-Seite statt Apaches englischer Vorgabe.
+# /404/ wird von der Regel unten nach public/404/ umgeschrieben; der Status
+# bleibt dabei 404, es ist keine Weiterleitung.
+ErrorDocument 404 /404/
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
@@ -30,12 +39,108 @@ DirectoryIndex index.html
   RewriteCond %{ENV:REDIRECT_STATUS} ^$
   RewriteRule ^public/(.*)$ /$1 [R=301,L]
 
+  # Zwei Dateien tragen die Endung, die Suchmaschinen erwarten, und werden
+  # doch von PHP erzeugt: sie brauchen die Domain aus content/site.json und
+  # die Liste der Seiten aus lib/pages.php. Deshalb je eine eigene Regel,
+  # vor der allgemeinen darunter.
+  RewriteRule ^sitemap\.xml$ public/sitemap.php [L]
+  RewriteRule ^robots\.txt$ public/robots.php [L]
+
+  # Fehlender Schrägstrich am Ende: /termine → /termine/, einmal 301.
+  #
+  # Ohne diese Regel würde /termine erst nach public/termine umgeschrieben;
+  # dort ist es ein Ordner, und mod_dir hängt den Schrägstrich selbst an —
+  # aber an die *umgeschriebene* Adresse. Der Besucher sähe kurz
+  # /public/termine/, das die Regel ganz oben dann noch einmal umleitet.
+  # Zwei Weiterleitungen und dazwischen der interne Pfad in der Adresszeile.
+  #
+  # Greift nur bei Adressen ohne Punkt (also keine Datei) und ohne
+  # Schrägstrich am Ende — deshalb kann sie sich nicht selbst auslösen.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^([^.]+[^/])$ /$1/ [R=301,L]
+
   # Alles andere nach public/. Die Bedingung ist nicht Zierde: /termine/ wird
   # zu public/termine/, darauf schlägt DirectoryIndex zu und fragt intern
-  # public/termine/index.html nach — ohne die Bedingung würde daraus
-  # public/public/termine/index.html.
+  # public/termine/index.php nach — ohne die Bedingung würde daraus
+  # public/public/termine/index.php.
   RewriteCond %{REQUEST_URI} !^/public/
   RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# ------------------------------------------------------------
+# Zwischenspeichern
+#
+# Hinter jedem Stylesheet steht seine Änderungszeit (?v=… aus
+# asset_versioned() in lib/paths.php). Erst diese Kopfzeilen machen daraus
+# etwas: der Browser darf die Datei ein Jahr behalten und holt sie doch
+# sofort neu, sobald der Stempel sich ändert. Ohne sie fragt er bei jedem
+# Besuch für jede Datei einzeln nach — bei 17 Stylesheets, 9 Modulen,
+# 4 Schriften und den Fotos sind das reihenweise 304er vor dem ersten Pixel.
+#
+# Die Show-Fotos tragen keinen Stempel und brauchen keinen: sie liegen in
+# Ordnern nach Datum, ein anderes Foto ist dort immer eine andere Datei.
+# Wo der Dateiname dagegen festliegt und der Inhalt wechseln kann — Logo,
+# Symbole, Hero- und Gruppenfotos —, hängt der Stempel dran (siehe
+# asset_versioned in sections/hero.php, about.php, head.php und header.php).
+# Ohne ihn bekäme ein ausgetauschtes Foto ein Jahr lang niemand zu sehen.
+#
+# js/ bekommt bewusst kein "immutable": main.js lädt die übrigen Module
+# selbst nach, deren Pfade in seinem Quelltext stehen, und ein Stempel am
+# Elternteil würde ein Update von slider.js nur scheinbar durchreichen.
+# Eine Woche mit Rückfrage ist der ehrliche Kompromiss.
+#
+# Die Seiten selbst nie: sie entstehen bei jedem Aufruf neu, und ein
+# zwischengespeicherter Termin wäre ein falscher Termin.
+# ------------------------------------------------------------
+<IfModule mod_headers.c>
+  <FilesMatch "\.(css|woff2|jpg|jpeg|png|gif|svg|ico)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  <FilesMatch "\.js$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+
+  <FilesMatch "\.php$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
+
+# ------------------------------------------------------------
+# Komprimieren
+#
+# Die Seiten sind Text, die Stylesheets sind Text mit vielen Kommentaren —
+# genau das, was gzip auf ein Viertel bringt. Bilder und Schriften stehen
+# absichtlich nicht in der Liste: woff2 und jpg sind bereits komprimiert,
+# ein zweiter Durchgang kostet nur Rechenzeit.
+# ------------------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
+  AddOutputFilterByType DEFLATE application/javascript application/xml
+  AddOutputFilterByType DEFLATE application/xhtml+xml image/svg+xml
+</IfModule>
+
+# ------------------------------------------------------------
+# Kopfzeilen zur Sicherheit
+#
+# Die Richtlinie unten ist so eng, wie sie nur sein kann, und das ist keine
+# Strenge, sondern eine Beschreibung: diese Seite lädt nichts von fremden
+# Servern, hat kein Formular, kein Analytics, keine Schrift von Google und
+# kein einziges Skript im Markup. Alles kommt von 'self'.
+#
+# Das JSON-LD im <head> ist ein <script type="application/ld+json"> und
+# damit ein Datenblock, kein Skript — es wird nicht ausgeführt und fällt
+# nicht unter script-src. Nach dem Einschalten trotzdem einmal jede Seite
+# mit offener Konsole aufrufen.
+#
+# form-action 'none': es gibt kein Formular auf der Seite. Steht später
+# eines da, gehört hier 'self' hin.
+# ------------------------------------------------------------
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), camera=(), microphone=(), interest-cohort=()"
+  Header always set Content-Security-Policy "default-src 'self'; img-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
 </IfModule>
 
 # Notbremse, falls mod_rewrite fehlt und oben nichts greift.

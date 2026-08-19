@@ -1,0 +1,49 @@
+Sturmfrei Impro — Website
+=========================
+
+Diese Ablage enthält zweierlei, und für beides gilt nicht dasselbe.
+
+
+1. Der Code
+-----------
+
+Alles außer public/images/ und public/fonts/ — also die PHP-Dateien in lib/,
+sections/ und public/, die Stylesheets, die JavaScript-Module, die Werkzeuge
+in tools/ und die Angaben in content/ — steht unter der MIT-Lizenz:
+
+    Copyright (c) 2026 Sturmfrei Impro
+
+    Hiermit wird unentgeltlich jeder Person, die eine Kopie dieser Software
+    und der zugehörigen Dokumentationsdateien erhält, die Erlaubnis erteilt,
+    sie uneingeschränkt zu nutzen, zu kopieren, zu verändern, zusammen-
+    zuführen, zu veröffentlichen, zu verbreiten, zu unterlizenzieren und zu
+    verkaufen, unter den folgenden Bedingungen:
+
+    Der obige Urheberrechtsvermerk und dieser Erlaubnisvermerk sind in allen
+    Kopien oder wesentlichen Teilen der Software beizulegen.
+
+    DIE SOFTWARE WIRD OHNE JEDE GEWÄHRLEISTUNG BEREITGESTELLT.
+
+
+2. Die Fotos
+------------
+
+public/images/ ist ausdrücklich NICHT davon erfasst. Alle Rechte vorbehalten.
+
+Auf diesen Aufnahmen sind identifizierbare Personen zu sehen. Sie sind mit
+deren Einverständnis für diese Seite veröffentlicht — und für diese Seite.
+Das Einverständnis erstreckt sich nicht auf eine Weiterverwendung anderswo,
+und wir könnten es auch gar nicht für andere erteilen.
+
+Wer eines der Fotos verwenden möchte, fragt vorher: info@impro-sturmfrei.de
+
+Wer sich auf einem Foto sieht und es dort nicht haben möchte, schreibt an
+dieselbe Adresse — wir nehmen es heraus, ohne Begründung und ohne Rückfrage.
+
+
+3. Die Schriften
+----------------
+
+public/fonts/ enthält Anton und Inter. Beide stehen unter der SIL Open Font
+License 1.1 und gehören ihren jeweiligen Urhebern; sie liegen hier nur, weil
+die Seite sie selbst ausliefert statt sie von Google zu holen.

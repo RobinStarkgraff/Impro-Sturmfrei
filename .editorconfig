@@ -14,5 +14,11 @@ indent_size = 2
 [Makefile*]
 indent_style = tab
 
+# Die Abschnitte in sections/ sind HTML mit Löchern: ihre Einrückung ist die
+# des Markups, also zwei wie überall. Die Logik in lib/ und tools/ rückt
+# PHP-üblich mit vier ein — dort gibt es kein Markup, an dem sie hängt.
+[{lib,tools}/*.php]
+indent_size = 4
+
 [*.md]
 trim_trailing_whitespace = false

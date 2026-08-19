@@ -33,7 +33,14 @@
       "Impressum steht sie, weil das Gesetz es verlangt; im JSON-LD würde",
       "Google sie als Anschrift der Gruppe lesen und in Karten und",
       "Wissenspanel anzeigen können — und es ist eine Privatanschrift, keine",
-      "Spielstätte. Auf true setzen, wenn das gewollt ist."
+      "Spielstätte. Auf true setzen, wenn das gewollt ist.",
+      "",
+      "publishPhoneInSchema: dasselbe für die Telefonnummer, und aus demselben",
+      "Grund. Sie stand vorher ohne Rückfrage im JSON-LD, während die Anschrift",
+      "geschützt war — das war ein Widerspruch, keine Entscheidung. Standard",
+      "ist jetzt false: die Nummer steht im Impressum und auf /kontakt/, wo",
+      "Menschen sie suchen, aber nicht als maschinenlesbare Angabe im",
+      "Wissenspanel. Auf true setzen, wenn sie dort stehen soll."
     ],
     "entity": null,
     "responsible": "Robin Starkgraff",
@@ -42,7 +49,8 @@
     "city": "Hamburg",
     "phone": "+49 151 56969948",
     "vatId": null,
-    "publishAddressInSchema": false
+    "publishAddressInSchema": false,
+    "publishPhoneInSchema": false
   },
 
   "privacy": {
