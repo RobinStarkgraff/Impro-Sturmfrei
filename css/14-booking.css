@@ -1,0 +1,201 @@
+/* ============================================================
+   14. BUCHEN — Formate, Voraussetzungen, Fragen, Anfrage
+
+   Die Karten hier tragen bewusst kein Glas: /buchen/ ist die Seite, auf
+   der jemand eine Entscheidung trifft, und die drei Formate müssen sich
+   voneinander unterscheiden lassen, nicht von der Seite. Deshalb Kante und
+   Grundfläche, kein backdrop-filter.
+   ============================================================ */
+
+.format-grid {
+  display: grid;
+  gap: var(--space-lg);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+}
+
+.format {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: clamp(var(--space-lg), 3vw, var(--space-xl));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--slow) var(--ease),
+              background-color var(--slow) var(--ease);
+}
+
+.format:hover {
+  background: var(--surface-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.format__duration {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+.format__summary {
+  margin: 0;
+}
+
+/* Die Besetzungszeile ist die letzte im Kasten und soll unten stehen, auch
+   wenn der Text darüber kürzer ist als in der Karte daneben. */
+.format__cast {
+  margin: auto 0 0;
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border);
+}
+
+/* --- Was wir brauchen ------------------------------------------------
+   Eine <dl>: Begriff und Erläuterung sind hier wirklich Paare, keine
+   Liste mit Doppelpunkt drin. */
+
+.need-grid {
+  display: grid;
+  gap: var(--space-lg) var(--space-xl);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  margin: 0;
+}
+
+.need {
+  padding-left: var(--space-lg);
+  border-left: 2px solid rgb(var(--accent-rgb) / 0.35);
+}
+
+.need__item {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--heading);
+}
+
+.need__detail {
+  margin: var(--space-2xs) 0 0;
+  font-size: var(--text-meta);
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.need-grid__note {
+  margin-top: var(--space-xl);
+}
+
+/* --- Fragen ----------------------------------------------------------
+   <details>, nicht selbst gebaut: die Aufklapp-Mechanik ist im Browser
+   vorhanden, funktioniert ohne JS und ist für Screenreader schon richtig
+   benannt. */
+
+.faq {
+  display: grid;
+  border-top: 1px solid var(--border);
+}
+
+.faq__item {
+  border-bottom: 1px solid var(--border);
+}
+
+.faq__item summary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-lg) 0;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  color: var(--heading);
+  cursor: pointer;
+  list-style: none;
+}
+
+/* Das eigene Dreieck weg, in beiden Familien. */
+.faq__item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq__item summary::after {
+  content: "+";
+  flex: 0 0 auto;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--accent-text);
+  transition: transform var(--fast) var(--ease);
+}
+
+.faq__item[open] summary::after {
+  transform: rotate(45deg);
+}
+
+.faq__item summary:hover {
+  color: var(--accent-text);
+}
+
+.faq__item > p {
+  margin: 0;
+  padding-bottom: var(--space-lg);
+  max-width: 60ch;
+  color: var(--text-muted);
+}
+
+/* --- Anfrage ---------------------------------------------------------
+   Hier darf es die Glasfläche sein: dieser Kasten ist der Abschluss der
+   Seite und soll wie der nächste Termin gelesen werden — als das eine,
+   was zu tun ist. */
+
+.cta {
+  display: grid;
+  gap: var(--space-md);
+  justify-items: center;
+  text-align: center;
+  padding: clamp(2rem, 6vw, 4rem);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-lg);
+}
+
+.cta .lead,
+.cta__note {
+  max-width: 42ch;
+}
+
+.cta__note {
+  margin: 0;
+}
+
+/* --- Kontaktwege -----------------------------------------------------
+   Vier Blöcke, kein Formular. Ein Formular bräuchte einen fremden Dienst,
+   und dieser Seite ist ihre Unabhängigkeit mehr wert als die zwei Klicks,
+   die es spart. */
+
+.contact-ways {
+  display: grid;
+  gap: var(--space-xl);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+}
+
+.contact-way__label {
+  margin: 0 0 var(--space-2xs);
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+.contact-way .lead {
+  margin: 0 0 var(--space-xs);
+  word-break: break-word;
+}
+
+.contact-way .meta {
+  margin: 0;
+}

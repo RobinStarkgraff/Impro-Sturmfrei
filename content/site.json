@@ -1,0 +1,113 @@
+{
+  "$comment": [
+    "Einzige Quelle für alles, was auf der Seite mehr als einmal vorkommt:",
+    "Links, E-Mail, Fotos, Meta-Angaben. Nach jeder Änderung `make build`.",
+    "Einmaliger Prosatext steht bewusst NICHT hier, sondern als HTML in",
+    "tools/build.mjs — dort liest er sich als Text, hier wäre er nur Ballast."
+  ],
+
+  "url": "https://www.impro-sturmfrei.de",
+  "$comment_url": [
+    "Sobald die Domain steht: hier z. B. \"https://sturmfrei-impro.de\" eintragen",
+    "(ohne Slash am Ende) und `make build` laufen lassen. Das erzeugt dann",
+    "automatisch og:url, canonical, die absoluten URLs im JSON-LD sowie",
+    "robots.txt und sitemap.xml. Solange der Wert null ist, bleiben diese",
+    "Angaben weg — eine halbe og:url ist schlimmer als keine."
+  ],
+
+  "ogImage": null,
+  "$comment_ogImage": [
+    "Pfad zu einem 1200x630-Bild, z. B. \"images/og.jpg\". Wird nur ausgegeben,",
+    "wenn zusätzlich \"url\" gesetzt ist — Social-Netzwerke brauchen absolute URLs.",
+    "Ohne Bild bleibt twitter:card auf \"summary\", weil eine große leere Karte",
+    "schlechter aussieht als eine kleine ohne Bild."
+  ],
+
+  "brand": {
+    "name": "Sturmfrei",
+    "alternateName": "Sturmfrei Impro",
+    "tagline": "Improvisationstheater · Hamburg",
+    "logo": "images/logo/logo.jpg"
+  },
+
+  "meta": {
+    "title": "Sturmfrei Impro – Improvisationstheater aus Hamburg",
+    "description": "Sturmfrei – Hamburger Impro Shows. Kein Drehbuch, kein Plan B: Improvisationstheater, das live auf der Bühne entsteht.",
+    "ogDescription": "Kein Drehbuch. Kein Plan B. Nur dieser Abend. Improvisationstheater, das live auf der Bühne entsteht.",
+    "schemaDescription": "Improvisationstheater aus Hamburg. Kein Drehbuch, kein Plan B — alles entsteht live auf der Bühne.",
+    "locale": "de_DE",
+    "lang": "de",
+    "themeColor": "#002d4d"
+  },
+
+  "city": "Hamburg",
+  "email": "info@impro-sturmfrei.de",
+  "copyrightYear": 2026,
+
+  "$comment_nav": [
+    "Beschriftung und Ziel der Navigation — einmal hier, nicht je einmal in",
+    "Kopfleiste und Footer. \"page\" ist der Ordnername der Seite; \"index\" ist",
+    "die Startseite. Der Footer zeigt alle Punkte, die Kopfleiste die mit",
+    "\"inHeader\": true. Die Seite muss es in PAGES (tools/build.mjs) geben —",
+    "sonst meldet `make check` es.",
+    "",
+    "Start steht bewusst nicht in der Kopfleiste: dort ist die Wortmarke",
+    "links der Weg zurück, ein zusätzlicher Punkt wäre derselbe Link zweimal."
+  ],
+  "nav": [
+    { "label": "Start",   "page": "index" },
+    { "label": "Termine", "page": "termine", "inHeader": true },
+    { "label": "Buchen",  "page": "buchen",  "inHeader": true },
+    { "label": "Archiv",  "page": "archiv",  "inHeader": true },
+    { "label": "Kontakt", "page": "kontakt", "inHeader": true }
+  ],
+
+  "$comment_legalNav": [
+    "Pflichtseiten. Stehen unten im Footer, nicht in der Kopfleiste — dort",
+    "sind sie erwartbar und nehmen der Hauptnavigation keinen Platz weg."
+  ],
+  "legalNav": [
+    { "label": "Impressum",   "page": "impressum" },
+    { "label": "Datenschutz", "page": "datenschutz" }
+  ],
+
+  "links": {
+    "instagram": {
+      "name": "Instagram",
+      "url": "https://www.instagram.com/impro_sturmfrei/",
+      "handle": "@impro_sturmfrei",
+      "hint": "Fotos, Clips und Ankündigungen"
+    },
+    "eventbrite": {
+      "name": "Eventbrite",
+      "url": "https://www.eventbrite.de/o/121025991893",
+      "hint": "Tickets für die nächste Show"
+    },
+    "meetup": {
+      "name": "MeetUp",
+      "url": "https://www.meetup.com/sturmfrei/",
+      "hint": "Termine und Community"
+    }
+  },
+
+  "hero": {
+    "photo": "images/group/1.jpg",
+    "alt": "Die vier Spieler von Sturmfrei vor dem Bühnenvorhang"
+  },
+
+  "about": {
+    "photoAlt": "Die Sturmfrei-Impro-Gruppe",
+    "$comment_crossfade": [
+      "Reihenfolge der Überblendung. Das erste Bild ist gleichzeitig das,",
+      "das im Markup steht — deshalb hier absichtlich nicht 1.jpg: das ist",
+      "das Hero-Foto und würde beim ersten Blick doppelt erscheinen."
+    ],
+    "crossfade": [
+      "images/group/3.jpg",
+      "images/group/4.jpg",
+      "images/group/5.jpg",
+      "images/group/2.jpg",
+      "images/group/1.jpg"
+    ]
+  }
+}

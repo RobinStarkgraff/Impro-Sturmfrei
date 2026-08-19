@@ -1,0 +1,126 @@
+/* ============================================================
+   5. BUTTONS
+   ============================================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  min-height: 3rem;
+  padding: var(--space-sm) var(--space-xl);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    transform var(--fast) var(--ease),
+    box-shadow var(--fast) var(--ease),
+    background-color var(--fast) var(--ease),
+    border-color var(--fast) var(--ease);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn--primary {
+  background: var(--accent-fill);
+  color: var(--white);
+  box-shadow: var(--shadow-md);
+}
+
+.btn--primary:hover {
+  background: var(--accent-fill-hover);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn--ghost {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border);
+  backdrop-filter: blur(10px);
+}
+
+.btn--ghost:hover {
+  background: var(--surface-hover);
+}
+
+/* Im Hero sitzt der Button auf dem dunklen Foto. Der Rand ist heller als
+   --glass-border, weil hier direkt das Foto dahinter liegt. */
+.btn--on-dark {
+  background: var(--glass);
+  border-color: rgb(var(--white-rgb) / 0.45);
+  color: var(--white);
+  backdrop-filter: blur(10px);
+}
+
+.btn--on-dark:hover {
+  background: var(--glass-hover);
+}
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  margin-top: var(--space-xl);
+}
+
+.btn-row--center {
+  justify-content: center;
+}
+
+
+/* ------------------------------------------------------------
+   Runder Icon-Button
+
+   Slider-Pfeile und Lightbox-Buttons teilen dieselbe Form: rundes
+   Kästchen, zentriertes Glyph, ein Rand, weicher Übergang. Die steht hier
+   einmal; --light und --glass sind die zwei Anstriche. Wo der Button
+   sitzt, bestimmt die jeweilige Komponente — hier steht keine Position.
+   ------------------------------------------------------------ */
+
+.icon-btn {
+  --icon-btn-size: 3rem;
+  display: grid;
+  place-items: center;
+  width: var(--icon-btn-size);
+  height: var(--icon-btn-size);
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  transition:
+    opacity var(--slow) var(--ease),
+    background-color var(--fast) var(--ease);
+}
+
+/* Auf der hellen Seite: weiße Scheibe mit Schatten (Slider-Pfeile). */
+.icon-btn--light {
+  background: rgb(var(--white-rgb) / 0.85);
+  border-color: var(--border);
+  color: var(--ink);
+  box-shadow: var(--shadow-md);
+}
+
+.icon-btn--light:hover {
+  background: var(--white);
+}
+
+/* Auf dunklem Grund: Milchglas (Lightbox). */
+.icon-btn--glass {
+  background: var(--glass);
+  border-color: var(--glass-border);
+  color: var(--white);
+  backdrop-filter: blur(8px);
+}
+
+.icon-btn--glass:hover {
+  background: var(--glass-hover);
+}

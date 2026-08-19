@@ -1,13 +1,34 @@
 # DevContainer — local dev environment, not part of the site
 # Recreate with: bash quick-install.sh --repo=<base-repo-url>
 .devcontainer/
-# Makefile holds only devcontainer bootstrap targets (anchored to repo root)
-/Makefile
+# Lokale Make-Ziele (devcontainer-Bootstrap); das Makefile selbst gehört ins Repo
+/Makefile.local
 
 # MCP artifacts and logs
 .downloads/
 # Claude notification port files
 .claude-notify-ports/
+# Claude Code project settings
+.claude/
+
+# macOS folder metadata
+.DS_Store
+**/.DS_Store
 
 # JetBrains IDE project files
 .idea/
+
+# Die fertige Seite. Sie entsteht aus content/, css/, js/, images/ und fonts/
+# mit `make build` — lokal wie auf dem Server. Im Repo stehen die Quellen;
+# was daraus wird, gehört nicht mit hinein.
+/public/
+
+# Zwischenstand des Deploys: tools/deploy.sh baut erst dorthin, prüft, und
+# tauscht dann gegen public/.
+/.public-neu
+/.public-alt
+
+# Protokoll von tools/deploy.sh — entsteht auf jedem Server neu und hat im
+# Repo nichts zu suchen: ein mitcommittetes Log würde netcups nächstes
+# `git pull` auf dem Webspace mit lokalen Änderungen kollidieren lassen.
+deploy.log

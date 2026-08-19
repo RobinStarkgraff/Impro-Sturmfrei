@@ -1,0 +1,60 @@
+/* ============================================================
+   3. TYPOGRAPHY
+   ============================================================ */
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  color: var(--heading);
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 0.98;
+  text-wrap: balance;
+  margin: 0;
+}
+
+h1 { font-size: var(--text-h1); letter-spacing: -0.025em; }
+h2 { font-size: var(--text-h2); }
+h3 { font-size: var(--text-h3); letter-spacing: 0; }
+
+p {
+  text-wrap: pretty;
+  margin: 0 0 var(--space-md);
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+.eyebrow {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  margin: 0 0 var(--space-sm);
+}
+
+.lead {
+  font-size: var(--text-lead);
+  line-height: 1.55;
+}
+
+.meta {
+  font-size: var(--text-meta);
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Datumszeile über einem Showtitel — im Rückblick und in der Karte für
+   die nächste Show dieselbe, deshalb hier und nicht in einer Komponente. */
+.date-line {
+  font-family: var(--font-body);
+  font-size: var(--text-meta);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}

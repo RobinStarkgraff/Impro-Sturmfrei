@@ -1,0 +1,73 @@
+{
+  "$comment": [
+    "Alles, was die Seite /buchen/ als Aufzählung zeigt: Formate, was ihr",
+    "vor Ort braucht, und die häufigen Fragen. Prosa steht wie überall in",
+    "tools/build.mjs — hier steht nur, was sich wiederholt oder wächst.",
+    "",
+    "!!! ACHTUNG: formats, needs und faq sind ENTWÜRFE. Dauer, Personenzahl",
+    "und Antworten sind geraten und müssen von euch geprüft werden. Solange",
+    "\"reviewed\": false steht, weist `make check` darauf hin.",
+    "",
+    "Preise stehen bewusst nirgends: \"auf Anfrage\" ist ehrlicher als eine",
+    "Zahl, die dann doch nicht stimmt. Sobald ihr eine Spanne nennen wollt,",
+    "kommt sie hier als \"price\" je Format dazu."
+  ],
+
+  "reviewed": false,
+
+  "formats": [
+    {
+      "name": "Kurze Bühnenshow",
+      "duration": "30–45 Minuten",
+      "summary": "Der kompakte Auftritt für einen Abend, der noch weitergeht.",
+      "detail": "Schnelle Spielformen, viel Publikumseinsatz, kein Umbau. Passt zwischen Rede und Buffet, auf Firmenfeiern und Vereinsfeste.",
+      "cast": "2–4 Spieler"
+    },
+    {
+      "name": "Abendshow",
+      "duration": "60–90 Minuten",
+      "summary": "Das ganze Programm, mit Pause und größeren Szenen.",
+      "detail": "Wie unsere öffentlichen Shows: kurze Spielformen im ersten Teil, längere Geschichten im zweiten. Braucht eine Bühne und Publikum, das sitzt.",
+      "cast": "3–4 Spieler"
+    },
+    {
+      "name": "Impro zum Mitmachen",
+      "duration": "2–3 Stunden",
+      "summary": "Kein Zuschauen — alle spielen mit.",
+      "detail": "Warm-ups, einfache Spielformen, am Ende eine kleine Szene. Für Teams, Geburtstage und alle, die Impro von innen sehen wollen. Vorerfahrung braucht niemand.",
+      "cast": "bis 16 Teilnehmende"
+    }
+  ],
+
+  "needs": [
+    { "item": "Spielfläche",  "detail": "etwa 3 × 4 Meter, freier Boden, Publikum davor" },
+    { "item": "Licht",        "detail": "die Fläche muss hell sein — Deckenlicht genügt" },
+    { "item": "Strom",        "detail": "eine Steckdose in Reichweite der Fläche" },
+    { "item": "Ton",          "detail": "ab etwa 60 Zuschauern Mikros; bei kleineren Räumen nicht nötig" },
+    { "item": "Ruhe",         "detail": "kein laufendes Buffet oder Musikprogramm im selben Raum" },
+    { "item": "Platz hinten", "detail": "eine Ecke zum Umziehen und Ablegen genügt" }
+  ],
+
+  "faq": [
+    {
+      "q": "Wie früh sollten wir anfragen?",
+      "a": "So früh es geht — vier bis sechs Wochen sind angenehm. Kurzfristiger lohnt die Frage trotzdem, manchmal passt es."
+    },
+    {
+      "q": "Was kostet das?",
+      "a": "Das hängt an Format, Dauer, Anfahrt und Anlass. Schreibt uns kurz, was ihr vorhabt — dann bekommt ihr eine Zahl und keine Preisliste zum Raten."
+    },
+    {
+      "q": "Kommt ihr auch außerhalb von Hamburg?",
+      "a": "Ja. Im Hamburger Umland ohne Aufschlag, weiter weg rechnen wir Anfahrt dazu."
+    },
+    {
+      "q": "Muss unser Publikum mitspielen?",
+      "a": "Niemand muss. Wir holen Ideen aus dem Publikum, aber niemand wird auf die Bühne gezogen — wer mitspielen will, meldet sich freiwillig."
+    },
+    {
+      "q": "Könnt ihr auf ein Thema eingehen?",
+      "a": "Gern. Firmenjubiläum, Abschied, Vereinsgeschichte: erzählt uns vorher davon, dann kommt es im Spiel vor. Wir bauen daraus keine Nummer, die auf Kosten von Einzelnen geht."
+    }
+  ]
+}

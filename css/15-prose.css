@@ -1,0 +1,76 @@
+/* ============================================================
+   15. PROSA — Impressum und Datenschutz
+
+   Zwei Seiten, die niemand zum Vergnügen liest. Deshalb ohne Karten, ohne
+   Glas und ohne Einblendung: durchgehender Text mit sichtbarer Gliederung,
+   damit man die eine Angabe findet, die man sucht.
+   ============================================================ */
+
+/* Überschriften auf diesen Seiten sind Zwischentitel im Text, keine
+   Abschnittsköpfe — sie brauchen die Anton-Größe von h2 nicht. */
+.prose h2 {
+  font-size: var(--text-h3);
+  margin-top: var(--space-2xl);
+  margin-bottom: var(--space-sm);
+}
+
+.prose > :first-child {
+  margin-top: 0;
+}
+
+.prose h2:first-of-type {
+  margin-top: 0;
+}
+
+.prose p {
+  max-width: 68ch;
+}
+
+.prose .lead {
+  margin-bottom: var(--space-xl);
+}
+
+.prose a {
+  color: var(--accent-text);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.prose code {
+  font-size: 0.9em;
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius-sm);
+  background: rgb(var(--accent-rgb) / 0.10);
+  color: var(--accent-text);
+}
+
+/* --- Was noch fehlt --------------------------------------------------
+   Sichtbar, nicht als Kommentar im Quelltext: eine fehlende Anschrift im
+   Impressum ist ein Problem der Seite, nicht des Repos, und wer die Seite
+   ansieht, soll es sehen. Verschwindet von selbst, sobald die Angabe in
+   content/legal.json steht. */
+
+.notice {
+  padding: var(--space-lg);
+  margin-bottom: var(--space-2xl);
+  border-left: 3px solid var(--accent-fill);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  background: rgb(var(--accent-rgb) / 0.10);
+  font-size: var(--text-meta);
+  line-height: 1.6;
+}
+
+.notice strong {
+  color: var(--accent-text);
+}
+
+/* <mark> statt einer eigenen Klasse: es ist wirklich eine Hervorhebung im
+   Fließtext, und Screenreader kündigen sie in modernen Browsern an. */
+.todo {
+  padding: 0.1em 0.4em;
+  border-radius: var(--radius-sm);
+  background: rgb(var(--accent-rgb) / 0.18);
+  color: var(--accent-text);
+  font-size: 0.9em;
+  font-weight: 600;
+}

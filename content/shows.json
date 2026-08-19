@@ -1,0 +1,86 @@
+{
+  "$comment": [
+    "Alle Shows an einer Stelle. Aus diesen Daten entstehen beim Build:",
+    "der Rückblick-Abschnitt, die Slider samt alt-Texten, das aria-label je",
+    "Slider und die TheaterEvent-Einträge im JSON-LD. Nach dem Bearbeiten",
+    "`make build` laufen lassen.",
+    "",
+    "alt: leer lassen heißt \"Impro-Szene N – Show vom TT.MM.JJJJ\" als",
+    "Notbehelf. Ein echter Satz zum Bild ist deutlich besser — Screenreader",
+    "können mit einer laufenden Nummer nichts anfangen. `make check` zählt,",
+    "wie viele noch offen sind."
+  ],
+
+  "upcoming": null,
+  "$comment_upcoming": [
+    "Steht der nächste Termin, hier eintragen — dann zeigt der Abschnitt",
+    "\"Nächste Show\" die echte Show statt des Platzhalters, und das JSON-LD",
+    "bekommt ein weiteres TheaterEvent:",
+    "",
+    "  \"upcoming\": {",
+    "    \"date\": \"2026-09-19\",",
+    "    \"title\": \"Sturmfrei im Herbst\",",
+    "    \"venue\": \"Kulturschloss Wandsbek\",",
+    "    \"time\": \"20:00\",",
+    "    \"ticketUrl\": \"https://www.eventbrite.de/e/...\",",
+    "    \"note\": \"Einlass ab 19:30\"",
+    "  }",
+    "",
+    "time, ticketUrl und note sind optional."
+  ],
+
+  "past": [
+    {
+      "date": "2026-01-09",
+      "title": "Die Sturmfrei-Premiere",
+      "venue": "Kulturschloss Wandsbek",
+      "cast": ["Enya", "Nicklas", "Raymond", "Robin"],
+      "photos": [
+        { "file": "1.jpg", "alt": "" },
+        { "file": "2.jpg", "alt": "" },
+        { "file": "3.jpg", "alt": "" },
+        { "file": "4.jpg", "alt": "" },
+        { "file": "5.jpg", "alt": "" },
+        { "file": "6.jpg", "alt": "" },
+        { "file": "7.jpg", "alt": "" },
+        { "file": "8.jpg", "alt": "" },
+        { "file": "9.jpg", "alt": "" }
+      ]
+    },
+    {
+      "date": "2026-03-22",
+      "title": "Sturmfrei im Kulturschloss",
+      "venue": "Kulturschloss Wandsbek",
+      "cast": ["Enya", "Nicklas", "Raymond", "Robin"],
+      "photos": [
+        { "file": "1.jpg", "alt": "" },
+        { "file": "2.jpg", "alt": "" },
+        { "file": "3.jpg", "alt": "" },
+        { "file": "4.jpg", "alt": "" },
+        { "file": "5.jpg", "alt": "" },
+        { "file": "6.jpg", "alt": "" },
+        { "file": "7.jpg", "alt": "" },
+        { "file": "8.jpg", "alt": "" }
+      ]
+    },
+    {
+      "date": "2026-04-21",
+      "title": "Sturmfrei im Hörsaal",
+      "venue": "Hörsaal Hamburg",
+      "cast": ["Enya", "Nicklas", "Moritz", "Raymond", "Robin"],
+      "photos": [
+        { "file": "1.jpg", "alt": "" },
+        { "file": "2.jpg", "alt": "" },
+        { "file": "3.jpg", "alt": "" },
+        { "file": "4.jpg", "alt": "" },
+        { "file": "5.jpg", "alt": "" },
+        { "file": "6.jpg", "alt": "" },
+        { "file": "7.jpg", "alt": "" },
+        { "file": "8.jpg", "alt": "" },
+        { "file": "9.jpg", "alt": "" },
+        { "file": "10.jpg", "alt": "" },
+        { "file": "11.jpg", "alt": "" }
+      ]
+    }
+  ]
+}

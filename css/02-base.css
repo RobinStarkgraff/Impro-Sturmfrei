@@ -1,0 +1,114 @@
+/* ============================================================
+   2. RESET & BASE
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  /* Die Kopfleiste liegt fest oben und ist aus dem Fluss heraus — hier wird
+     ihr Platz freigehalten, damit sie ein eigener Abschnitt bleibt und nicht
+     als Schleier auf dem ersten Abschnitt liegt. */
+  padding-top: var(--header-h);
+  /* clip, nicht hidden: hidden macht aus <body> einen Scroll-Container und
+     nimmt der fixierten Kopfleiste ihren Bezug. Gebraucht wird es für die
+     Slider im Archiv, die absichtlich bis an den Fensterrand gehen — die
+     paar Pixel, die eine sichtbare Scrollleiste dabei übrig lässt, sollen
+     keine zweite, waagerechte Leiste erzeugen. */
+  overflow-x: clip;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: 1.7;
+  color: var(--text);
+  /* Der Hero deckt den ersten Bildschirm ab; der Übergang von Creme zu
+     Himmelblau liegt deshalb genau dort, wo man aus ihm herausscrollt. */
+  background:
+    linear-gradient(
+      180deg,
+      var(--page-top) 0%,
+      var(--page-mid) 30%,
+      var(--page-mid) 70%,
+      var(--page-bottom) 100%
+    );
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body[data-nav-open="true"] {
+  overflow: hidden;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* !important mit Absicht: die Lightbox-Buttons stehen weiter unten in der
+   Datei und setzen display: grid. Ohne das hier würde [hidden] an ihnen
+   wirkungslos bleiben — und genau daran hängt, dass ‹ und › bei einer
+   einzelnen Aufnahme verschwinden. */
+[hidden] {
+  display: none !important;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Ein Fokusring, überall derselbe. */
+:focus-visible {
+  outline: 3px solid var(--accent-text);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--space-md);
+  top: var(--space-md);
+  z-index: 100;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-pill);
+  background: var(--accent-fill);
+  color: var(--white);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform var(--fast) var(--ease);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* Ziel des Skip-Links: fokussierbar für den Sprung, aber ohne Ring. */
+#main:focus {
+  outline: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

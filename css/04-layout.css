@@ -1,0 +1,85 @@
+/* ============================================================
+   4. LAYOUT PRIMITIVES
+
+   .wrap ist die Standardbreite der Seite (--measure-page): Raster,
+   Kartenreihen, Hero. .wrap--prose zieht auf Lesebreite ein
+   (--measure-prose). Wer keins von beiden will, sondern bis an den Rand
+   des Fensters, nimmt .slider-wrap--bleed in css/10-shows.css.
+
+   Vorher gab es nur ein Maß für beides. Das Ergebnis war eine Seite, die
+   auf einem großen Schirm nie über 1152 px hinauskam und deren wichtigste
+   Abschnitte bei 768 px endeten — also bei gut der Hälfte des Fensters.
+   ============================================================ */
+
+.wrap {
+  width: 100%;
+  max-width: var(--measure-page);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.wrap--prose {
+  max-width: var(--measure-prose);
+}
+
+/* Klasse, nicht das nackte <section>: sonst erbt jedes künftige <section>
+   irgendwo in der Seite den Abstand eines Hauptabschnitts. */
+.section {
+  padding-block: var(--section-y);
+  /* Ein Sprungziel muss unter der Leiste anfangen, nicht hinter ihr. */
+  scroll-margin-top: calc(var(--header-h) + var(--space-md));
+}
+
+/* Zwei Abschnitte, die inhaltlich zusammengehören, brauchen zwischen sich
+   nicht den ganzen Abstand — sonst liest sich Zusammengehöriges wie zwei
+   Themen. */
+.section--tight {
+  padding-block: calc(var(--section-y) * 0.5);
+}
+
+.section-head {
+  margin-bottom: var(--space-2xl);
+}
+
+.section-head--center {
+  text-align: center;
+  margin-inline: auto;
+  max-width: 44rem;
+}
+
+/* Ist der Kopf der ganze Abschnitt (z. B. Kontakt), braucht er darunter
+   keinen Abstand. */
+.section-head:last-child {
+  margin-bottom: 0;
+}
+
+/* Ein zweiter Kopf mitten im Abschnitt (Termine, Buchen) braucht über
+   sich Luft — sonst klebt er an dem, was davor endete. */
+.wrap > * + .section-head {
+  margin-top: var(--space-3xl);
+}
+
+/* Zentrierter Absatz unter einer zentrierten Überschrift. */
+.section-head--center > .lead {
+  max-width: 34rem;
+  margin-inline: auto;
+  margin-top: var(--space-lg);
+}
+
+/* Absatz unter einer linksbündigen Überschrift. */
+.section-head > .lead {
+  margin-top: var(--space-lg);
+}
+
+/* Akzentlinie unter zentrierten Überschriften — nimmt den Backstein noch
+   einmal auf, damit er als Teil der Palette gelesen wird und nicht als
+   verirrte Buttonfarbe. */
+.section-head--center h2::after {
+  content: "";
+  display: block;
+  width: 4rem;
+  height: 3px;
+  margin: var(--space-lg) auto 0;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+}

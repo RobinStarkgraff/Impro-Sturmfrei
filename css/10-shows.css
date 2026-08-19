@@ -1,0 +1,158 @@
+/* ============================================================
+   10. SHOWS & SLIDER
+
+   Das Archiv trug seine Slider vorher in Glaskarten. Drei Wirkungen davon
+   waren gegen die Sache:
+
+   1. Die Karte begrenzte den Slider auf die Seitenbreite. Bei Kacheln von
+      höchstens 304 px waren dreieinhalb Fotos zu sehen — auf einer Seite,
+      deren Inhalt die Fotos sind.
+   2. Drei backdrop-filter übereinander, jedes über einem Scrollbereich mit
+      bis zu elf Bildern, kosten bei jedem Scrollschritt echte Rechenzeit.
+   3. Alle Abschnitte trugen dieselbe Glasfläche. Damit sah der letzte Abend
+      genauso aus wie der nächste Termin — die Karte trug keine Bedeutung
+      mehr, nur noch Textur.
+
+   Jetzt: Beschriftung auf Seitenbreite, Fotos über die ganze Fensterbreite,
+   dazwischen eine Linie. Die Glaskarte bleibt dem nächsten Termin
+   (css/08-next-show.css) — dort sagt sie etwas.
+   ============================================================ */
+
+.show + .show {
+  margin-top: var(--space-3xl);
+}
+
+/* Die Trennlinie sitzt am Kopf und nicht am <article>: der Kopf ist das
+   Element mit der Seitenbreite. Am <article> ginge sie über die ganze
+   Fensterbreite und würde die Seite in Streifen schneiden. */
+.show + .show .show__head {
+  padding-top: var(--space-3xl);
+  border-top: 1px solid var(--border);
+}
+
+.show__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-xs) var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+/* Die Fotos einer Show sind mehr wert als der Platz, den die Seitenbreite
+   ihnen lässt. Also nimmt der Slider die ganze Fensterbreite und richtet
+   seine erste Kachel über padding-inline am Text darüber aus — kein
+   negativer Rand, kein 100vw, keine Rechnung, die an der Scrollleiste
+   scheitert. */
+.slider-wrap {
+  position: relative;
+}
+
+.slider-wrap--bleed .slider {
+  padding-inline: var(--gutter);
+  scroll-padding-inline: var(--gutter);
+}
+
+/* Die Randverläufe deuten an, dass es noch weitergeht. --fade-start und
+   --fade-end schalten je Seite ab, wenn der Slider dort angekommen ist —
+   so steht der Verlauf nur einmal da und nicht je Kombination von Anfang
+   und Ende einmal komplett ausgeschrieben. */
+.slider {
+  --fade: 2.5rem;
+  --fade-start: var(--fade);
+  --fade-end: var(--fade);
+  --mask: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 var(--fade-start),
+    #000 calc(100% - var(--fade-end)),
+    transparent 100%
+  );
+
+  display: flex;
+  gap: var(--space-md);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--space-2xs);
+  padding-bottom: var(--space-xs);
+  scrollbar-width: none;
+  -webkit-mask-image: var(--mask);
+  mask-image: var(--mask);
+}
+
+.slider-wrap.is-start .slider { --fade-start: 0px; }
+.slider-wrap.is-end   .slider { --fade-end:   0px; }
+
+.slider::-webkit-scrollbar {
+  display: none;
+}
+
+/* Jede Aufnahme ist ein Link auf die Originaldatei. Mit JS fängt die
+   Lightbox den Klick ab, ohne JS öffnet der Browser das Bild — deshalb
+   gibt es hier keinen Button, der ohne JS ins Nichts klickt. */
+.slide {
+  flex: 0 0 auto;
+  /* Vorher höchstens 19rem. Die Vorlagen liegen bei 1600 px Breite, bei
+     24rem (384 px) ist auf einem Retina-Schirm noch Reserve — und über die
+     ganze Fensterbreite passen so sechs bis sieben Fotos statt dreieinhalb. */
+  width: clamp(13rem, 58vw, 24rem);
+  scroll-snap-align: center;
+  display: block;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  text-decoration: none;
+  transition: transform var(--slow) var(--ease),
+              box-shadow var(--slow) var(--ease);
+}
+
+.slide img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: top;
+}
+
+.slide:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: var(--shadow-xl);
+}
+
+/* Die Pfeile baut js/slider.js — ohne JS gibt es keine toten Bedienelemente. */
+.slider-nav {
+  --icon-btn-size: 2.75rem;
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+}
+
+.slider-nav--prev { left: calc(var(--space-xs) * -1); }
+.slider-nav--next { right: calc(var(--space-xs) * -1); }
+
+/* Über die ganze Fensterbreite gäbe es links und rechts keinen negativen
+   Rand mehr, in den die Pfeile ausweichen könnten — dort setzen sie sich
+   in den Seitenabstand, mittig zwischen Fensterkante und erster Kachel. */
+.slider-wrap--bleed .slider-nav--prev { left:  max(var(--space-2xs), calc(var(--gutter) / 2 - 1.375rem)); }
+.slider-wrap--bleed .slider-nav--next { right: max(var(--space-2xs), calc(var(--gutter) / 2 - 1.375rem)); }
+
+/* :not([disabled]) statt eines !important weiter unten: am Anfang und am
+   Ende soll der jeweilige Pfeil auch beim Überfahren wegbleiben. */
+.slider-wrap:hover .slider-nav:not([disabled]),
+.slider-nav:focus-visible {
+  opacity: 1;
+}
+
+.slider-nav[disabled] {
+  pointer-events: none;
+}
+
+/* Touchgeräte kennen kein Hover: dort bleiben die Pfeile weg, und die
+   Wischbewegung macht die Arbeit. */
+@media (hover: none) {
+  .slider-nav {
+    display: none;
+  }
+}

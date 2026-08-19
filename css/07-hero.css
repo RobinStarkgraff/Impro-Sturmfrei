@@ -1,0 +1,221 @@
+/* ============================================================
+   7. HERO
+   ============================================================ */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  align-items: center;
+  /* Der Rest des Fensters unter der Kopfleiste: die füllt ihre Höhe selbst,
+     der Hero darf sie nicht ein zweites Mal beanspruchen. */
+  min-height: calc(100vh - var(--header-h));
+  min-height: calc(100svh - var(--header-h));
+  padding-block: var(--space-3xl);
+  overflow: hidden;
+  color: var(--white);
+  background:
+    radial-gradient(90% 70% at 15% 10%, rgb(var(--brick-rgb) / 0.35), transparent 60%),
+    linear-gradient(165deg, var(--hero-top) 0%, var(--hero-mid) 55%, var(--hero-bottom) 100%);
+}
+
+/* Dasselbe Foto, weichgezeichnet — reine Atmosphäre, die Auflösung spielt
+   daher keine Rolle. Liegt unter dem Schleier. */
+.hero__backdrop {
+  position: absolute;
+  inset: -12%;
+  width: 124%;
+  height: 124%;
+  object-fit: cover;
+  filter: blur(70px) saturate(160%);
+  opacity: 0.45;
+  z-index: -2;
+  pointer-events: none;
+}
+
+/* Der Schleier hält den Text auf vollem Kontrast, was die Weichzeichnung
+   auch ausspuckt. */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    rgb(var(--scrim-rgb) / 0.55) 0%,
+    rgb(var(--scrim-rgb) / 0.35) 45%,
+    rgb(var(--scrim-rgb) / 0.70) 100%
+  );
+}
+
+.hero__inner {
+  display: grid;
+  gap: clamp(var(--space-xl), 5vw, var(--space-3xl));
+  align-items: center;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 52rem) {
+  .hero__inner {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  }
+}
+
+.hero__content {
+  max-width: 46rem;
+}
+
+/* Das Foto bleibt so groß, wie die Vorlage es scharf füllen kann. Die
+   Vorlagen liegen bei 1600 px, bei 44rem (704 px) ist auf einem Retina-
+   Schirm also noch Reserve. */
+.hero__figure {
+  margin: 0;
+  position: relative;
+  max-width: 44rem;
+  justify-self: center;
+}
+
+.hero__photo {
+  width: 100%;
+  aspect-ratio: 5 / 4;
+  object-fit: cover;
+  object-position: center 25%;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid rgb(var(--white-rgb) / 0.14);
+}
+
+/* Warmer Schein hinter dem Foto, der den Backstein aufnimmt. */
+.hero__figure::before {
+  content: "";
+  position: absolute;
+  inset: -8%;
+  z-index: -1;
+  border-radius: var(--radius-xl);
+  background: radial-gradient(closest-side, rgb(var(--brick-rgb) / 0.5), transparent);
+  filter: blur(30px);
+}
+
+.hero .eyebrow {
+  color: var(--white);
+  opacity: 0.85;
+}
+
+.hero h1 {
+  color: var(--white);
+  margin-bottom: var(--space-lg);
+}
+
+.hero h1 .accent {
+  color: var(--hero-accent);
+}
+
+.hero__text {
+  /* Der einzige Absatz im Hero, der wirklich gelesen wird — er bleibt auf
+     Lesebreite, auch wenn die Spalte daneben breiter geworden ist. */
+  max-width: var(--measure-prose);
+  font-size: var(--text-lead);
+  line-height: 1.55;
+  color: rgb(var(--white-rgb) / 0.90);
+}
+
+.hero .btn-row {
+  margin-top: var(--space-2xl);
+}
+
+/* Hinweis zum Weiterscrollen */
+.scroll-cue {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-top: var(--space-2xl);
+  color: rgb(var(--white-rgb) / 0.85);
+  font-size: var(--text-meta);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color var(--fast) var(--ease);
+}
+
+.scroll-cue:hover {
+  color: var(--white);
+}
+
+.scroll-cue__arrow {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid rgb(var(--white-rgb) / 0.40);
+  border-radius: var(--radius-pill);
+  animation: bob 2.4s var(--ease) infinite;
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(5px); }
+}
+
+
+/* ============================================================
+   7b. SEITENKOPF DER UNTERSEITEN
+
+   Das Band, mit dem jede Seite ohne Hero beginnt: Titel und Vorspann auf
+   demselben dunklen Grund, den Hero und Kopfleiste tragen. Es steht in
+   derselben Datei wie der Hero, weil es dessen Farben teilt und nicht
+   getrennt davon umgefärbt werden darf.
+
+   Früher war es außerdem Bedingung: die Kopfleiste war über dem Hero
+   durchsichtig und brauchte dunkle Pixel unter sich, sonst stand ihr
+   weißer Text auf Creme. Die Leiste bringt ihren Grund inzwischen selbst
+   mit (siehe css/06-header.css) — dieses Band ist jetzt Gestaltung, und
+   eine Seite ohne es wäre nur unschön, nicht unlesbar.
+   ============================================================ */
+
+.page-hero {
+  position: relative;
+  isolation: isolate;
+  padding-block: var(--space-3xl);
+  color: var(--white);
+  background:
+    radial-gradient(80% 120% at 12% 0%, rgb(var(--brick-rgb) / 0.32), transparent 62%),
+    linear-gradient(160deg, var(--hero-top) 0%, var(--hero-mid) 70%, var(--hero-bottom) 100%);
+}
+
+.page-hero .eyebrow {
+  color: var(--white);
+  opacity: 0.85;
+}
+
+.page-hero h1 {
+  color: var(--white);
+  max-width: 30ch;
+}
+
+.page-hero__lead {
+  margin-top: var(--space-lg);
+  max-width: var(--measure-prose);
+  color: rgb(var(--white-rgb) / 0.90);
+  line-height: 1.55;
+}
+
+.page-hero .btn-row {
+  margin-top: var(--space-xl);
+}
+
+/* Der Übergang in die helle Seite. Ohne die Kante wirkt das Band wie ein
+   abgeschnittenes Foto; mit ihr wie eine Bühne, von der man heruntergeht. */
+.page-hero::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(var(--brick-rgb) / 0.9) 30%,
+    rgb(var(--brick-rgb) / 0.9) 70%,
+    transparent
+  );
+}

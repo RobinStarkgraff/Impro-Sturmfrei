@@ -1,0 +1,70 @@
+{
+  "$comment": [
+    "Impressum (§5 DDG, früher §5 TMG) und die Angaben, die die",
+    "Datenschutzerklärung braucht.",
+    "",
+    "!!! Diese Angaben kann niemand für euch erfinden. Solange hier null",
+    "steht, zeigen /impressum/ und /datenschutz/ an der Stelle einen",
+    "sichtbaren Hinweis statt einer Angabe, und `make check` meldet es als",
+    "FEHLER — eine Seite mit erfundener Anschrift wäre schlimmer als eine,",
+    "die sagt, dass die Angabe noch fehlt.",
+    "",
+    "Rechtsform: Eine Gruppe ohne Rechtsform ist ein nicht eingetragener",
+    "Verein oder eine Gruppe von Privatpersonen. Dann nennt man eine",
+    "vertretungsberechtigte Person mit ihrer Anschrift. Eine Postfach- oder",
+    "c/o-Adresse genügt nicht — es muss eine ladungsfähige Anschrift sein.",
+    "",
+    "Kein Rechtsrat: der Text auf den beiden Seiten ist eine Grundlage für",
+    "eine Seite ohne Formular, ohne Analytics und ohne Cookies. Lasst ihn",
+    "einmal prüfen, bevor die Domain live geht."
+  ],
+
+  "impressum": {
+    "$comment": [
+      "responsible: Name der vertretungsberechtigten Person, z. B. \"Robin Starkgraff\".",
+      "entity: nur ausfüllen, wenn es eine Rechtsform gibt (e. V., GbR, UG) —",
+      "sonst null lassen, dann steht nur die Person da.",
+      "street/postalCode/city: ladungsfähige Anschrift.",
+      "phone: freiwillig, aber ein zweiter Weg neben der E-Mail ist gern gesehen.",
+      "vatId: nur falls vorhanden (USt-IdNr. nach §27a UStG).",
+      "",
+      "publishAddressInSchema: soll die vollständige Anschrift zusätzlich in",
+      "die strukturierten Daten (JSON-LD) wandern? Standard ist false. Im",
+      "Impressum steht sie, weil das Gesetz es verlangt; im JSON-LD würde",
+      "Google sie als Anschrift der Gruppe lesen und in Karten und",
+      "Wissenspanel anzeigen können — und es ist eine Privatanschrift, keine",
+      "Spielstätte. Auf true setzen, wenn das gewollt ist."
+    ],
+    "entity": null,
+    "responsible": "Robin Starkgraff",
+    "street": "Schlettstadter Straße 3",
+    "postalCode": "22049",
+    "city": "Hamburg",
+    "phone": "+49 151 56969948",
+    "vatId": null,
+    "publishAddressInSchema": false
+  },
+
+  "privacy": {
+    "$comment": [
+      "host: wer die Seite ausliefert. Gehört in die Erklärung, weil dort",
+      "die Server-Logs anfallen.",
+      "",
+      "serverLocation: wo die Server stehen. Bei einem Standort in der EU ist",
+      "das ein Argument und keine Auflage — deshalb steht es im Text.",
+      "",
+      "logRetentionDays: wie lange der Anbieter Zugriffsprotokolle behält.",
+      "Steht in dessen Datenschutzangaben; bei Unsicherheit null lassen,",
+      "dann bleibt der Satz allgemein statt falsch.",
+      "",
+      "processingAgreement: erst auf true setzen, wenn der Vertrag über die",
+      "Auftragsverarbeitung (Art. 28 DSGVO) mit netcup wirklich geschlossen",
+      "ist. Solange false steht, behauptet die Seite es nicht."
+    ],
+    "host": "netcup GmbH, Karlsruhe",
+    "serverLocation": "Nürnberg (Deutschland)",
+    "hostOutsideEU": false,
+    "logRetentionDays": null,
+    "processingAgreement": false
+  }
+}

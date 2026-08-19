@@ -1,0 +1,46 @@
+/* ============================================================
+   0. FONTS
+
+   Selbst gehostet, damit beim Seitenaufruf keine Besucher-IP an Google
+   geht (LG München I, 3 O 17493/20). Die Dateien liegen in fonts/, werden nach public/fonts/ gespiegelt und
+   enthalten latin + latin-ext in einem Stück — deshalb hier bewusst kein
+   unicode-range: das würde Zeichen ausblenden, die in der Datei stehen.
+
+   display: swap, damit der Text sofort steht. Anton wird im <head>
+   vorgeladen, der Austausch ist dadurch praktisch nie zu sehen.
+
+   Die url() sind relativ zur fertigen public/style.css — also zur Wurzel
+   der ausgelieferten Seite —, nicht zu dieser Quelldatei.
+   ============================================================ */
+
+@font-face {
+  font-family: "Anton";
+  src: url("fonts/anton-v27-latin_latin-ext-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("fonts/inter-v20-latin_latin-ext-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("fonts/inter-v20-latin_latin-ext-600.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("fonts/inter-v20-latin_latin-ext-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

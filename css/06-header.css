@@ -1,0 +1,233 @@
+/* ============================================================
+   6. HEADER / NAV
+
+   Die Kopfleiste ist ein eigener Abschnitt, kein Schleier über dem Hero:
+   eigene Höhe (--header-h, die <body> als padding-top freihält), eigener
+   dunkler Grund aus der Hero-Palette, und unten dieselbe Backstein-Kante,
+   mit der auch das Kopfband der Unterseiten endet.
+
+   Vorher war sie über dem Hero durchsichtig und wurde erst nach 40 px
+   Scrollweg undurchsichtig. Das band jede Seite ohne Hero an ein dunkles
+   Band darunter — sonst stand weißer Leistentext auf Creme. Diese Kopplung
+   ist weg: die Leiste bringt ihren Grund selbst mit.
+   ============================================================ */
+
+.site-header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 50;
+  /* Dieselben Grundfarben wie Hero und Kopfband: die Leiste gehört zu der
+     Familie dunkler Bänder oben auf der Seite — als eigenes Glied davon. */
+  background:
+    radial-gradient(70% 200% at 6% 0%, rgb(var(--brick-rgb) / 0.30), transparent 68%),
+    linear-gradient(165deg, var(--hero-top) 0%, var(--hero-mid) 100%);
+  border-bottom: 1px solid var(--bar-border);
+  transition: box-shadow var(--slow) var(--ease);
+}
+
+/* Die Backstein-Kante nach unten — dasselbe Zeichen für „hier endet ein
+   Band" wie bei .page-hero, nur etwas leiser. */
+.site-header::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(var(--brick-rgb) / 0.75) 30%,
+    rgb(var(--brick-rgb) / 0.75) 70%,
+    transparent
+  );
+}
+
+/* Sobald die Seite unter der Leiste durchläuft, hebt ein Schatten sie ab.
+   Die Höhe bleibt dabei gleich: <body> hält genau --header-h frei, eine
+   schrumpfende Leiste würde dort eine Lücke aufreißen. */
+.site-header.is-scrolled {
+  box-shadow: var(--shadow-lg);
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  min-height: var(--header-h);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-md);
+  color: var(--on-bar);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 1.15rem + 1vw, 2.125rem);
+  line-height: 1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Wächst mit der Leiste mit, bleibt aber immer kleiner als sie: sonst
+   drückt das Logo die Höhe, die --header-h vorgibt. */
+.brand__mark {
+  width: clamp(2.5rem, 2rem + 1.3vw, 3.25rem);
+  height: clamp(2.5rem, 2rem + 1.3vw, 3.25rem);
+  border-radius: var(--radius-pill);
+  object-fit: cover;
+  box-shadow: 0 0 0 1px rgb(var(--white-rgb) / 0.35);
+}
+
+.nav-list {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-list a {
+  position: relative;
+  color: var(--on-bar);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  padding-block: var(--space-xs);
+  transition: opacity var(--fast) var(--ease);
+}
+
+/* Unterstrich, der beim Überfahren von links wächst. */
+.nav-list a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--slow) var(--ease);
+}
+
+.nav-list a:hover::after,
+.nav-list a:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* Die Seite, auf der man gerade steht. Der Unterstrich ist derselbe wie beim
+   Überfahren, nur schon ausgefahren und in der Akzentfarbe — so ist es
+   dieselbe Sprache und nicht ein zweites Zeichen für dieselbe Sache.
+   aria-current="page" steht ohnehin im Markup; hier wird es nur sichtbar. */
+.nav-list a.is-here {
+  cursor: default;
+}
+
+.nav-list a.is-here::after {
+  transform: scaleX(1);
+  background: var(--hero-accent);
+}
+
+.nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: var(--glass);
+  color: var(--on-bar);
+}
+
+.nav-toggle__bars,
+.nav-toggle__bars::before,
+.nav-toggle__bars::after {
+  display: block;
+  width: 1.125rem;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: currentColor;
+  transition: transform var(--fast) var(--ease), opacity var(--fast) var(--ease);
+}
+
+.nav-toggle__bars::before,
+.nav-toggle__bars::after {
+  content: "";
+  position: absolute;
+}
+
+.nav-toggle__bars {
+  position: relative;
+}
+
+.nav-toggle__bars::before { transform: translateY(-6px); }
+.nav-toggle__bars::after  { transform: translateY(6px); }
+
+.nav-toggle[aria-expanded="true"] .nav-toggle__bars {
+  background: transparent;
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle__bars::before {
+  transform: rotate(45deg);
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle__bars::after {
+  transform: rotate(-45deg);
+}
+
+@media (max-width: 46rem) {
+  .nav-toggle {
+    display: inline-flex;
+  }
+
+  .site-nav {
+    position: absolute;
+    inset: 100% 0 auto 0;
+    /* Setzt den Grund der Leiste nach unten fort — das offene Menü ist
+       derselbe Abschnitt, nur ausgeklappt, und keine zweite Fläche. */
+    background: linear-gradient(180deg, var(--hero-mid) 0%, var(--hero-bottom) 100%);
+    border-bottom: 1px solid var(--bar-border);
+    padding: var(--space-md) var(--gutter) var(--space-xl);
+    display: none;
+  }
+
+  body[data-nav-open="true"] .site-nav {
+    display: block;
+    animation: nav-in var(--slow) var(--ease) both;
+  }
+
+  .nav-list {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .nav-list a {
+    display: block;
+    padding: var(--space-md) 0;
+    font-size: 1.25rem;
+    border-bottom: 1px solid rgb(var(--white-rgb) / 0.10);
+  }
+
+  .nav-list a::after {
+    display: none;
+  }
+
+  /* Im Menü ist der Unterstrich abgeschaltet, die aktive Seite braucht also
+     ein anderes Zeichen: ein Balken davor, im Abstand des Textes. */
+  .nav-list a.is-here {
+    padding-left: var(--space-md);
+    box-shadow: inset 3px 0 0 var(--hero-accent);
+  }
+}
+
+@keyframes nav-in {
+  from { opacity: 0; transform: translateY(-0.5rem); }
+  to   { opacity: 1; transform: translateY(0); }
+}

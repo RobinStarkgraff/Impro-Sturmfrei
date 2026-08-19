@@ -1,0 +1,58 @@
+# ============================================================
+# Sturmfrei Impro — Apache-Regeln für das Webverzeichnis
+#
+# Bei netcup ist der Git-Checkout gleichzeitig das Webverzeichnis: diese
+# Datei liegt also im Projektstamm und landet mit dem Deploy oben im
+# Docroot. Ausgeliefert werden soll aber nur public/.
+#
+# Das erledigt eine Regel, und sie erledigt beides zugleich: jede Anfrage
+# wird nach public/ umgeschrieben. Was dort nicht liegt — content/, css/,
+# js/, tools/, .git/, README.md, Makefile — ist damit nicht "gesperrt",
+# sondern schlicht nicht adressierbar und endet als 404. Eine Deny-Liste
+# müsste man bei jeder neuen Quelldatei nachziehen; hier gibt es nichts
+# nachzuziehen.
+#
+# Der Preis: ohne mod_rewrite greift nichts davon. Deshalb steht unten
+# trotzdem eine Notbremse für .git, und Options -Indexes verhindert, dass
+# im Fehlerfall der Projektordner als Liste im Netz steht.
+# ============================================================
+
+Options -Indexes
+DirectoryIndex index.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # /public/… von außen: einmal 301 auf die saubere Adresse. Sonst wäre jede
+  # Seite unter zwei Adressen erreichbar, und das canonical zeigt nur auf
+  # eine davon.
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^public/(.*)$ /$1 [R=301,L]
+
+  # Alles andere nach public/. Die Bedingung ist nicht Zierde: /termine/ wird
+  # zu public/termine/, darauf schlägt DirectoryIndex zu und fragt intern
+  # public/termine/index.html nach — ohne die Bedingung würde daraus
+  # public/public/termine/index.html.
+  RewriteCond %{REQUEST_URI} !^/public/
+  RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Notbremse, falls mod_rewrite fehlt und oben nichts greift.
+RedirectMatch 404 ^/\.git(/|$)
+
+# ------------------------------------------------------------
+# Noch nicht einschalten: erst wenn das Let's-Encrypt-Zertifikat steht.
+# Vorher schaltet der HTTPS-Zwang die Seite ab. Beides kann netcup auch im
+# WCP erledigen — wenn es das dort gibt, gehört es dorthin und nicht hier.
+#
+# Die www-Form ist die richtige: das canonical und og:url aus
+# content/site.json zeigen auf https://www.impro-sturmfrei.de/.
+# ------------------------------------------------------------
+# <IfModule mod_rewrite.c>
+#   RewriteCond %{HTTPS} !=on
+#   RewriteRule ^(.*)$ https://www.impro-sturmfrei.de/$1 [R=301,L]
+#
+#   RewriteCond %{HTTP_HOST} !^www\. [NC]
+#   RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
+# </IfModule>

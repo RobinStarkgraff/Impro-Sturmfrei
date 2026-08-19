@@ -1,0 +1,172 @@
+/* ============================================================
+   1. TOKENS
+
+   Regel für alle Komponenten weiter unten: keine Farbe im Klartext.
+   Wer eine andere Deckkraft braucht, nimmt das passende Kanal-Token —
+   rgb(var(--accent-rgb) / 0.35) — und nicht rgba(184, 57, 31, 0.35).
+   Sonst wandert die Farbe beim nächsten Umfärben (und im Dark Mode)
+   nicht mit.
+   ============================================================ */
+
+:root {
+  color-scheme: light dark;
+
+  /* --- Kanäle: eine Farbe, viele Deckkraftstufen --- */
+  --accent-rgb: 184 57 31;
+  --white-rgb:  255 255 255;
+  --shadow-rgb: 0 25 45;
+  --scrim-rgb:  0 15 26;
+
+  /* Derselbe Backstein, aber festgenagelt: der Hero ist in beiden Modi
+     gleich dunkel, deshalb darf sein Schimmer nicht mit dem Farbschema
+     wandern. --accent-rgb dreht im Dark Mode mit, --brick-rgb nie. */
+  --brick-rgb: 184 57 31;
+
+  /* --- brand --- */
+  --cream: #fff9d3;
+  --sky:   #93bdd7;
+  --ink:   #002d4d;
+  --white: #ffffff;
+
+  --accent: rgb(var(--accent-rgb));
+
+  /* Der Backstein muss zwei verschiedene Jobs machen, und ein Wert kann
+     nicht für beide den Kontrast schaffen. Flächen tragen weißen Text;
+     -text sitzt auf der Seite selbst. Geprüft gegen den Sky-Hintergrund
+     und die Glasflächen. */
+  --accent-fill:       rgb(var(--accent-rgb)); /* Weiß darauf: 5.8:1 */
+  --accent-fill-hover: #8f2a15;
+  --accent-text:       #7a2413;                /* darauf auf Sky: 5.1:1 */
+
+  /* --- page (light) --- */
+  --page-top:    var(--cream);
+  --page-mid:    var(--sky);
+  --page-bottom: var(--cream);
+
+  --text:       #002d4d;
+  --text-muted: #164460;
+  --heading:    #002d4d;
+
+  --surface:       rgb(var(--white-rgb) / 0.52);
+  --surface-hover: rgb(var(--white-rgb) / 0.70);
+  --border:        rgb(0 45 77 / 0.14);
+
+  --bar:        rgb(0 28 48 / 0.80);
+  --bar-border: rgb(var(--white-rgb) / 0.14);
+  --on-bar:     #ffffff;
+
+  /* --- Glas auf dunklem Grund ---------------------------------------
+     Die Behandlung, die sich Kopfleisten-Button, Hero-Button und die
+     Lightbox-Buttons teilen. Diese Flächen sitzen immer auf dunklen
+     Pixeln (Foto, Leiste, Lightbox) und drehen im Dark Mode bewusst
+     NICHT mit — dort ist es schon dunkel. */
+  --glass:        rgb(var(--white-rgb) / 0.12);
+  --glass-hover:  rgb(var(--white-rgb) / 0.26);
+  --glass-border: rgb(var(--white-rgb) / 0.30);
+
+  /* --- Hero: eigene Bühne, eigene Grundfarben --- */
+  --hero-top:    #06263d;
+  --hero-mid:    #001b2e;
+  --hero-bottom: #000f1a;
+  --hero-accent: #ffb8a2; /* aufgehellter Backstein für die H1-Zeile */
+
+  /* --- type --- */
+  --font-display: "Anton", "Arial Narrow", "Haettenschweiler", Impact, sans-serif;
+  --font-body:    "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --text-eyebrow:   clamp(0.75rem,   0.72rem + 0.15vw, 0.875rem);
+  --text-meta:      clamp(0.9375rem, 0.9rem  + 0.2vw,  1.0625rem);
+  --text-body:      clamp(1.0625rem, 1rem    + 0.3vw,  1.25rem);
+  --text-lead:      clamp(1.125rem,  1.03rem + 0.5vw,  1.5rem);
+  --text-h3:        clamp(1.375rem,  1.15rem + 1.1vw,  2rem);
+  --text-h2:        clamp(2rem,      1.45rem + 2.8vw,  3.5rem);
+  --text-h1:        clamp(2.375rem,  1.3rem  + 5.4vw,  4.5rem);
+  --text-statement: clamp(1.75rem,   1.2rem  + 2.4vw,  2.75rem);
+
+  /* --- space --- */
+  --space-2xs: 0.25rem;
+  --space-xs:  0.5rem;
+  --space-sm:  0.75rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+
+  --section-y: clamp(4rem, 9vw, 8rem);
+  --gutter:    clamp(1.25rem, 4vw, 4rem);
+
+  /* Die Höhe der Kopfleiste. Sie ist ein eigener Abschnitt und liegt fest
+     oben; <body> hält genau diese Höhe als padding-top frei, der Hero zieht
+     sie von der Fensterhöhe ab, und jedes Sprungziel hält sie als
+     scroll-margin frei. Deshalb steht sie hier und nicht in 06-header.css:
+     drei Dateien rechnen mit ihr. */
+  --header-h: clamp(4.5rem, 3.2rem + 3.4vw, 6.75rem);
+
+  /* --- Breiten: zwei Maße und ein Ausbruch ---------------------------------
+     Ein einziges --measure musste vorher zwei Aufgaben erfüllen: wie breit
+     die Seite auf einem großen Schirm werden darf, UND wie lang eine
+     Textzeile werden darf. Das eine will breit, das andere schmal — mit
+     einem Wert gewinnt immer der Text, und die Seite steht als schmale
+     Spalte in einem weiten Feld.
+
+     Deshalb: -page für alles Gerasterte (Raster, Fotos, Hero), -prose für
+     Lesetext. Was ganz nach außen soll (die Slider im Archiv), nimmt
+     .slider-wrap--bleed und gar kein Maß. */
+  --measure-page:  82rem;   /* 1312 px — Raster, Hero, Kartenreihen */
+  --measure-prose: 48rem;   /*  768 px — Lesetext, ~75 Zeichen       */
+
+  /* --- radii --- */
+  --radius-sm:   0.625rem;
+  --radius-md:   1rem;
+  --radius-lg:   1.5rem;
+  --radius-xl:   2rem;
+  --radius-pill: 999px;
+
+  /* --- elevation --- */
+  --shadow-sm: 0 1px 2px rgb(var(--shadow-rgb) / 0.06),
+               0 2px 6px rgb(var(--shadow-rgb) / 0.06);
+  --shadow-md: 0 2px 4px rgb(var(--shadow-rgb) / 0.06),
+               0 8px 20px rgb(var(--shadow-rgb) / 0.10);
+  --shadow-lg: 0 4px 8px rgb(var(--shadow-rgb) / 0.07),
+               0 18px 40px rgb(var(--shadow-rgb) / 0.14);
+  --shadow-xl: 0 8px 16px rgb(var(--shadow-rgb) / 0.10),
+               0 32px 70px rgb(var(--shadow-rgb) / 0.22);
+
+  /* --- motion --- */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --fast: 160ms;
+  --slow: 420ms;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --accent-rgb:  217 84 47;
+    --shadow-rgb:  0 0 0;
+
+    --page-top:    #061420;
+    --page-mid:    #0e2a41;
+    --page-bottom: #061420;
+
+    --text:       #e6f0f7;
+    --text-muted: #9fbdd1;
+    --heading:    #f4fafe;
+
+    --surface:       rgb(var(--white-rgb) / 0.07);
+    --surface-hover: rgb(var(--white-rgb) / 0.11);
+    --border:        rgb(var(--white-rgb) / 0.13);
+
+    --bar:        rgb(4 16 26 / 0.82);
+    --bar-border: rgb(var(--white-rgb) / 0.10);
+
+    --accent-fill:       #c0401f; /* Weiß darauf: 5.3:1 */
+    --accent-fill-hover: #a03318;
+    --accent-text:       #f0866a; /* darauf auf der dunklen Seite: 5.9:1 */
+
+    /* Dunkler Grund braucht kräftigere Schatten, nicht nur schwarze. */
+    --shadow-lg: 0 4px 8px rgb(var(--shadow-rgb) / 0.30),
+                 0 18px 40px rgb(var(--shadow-rgb) / 0.45);
+    --shadow-xl: 0 8px 16px rgb(var(--shadow-rgb) / 0.35),
+                 0 32px 70px rgb(var(--shadow-rgb) / 0.55);
+  }
+}

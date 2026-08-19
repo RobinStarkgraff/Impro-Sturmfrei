@@ -1,0 +1,108 @@
+/* ============================================================
+   13. FOOTER
+   ============================================================ */
+
+.site-footer {
+  margin-top: var(--section-y);
+  padding-block: var(--space-3xl) var(--space-xl);
+  background: var(--bar);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid var(--bar-border);
+  color: rgb(var(--white-rgb) / 0.82);
+}
+
+.site-footer a {
+  color: var(--white);
+  text-decoration: none;
+  border-bottom: 1px solid rgb(var(--white-rgb) / 0.28);
+  transition: border-color var(--fast) var(--ease);
+}
+
+.site-footer a:hover {
+  border-bottom-color: var(--white);
+}
+
+.footer-grid {
+  display: grid;
+  gap: var(--space-xl);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  padding-bottom: var(--space-2xl);
+}
+
+/* Kein Überschriftenelement: die Zeilen benennen ihre Footerspalte, sie
+   sind keine Stufen in der Dokumentgliederung. Sehen aber so aus. */
+.footer-col__title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  line-height: 0.98;
+  font-size: 1.125rem;
+  letter-spacing: 0.1em;
+  color: var(--white);
+  margin: 0 0 var(--space-md);
+}
+
+/* .meta ist auf der hellen Seite gedämpft; im Footer erbt es die
+   Footerfarbe. Gezielt .meta und nicht jedes <p> im Footer: sonst
+   überstimmt diese Regel die Spaltentitel und den Wortmarken-Absatz,
+   die beide ihre eigene Farbe mitbringen. */
+.site-footer .meta {
+  color: inherit;
+}
+
+.footer-col ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-xs);
+  font-size: var(--text-meta);
+}
+
+.footer-brand {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--white);
+  margin-bottom: var(--space-sm);
+}
+
+.footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm) var(--space-lg);
+  padding-top: var(--space-lg);
+  border-top: 1px solid rgb(var(--white-rgb) / 0.12);
+  font-size: var(--text-meta);
+}
+
+.footer-bottom__note {
+  margin: 0;
+}
+
+/* Impressum und Datenschutz stehen hier unten, nicht in der Kopfleiste:
+   dort sucht sie niemand, und sie nähmen der Hauptnavigation Platz weg. */
+.footer-legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Eine Spalte, sobald nebeneinander nicht mehr geht — sonst rutscht die
+   Zeile mit dem Copyright unter die Linkliste und wirkt wie ein Nachtrag. */
+@media (max-width: 34rem) {
+  .footer-bottom {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .footer-legal {
+    justify-content: center;
+  }
+}
