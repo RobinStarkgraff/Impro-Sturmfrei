@@ -98,7 +98,22 @@ echo "→ frage $basis"
 hole "$basis/SHASUMS256.txt" "$tmp/SHASUMS256.txt" \
   || fehler "SHASUMS256.txt nicht erreichbar — gibt es '$wahl' auf nodejs.org?"
 
-archiv=$(awk -v m="-linux-$arch.tar.$endung" 'index($2, m) { print $2; exit }' "$tmp/SHASUMS256.txt")
+# Gelesen wird mit `read` und `case` — beides ist in der Shell eingebaut.
+# awk wäre kürzer, ist auf einem kargen Webspace aber nicht verlässlich da
+# (dort fehlte auch node). Die Prüfsumme derselben Zeile nehmen wir gleich
+# mit; das erspart weiter unten einen zweiten Durchgang.
+archiv=
+summe=
+while read -r zeilensumme zeilendatei; do
+  case "$zeilendatei" in
+    *"-linux-$arch.tar.$endung")
+      summe=$zeilensumme
+      archiv=$zeilendatei
+      break
+      ;;
+  esac
+done < "$tmp/SHASUMS256.txt"
+
 [ -n "$archiv" ] || fehler "kein Archiv für linux-$arch (.tar.$endung) in dieser Reihe."
 
 echo "→ hole $archiv (~30–45 MB)"
@@ -119,8 +134,8 @@ else
   pruefe() { return 2; }
 fi
 
-grep "  $archiv\$" "$tmp/SHASUMS256.txt" > "$tmp/erwartet.txt" \
-  || fehler "keine Prüfsumme für $archiv gefunden."
+[ -n "$summe" ] || fehler "keine Prüfsumme für $archiv gefunden."
+printf '%s  %s\n' "$summe" "$archiv" > "$tmp/erwartet.txt"
 
 stand=0
 pruefe || stand=$?
@@ -153,8 +168,15 @@ if ! tar -x${tarflag}f "$tmp/$archiv" -O --wildcards "*/bin/node" > "$tmp/node" 
 fi
 
 # Ein leeres oder winziges Ergebnis heißt: das Muster hat nichts getroffen.
-groesse=$(wc -c < "$tmp/node" | tr -d ' ')
-[ "$groesse" -gt 10000000 ] || fehler "die entpackte Datei ist nur $groesse Bytes groß — das ist nicht node."
+# Zählen kann die Shell nicht selbst; fehlt wc, entfällt diese Vorprüfung.
+# Der --version-Aufruf gleich darunter ist ohnehin der härtere Beweis.
+groesse=
+if command -v wc >/dev/null 2>&1; then
+  # Wortzerlegung streift die Führungsleerzeichen mancher wc-Fassungen ab.
+  set -- $(wc -c < "$tmp/node")
+  groesse=$1
+  [ "$groesse" -gt 10000000 ] || fehler "die entpackte Datei ist nur $groesse Bytes groß — das ist nicht node."
+fi
 
 chmod 755 "$tmp/node"
 
@@ -173,7 +195,11 @@ mv "$ziel.neu" "$ziel"
 version=$("$ziel" --version)
 
 echo
-echo "Node $version liegt in $ziel ($(( groesse / 1048576 )) MB)."
+if [ -n "$groesse" ]; then
+  echo "Node $version liegt in $ziel ($(( groesse / 1048576 )) MB)."
+else
+  echo "Node $version liegt in $ziel."
+fi
 echo
 
 if [ "$zielverzeichnis" = "$HOME/bin" ]; then
