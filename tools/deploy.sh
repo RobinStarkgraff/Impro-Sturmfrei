@@ -64,16 +64,41 @@ echo "Deploy: $root"
 
 # ------------------------------------------------------------
 # 1. Node — ohne das geht hier nichts mehr
+#
+# Der PATH einer Deployment-Aktion ist karg: ein selbst abgelegtes Node liegt
+# dort nicht, auch wenn es im Home steht. Bevor also aufgegeben wird, sehen wir
+# an den üblichen Stellen nach — dann bleibt die Aktion im WCP die eine Zeile
+# 'sh tools/deploy.sh' und braucht kein 'PATH=' davor.
 # ------------------------------------------------------------
+if ! command -v node >/dev/null 2>&1; then
+  for verzeichnis in \
+    "${HOME:-/nonexistent}/bin" \
+    "${HOME:-/nonexistent}/.local/bin" \
+    "${HOME:-/nonexistent}/node/bin" \
+    "${HOME:-/nonexistent}"/.nvm/versions/node/*/bin
+  do
+    if [ -x "$verzeichnis/node" ]; then
+      PATH="$verzeichnis:$PATH"
+      export PATH
+      say "Node aus $verzeichnis"
+      break
+    fi
+  done
+fi
+
 if ! command -v node >/dev/null 2>&1; then
   echo "FEHLER: kein node auf diesem Webspace."
   echo
   echo "  public/ liegt nicht im Repo, die Seite wird hier gebaut — ohne Node"
   echo "  gibt es also nichts auszuliefern. Zwei Wege:"
   echo
-  echo "  a) Node in den Webspace legen: das linux-x64-Archiv von nodejs.org"
-  echo "     nach ~/bin/ entpacken und diese Aktion auf"
-  echo "     'PATH=\$HOME/bin:\$PATH sh tools/deploy.sh' ändern."
+  echo "  a) Node in den Webspace legen — das erledigt"
+  echo
+  echo "       sh tools/install-node.sh"
+  echo
+  echo "     einmalig (per SSH, oder vorübergehend selbst als Deployment-"
+  echo "     Aktion eingetragen). Es legt ~/bin/node ab; dieses Skript findet"
+  echo "     es danach von selbst, die Aktion bleibt 'sh tools/deploy.sh'."
   echo "  b) public/ wieder mit ins Repo nehmen (aus .gitignore austragen,"
   echo "     lokal 'make build' vor jedem Commit) — dann prüft dieses Skript"
   echo "     nur noch, statt zu bauen."

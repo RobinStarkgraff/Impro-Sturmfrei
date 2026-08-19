@@ -45,6 +45,7 @@ tools/build.mjs             erzeugt Seiten, style.css und js/ nach public/
 tools/check.mjs             prüft die fertigen Seiten
 tools/lib.mjs               das, was beide brauchen (beide Wurzeln, JSON, Datum)
 tools/deploy.sh             der Befehl, den netcup nach dem Deploy aufruft
+tools/install-node.sh       legt einmalig ~/bin/node in den Webspace
 tools/optimize-images.sh    verkleinert die Fotos
 tools/fetch-fonts.sh        holt die Schriften
 .htaccess                   liefert nur public/ aus (siehe "Deploy")
@@ -224,8 +225,10 @@ gehören in den Footer, nicht in den Index.
 Beim Aufsetzen bei netcup noch zu erledigen:
 
 * **Das Git-Deployment einrichten** und klären, ob Node auf dem Webspace
-  läuft — siehe „Deploy" unten. Danach ist ein Veröffentlichen ein
-  `git push`; ohne Node baut der Server nicht und es gibt keine Seite.
+  läuft — siehe „Deploy" unten. Fehlt Node (bei netcup ist das der
+  Normalfall: der Webspace bringt PHP mit, sonst nichts), legt
+  `sh tools/install-node.sh` es einmalig nach `~/bin/`. Danach ist ein
+  Veröffentlichen ein `git push`.
 * **`impro-sturmfrei.de` auf `www.impro-sturmfrei.de` umleiten** (301) und
   **HTTPS erzwingen** — Let's Encrypt reicht. Beides steht als
   auskommentierter Block in `.htaccess`; wenn netcup es im WCP anbietet,
@@ -265,9 +268,40 @@ Ob Node da ist, klärt per SSH `command -v node; node -v` — oder das
 Aktionsfeld selbst als Sonde: einmal
 `{ command -v node && node -v || echo "kein node"; } > public/node-probe.txt 2>&1`
 eintragen, deployen, `https://…/node-probe.txt` aufrufen, Datei wieder
-löschen. Fehlt Node, lässt sich das linux-x64-Archiv von nodejs.org nach
-`~/bin/` entpacken; die Aktion heißt dann
-`PATH=$HOME/bin:$PATH sh tools/deploy.sh`.
+löschen.
+
+### Fehlt Node: `tools/install-node.sh`
+
+Auf einem Webspace ist Node der Regelfall nicht. Das Skript holt es nach:
+
+```
+sh tools/install-node.sh
+```
+
+Es lädt die offizielle Linux-Binärdatei von nodejs.org, prüft die Prüfsumme
+aus deren `SHASUMS256.txt` und legt **genau eine Datei** ab: `~/bin/node`
+(~100 MB). npm und die Bibliotheken bleiben weg — `build.mjs` und `check.mjs`
+haben keine Abhängigkeiten und brauchen nur `node` selbst. Die Patch-Nummer
+steht nicht im Skript, sondern kommt aus der `SHASUMS256.txt` der gewählten
+Reihe; `sh tools/install-node.sh 20` nimmt einen anderen Hauptzweig, wenn die
+glibc des Webspace für den neueren zu alt ist.
+
+Ausführen lässt sich das auf zwei Wegen:
+
+* **per SSH** — einmal aufrufen, fertig.
+* **ohne SSH** — im Aktionsfeld vorübergehend `sh tools/install-node.sh`
+  eintragen, einmal deployen, danach wieder `sh tools/deploy.sh` eintragen.
+
+Danach bleibt die Aktion die eine Zeile `sh tools/deploy.sh` und braucht
+**kein** `PATH=` davor: `deploy.sh` sieht selbst in `~/bin`, `~/.local/bin`,
+`~/node/bin` und `~/.nvm/versions/node/*/bin` nach, bevor es aufgibt — der
+PATH einer Deployment-Aktion ist karg und enthält das Home nicht. Liegt Node
+woanders, sagt `install-node.sh` die passende `PATH=…`-Zeile.
+
+Ein Update ist derselbe Aufruf: die neue Datei wird daneben geschrieben und
+erst dann übergebügelt, ein gleichzeitig laufender Deploy trifft also nie auf
+eine halbe Datei. Schlägt Download oder Prüfsumme fehl, wird nichts
+installiert und das alte `~/bin/node` bleibt unberührt.
 
 **Der Checkout ist gleichzeitig das Webverzeichnis.** Ausgeliefert werden
 soll aber nur `public/`. Das erledigt die `.htaccess` im Projektstamm, und
