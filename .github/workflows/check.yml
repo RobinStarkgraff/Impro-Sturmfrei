@@ -1,0 +1,44 @@
+# ============================================================
+# `make check` bei jedem Push und jedem Pull Request.
+#
+# Warum das hier steht: netcup zieht das Repo selbst, und der Checkout IST
+# die Seite. Ein Push ist damit die Veröffentlichung — tools/deploy.sh läuft
+# danach und sagt das auch ("Sie sind schon online"). Die Prüfung gehört
+# also davor, und der Rechner, von dem aus gepusht wird, hat kein PHP.
+#
+# Hier hat er eins. Ein roter Haken am Commit erreicht euch, bevor jemand
+# die Seite aufruft.
+#
+# Gebaut wird nichts, installiert wird nichts: die Seite braucht kein
+# Composer, kein npm und keine Erweiterung über das hinaus, was jede
+# PHP-Installation mitbringt.
+# ============================================================
+
+name: check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    # Dasselbe PHP wie auf dem Webspace. Läuft es hier, läuft es dort.
+    container: php:8.2-cli
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # make ist im schlanken PHP-Image nicht dabei; die zwei Schritte aus
+      # dem check-Ziel direkt auszuführen ist ehrlicher als ein apt-get für
+      # eine einzige Zeile.
+      - name: Syntax
+        run: |
+          fehler=0
+          for datei in $(find lib sections public tools -name '*.php'); do
+            php -l "$datei" > /dev/null 2>&1 || { php -l "$datei"; fehler=1; }
+          done
+          [ $fehler -eq 0 ] || { echo "Erst den Syntaxfehler, dann alles andere."; exit 1; }
+
+      - name: Seiten prüfen
+        run: php tools/check.php

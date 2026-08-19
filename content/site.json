@@ -1,17 +1,17 @@
 {
   "$comment": [
     "Einzige Quelle für alles, was auf der Seite mehr als einmal vorkommt:",
-    "Links, E-Mail, Fotos, Meta-Angaben. Nach jeder Änderung `make build`.",
+    "Links, E-Mail, Fotos, Meta-Angaben. Wirkt sofort — es gibt keinen Build.",
     "Einmaliger Prosatext steht bewusst NICHT hier, sondern als HTML in",
-    "tools/build.mjs — dort liest er sich als Text, hier wäre er nur Ballast."
+    "sections/*.php — dort liest er sich als Text, hier wäre er nur Ballast."
   ],
 
   "url": "https://www.impro-sturmfrei.de",
   "$comment_url": [
     "Sobald die Domain steht: hier z. B. \"https://sturmfrei-impro.de\" eintragen",
-    "(ohne Slash am Ende) und `make build` laufen lassen. Das erzeugt dann",
-    "automatisch og:url, canonical, die absoluten URLs im JSON-LD sowie",
-    "robots.txt und sitemap.xml. Solange der Wert null ist, bleiben diese",
+    "(ohne Slash am Ende). Daraus entstehen dann automatisch og:url,",
+    "canonical, die absoluten URLs im JSON-LD sowie /robots.txt und",
+    "/sitemap.xml. Solange der Wert null ist, bleiben diese",
     "Angaben weg — eine halbe og:url ist schlimmer als keine."
   ],
 
@@ -48,7 +48,7 @@
     "Beschriftung und Ziel der Navigation — einmal hier, nicht je einmal in",
     "Kopfleiste und Footer. \"page\" ist der Ordnername der Seite; \"index\" ist",
     "die Startseite. Der Footer zeigt alle Punkte, die Kopfleiste die mit",
-    "\"inHeader\": true. Die Seite muss es in PAGES (tools/build.mjs) geben —",
+    "\"inHeader\": true. Die Seite muss es in pages() (lib/pages.php) geben —",
     "sonst meldet `make check` es.",
     "",
     "Start steht bewusst nicht in der Kopfleiste: dort ist die Wortmarke",

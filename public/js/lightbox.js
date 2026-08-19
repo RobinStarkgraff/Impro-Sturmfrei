@@ -34,7 +34,22 @@ export function initLightbox() {
     image.src = item.src;
     image.alt = item.alt;
 
-    if (counter) counter.textContent = `${current + 1} / ${group.length}`;
+    /* Der Zähler ist role="status" (siehe sections/lightbox.php): was hier
+       hineingeschrieben wird, liest ein Screenreader beim Blättern vor.
+       Sichtbar bleibt "3 / 9"; der alt-Text kommt unsichtbar dazu, sonst
+       wäre die Ansage eine Zahl ohne Gegenstand. */
+    if (counter) {
+      counter.textContent = "";
+
+      const position = document.createElement("span");
+      position.textContent = `${current + 1} / ${group.length}`;
+
+      const subject = document.createElement("span");
+      subject.className = "visually-hidden";
+      subject.textContent = item.alt ? ` – ${item.alt}` : "";
+
+      counter.append(position, subject);
+    }
 
     arrows.forEach((button) => {
       button.hidden = group.length < 2;

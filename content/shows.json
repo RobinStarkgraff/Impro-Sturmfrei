@@ -1,9 +1,9 @@
 {
   "$comment": [
-    "Alle Shows an einer Stelle. Aus diesen Daten entstehen beim Build:",
+    "Alle Shows an einer Stelle. Aus diesen Daten entstehen bei jedem Aufruf:",
     "der Rückblick-Abschnitt, die Slider samt alt-Texten, das aria-label je",
-    "Slider und die TheaterEvent-Einträge im JSON-LD. Nach dem Bearbeiten",
-    "`make build` laufen lassen.",
+    "Slider und die TheaterEvent-Einträge im JSON-LD. Eine Änderung hier",
+    "wirkt sofort — es gibt keinen Build.",
     "",
     "alt: leer lassen heißt \"Impro-Szene N – Show vom TT.MM.JJJJ\" als",
     "Notbehelf. Ein echter Satz zum Bild ist deutlich besser — Screenreader",

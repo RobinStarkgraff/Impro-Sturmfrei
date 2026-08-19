@@ -68,7 +68,22 @@ export function initCrossfade() {
   };
 
   onMotionPreferenceChange(() => (prefersReducedMotion() ? stop() : start()));
-  start();
+
+  /* Der Takt läuft nur, solange der Abschnitt zu sehen ist. document.hidden
+     deckt den Hintergrundtab ab, nicht den viel häufigeren Fall: sichtbarer
+     Tab, aber weit an "Wer sind wir?" vorbeigescrollt — dort dekodierte der
+     Browser bisher alle sechs Sekunden ein Foto für niemanden.
+
+     Ohne IntersectionObserver läuft es wie vorher durch: lieber der alte
+     Takt als gar keine Überblendung. */
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(
+      ([entry]) => (entry.isIntersecting ? start() : stop()),
+      { rootMargin: "200px" }
+    ).observe(media);
+  } else {
+    start();
+  }
 }
 
 function readPhotos(media) {
