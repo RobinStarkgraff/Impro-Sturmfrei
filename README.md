@@ -1,110 +1,113 @@
 # Sturmfrei – Hamburger Impro Shows
 
-Website für **Sturmfrei**, eine Improvisationstheater-Gruppe aus Hamburg.
-Keine Abhängigkeiten, kein Build: jede Seite wird bei ihrem Aufruf von PHP
-aus `content/*.json` und `sections/*.php` zusammengesetzt. Was im Repo
-steht, ist die Seite — ein `git push` genügt.
+Website for **Sturmfrei**, an improv theatre group from Hamburg. No
+dependencies, no build: every page is assembled by PHP from
+`content/*.json` and `sections/*.php` when it is requested. What is in the
+repo is the site — a `git push` is enough.
+
+The site itself is in German; the documentation and the code comments are
+in English.
 
 🔗 Instagram: [@impro_sturmfrei](https://www.instagram.com/impro_sturmfrei/)
 
-📄 Lizenz: Code unter MIT, **die Fotos nicht** — auf ihnen sind erkennbare
-Personen, und deren Einverständnis gilt für diese Seite und nicht darüber
-hinaus. Einzelheiten in [`LICENSE`](LICENSE).
+📄 Licence: the code is MIT, **the photos are not** — they show
+identifiable people, and their consent covers this site and nothing beyond
+it. Details in [`LICENSE`](LICENSE).
 
-## Aufbau
+## Structure
 
-Ausgeliefert wird genau ein Ordner: **`public/`**. Er liegt im Repo und
-wird nicht erzeugt — was dort liegt, ist im Browser erreichbar, und was
-im Browser erreichbar ist, liegt dort. Daneben liegen die Teile, aus denen
-die Seiten bestehen: `content/`, `sections/`, `lib/`. Die sind **absichtlich
-nicht** unter `public/` — dadurch kann der Webserver sie weder ausliefern
-noch ausführen (siehe „Deploy").
+Exactly one folder gets served: **`public/`**. It lives in the repo and is
+not generated — what lies there is reachable in a browser, and what is
+reachable in a browser lies there. Next to it are the parts the pages are
+made of: `content/`, `sections/`, `lib/`. Those are **deliberately not**
+under `public/` — which means the web server can neither serve nor execute
+them (see "Deploy").
 
-Das ist die eine Regel, die das Projekt hat: **`public/` ist der Docroot.**
-Ein frischer Klon braucht keinen ersten Befehl:
+That is the one rule this project has: **`public/` is the docroot.** A
+fresh clone needs no first command:
 
 ```bash
 make serve          # http://localhost:8000
-make check          # Syntax, Pfade, Sprungziele, alt-Texte, Pflichtangaben
+make check          # syntax, paths, jump targets, alt texts, legal details
 ```
 
 ```
-public/ — DIE SEITE. Wird ausgeliefert, liegt im Repo.
+public/ — THE SITE. Gets served, lives in the repo.
 
-  index.php                 Start: zwei Zeilen, die lib/ und sections/ rufen
-  termine/index.php         dasselbe für /termine/ — und so für jede Seite
+  index.php                 home: two lines that call lib/ and sections/
+  termine/index.php         the same for /termine/ — and so for every page
   buchen/  archiv/  kontakt/  impressum/  datenschutz/
-  404/index.php             die Antwort auf eine falsche Adresse
-  sitemap.php robots.php    erreichbar als /sitemap.xml und /robots.txt
-  css/00-fonts.css …        die Styles, einzeln verlinkt, in Dateinamenfolge
-  js/main.js …              die Module: header, reveal, crossfade, slider,
-                            lightbox + config (Zahlen), classes (Vertrag zu
-                            CSS und Markup), motion, images
-  fonts/                    Anton & Inter als woff2, selbst gehostet
-  images/logo/              Logo (auch als Favicon)
-  images/group/             Gruppenfotos für Hero und Überblendung
-  images/shows/<datum>/     Fotos je Show, Ordner nach Datum (YYYY-MM-DD)
+  404/index.php             the answer to a wrong address
+  sitemap.php robots.php    reachable as /sitemap.xml and /robots.txt
+  css/00-fonts.css …        the styles, linked individually, in name order
+  js/main.js …              the modules: header, reveal, crossfade, slider,
+                            lightbox + config (numbers), classes (contract
+                            with CSS and markup), motion, images
+  fonts/                    Anton & Inter as woff2, self-hosted
+  images/logo/              logo (also used as the favicon)
+  images/group/             group photos for the hero and the crossfade
+  images/shows/<date>/      photos per show, folders by date (YYYY-MM-DD)
 
-DIE TEILE — liegen über public/ und sind deshalb nicht adressierbar
+THE PARTS — sit above public/ and are therefore not addressable
 
-content/site.json           Links, Navigation, E-Mail, Meta-Angaben, Fotos
-content/shows.json          Alle Shows: Datum, Titel, Ort, Spieler, Fotos
-content/booking.json        Formate, Voraussetzungen und Fragen für /buchen/
-content/legal.json          Angaben für Impressum und Datenschutz
+content/site.json           links, navigation, email, meta values, photos
+content/shows.json          every show: date, title, venue, cast, photos
+content/booking.json        formats, requirements and questions for /buchen/
+content/legal.json          the details for Impressum and privacy policy
 
-sections/hero.php …         je ein Abschnitt der Seite, als HTML mit Löchern
-sections/head.php           der <head>: Titel, og:, canonical, JSON-LD
-sections/header.php         Kopfleiste  ·  footer.php  ·  lightbox.php
-sections/page-hero.php      das dunkle Band am Kopf jeder Unterseite
+sections/hero.php …         one section of the page each, HTML with holes
+sections/head.php           the <head>: title, og:, canonical, JSON-LD
+sections/header.php         header bar  ·  footer.php  ·  lightbox.php
+sections/page-hero.php      the dark band at the top of every subpage
 
-lib/boot.php                der Anfang jeder Seite: lädt alles darunter
-lib/data.php                content/*.json lesen, Datum, Fotozählung
-lib/html.php                esc(), Links, mailto, fehlende Pflichtangaben
-lib/paths.php               relative Pfade, Änderungsstempel, Stylesheet-Liste
-lib/schema.php              JSON-LD (Gruppe, Events, Brotkrumen)
-lib/pages.php               DIE SEITEN: Titel, Beschreibung, Abschnitte
-lib/render.php              setzt daraus die Seite zusammen
+lib/boot.php                where every page begins: loads everything below
+lib/data.php                reading content/*.json, dates, photo counts
+lib/html.php                esc(), links, mailto, missing legal details
+lib/paths.php               relative paths, mtime stamps, stylesheet list
+lib/schema.php              JSON-LD (group, events, breadcrumbs)
+lib/pages.php               THE PAGES: title, description, sections
+lib/render.php              assembles the page from them
 
-tools/check.php             prüft die Seiten (rendert sie dazu im Speicher)
-tools/router.php            nur für `make serve`
-tools/deploy.sh             der Befehl, den netcup nach dem Deploy aufruft
-tools/optimize-images.sh    verkleinert die Fotos
-tools/make-icons.sh         schneidet Favicon & Co. aus dem Logo
-tools/fetch-fonts.sh        holt die Schriften
-.htaccess                   liefert nur public/ aus (siehe "Deploy")
-Makefile                    die Aufgaben (make help)
+tools/check.php             checks the pages (rendering them into memory)
+tools/router.php            for `make serve` only
+tools/deploy.sh             the command netcup runs after a deploy
+tools/optimize-images.sh    shrinks the photos
+tools/make-icons.sh         cuts favicon & co. out of the logo
+tools/fetch-fonts.sh        fetches the fonts
+.htaccess                   serves public/ only (see "Deploy")
+Makefile                    the tasks (make help)
 ```
 
-**Jede Angabe steht genau einmal.** Eine Show — Datum, Titel, Ort, Spieler,
-Fotos — steht in `content/shows.json`; daraus entstehen der Artikel im
-Archiv, die Kacheln des Sliders samt `alt`-Texten, dessen `aria-label` und
-der `TheaterEvent`-Eintrag im JSON-LD. Ebenso Links, E-Mail-Adresse und
-Navigation: einmal in `content/`, nicht je einmal an jeder Stelle, an der
-sie auftauchen. `<head>`, Kopfleiste und Footer stehen einmal in
-`sections/` und gelten für jede Seite.
+**Every value stands exactly once.** A show — date, title, venue, cast,
+photos — lives in `content/shows.json`; from it come the article in the
+archive, the slider tiles including their `alt` texts, the slider's
+`aria-label` and the `TheaterEvent` entry in the JSON-LD. The same goes for
+links, the email address and the navigation: once in `content/`, not once
+per place they appear in. `<head>`, header bar and footer stand once in
+`sections/` and apply to every page.
 
-**Ein kaputter Push ist sofort live.** Der Checkout ist die Seite — es gibt
-nichts dazwischen, das scheitern und dabei die alte Fassung stehen lassen
-könnte. Deshalb gehört `make check` vor den Push: `tools/deploy.sh` prüft
-danach noch einmal, aber da ist der Stand schon ausgeliefert. Genau dafür
-läuft dieselbe Prüfung zusätzlich bei GitHub (siehe „Deploy").
+**A broken push is live immediately.** The checkout is the site — there is
+nothing in between that could fail and leave the old version standing. Which
+is why `make check` belongs before the push: `tools/deploy.sh` checks again
+afterwards, but by then the state is already served. That is exactly why the
+same check additionally runs on GitHub (see "Deploy").
 
-Ein Aufruf kostet dafür PHP-Zeit statt nur einen Dateizugriff: bei dieser
-Seitengröße sind das wenige Millisekundenteile, und `css/`, `js/`, `fonts/`
-und `images/` liefert der Webserver weiterhin als reine Dateien aus.
+The price is PHP time per request instead of a single file read: at this
+size of site that is a few fractions of a millisecond, and `css/`, `js/`,
+`fonts/` and `images/` are still served by the web server as plain files.
 
-## Die Seiten
+## The pages
 
-Eine Seite ist ein Eintrag in `pages()` in `lib/pages.php` — Ordnername,
-Titel, Beschreibung, und welche Abschnitte in welcher Reihenfolge darin
-stehen. Kopfleiste, Footer, `<head>` und JSON-LD entstehen daraus.
+A page is an entry in `pages()` in `lib/pages.php` — folder name, title,
+description, and which sections it holds in which order. Header bar,
+footer, `<head>` and JSON-LD all follow from that.
 
 ```php
 'termine' => [
     'navLabel' => 'Termine',
     'title' => "Termine – {$brand['alternateName']}",
     'description' => '…',              // meta description
-    'schema' => ['upcoming'],          // welche Events ins JSON-LD gehören
+    'schema' => ['upcoming'],          // which events belong in the JSON-LD
     'sections' => [
         ['page-hero', ['eyebrow' => 'Wann wir spielen', 'title' => 'Termine']],
         'dates',                       // sections/dates.php
@@ -112,8 +115,8 @@ stehen. Kopfleiste, Footer, `<head>` und JSON-LD entstehen daraus.
 ],
 ```
 
-Dazu gehört die Datei, die sie aufrufbar macht — `public/termine/index.php`,
-zwei Zeilen:
+Along with it goes the file that makes it reachable —
+`public/termine/index.php`, two lines:
 
 ```php
 require dirname(__DIR__, 2) . '/lib/boot.php';
@@ -121,342 +124,343 @@ require dirname(__DIR__, 2) . '/lib/boot.php';
 render_page('termine');
 ```
 
-Ein Abschnitt ist eine Datei in `sections/`: HTML mit Löchern. Er sieht
-`$site`, `$shows`, `$booking` und `$legal` — die Daten aus `content/` —
-und das, was in `pages()` neben seinem Namen steht. Mehr braucht er nicht
-zu wissen, insbesondere nicht, auf welcher Seite er steht:
+A section is a file in `sections/`: HTML with holes. It sees `$site`,
+`$shows`, `$booking` and `$legal` — the data from `content/` — plus
+whatever stands next to its name in `pages()`. It does not need to know
+more, and in particular not which page it is on:
 
 ```php
 <h2><?= esc($next['title']) ?></h2>
 <p class="lead"><?= esc($next['venue']) ?> · <?= esc($site['city']) ?></p>
 ```
 
-**Alles, was aus Daten ins Markup wandert, geht durch `esc()`** — für Text
-und Attributwerte gleichermaßen.
+**Everything that travels from data into the markup goes through `esc()`** —
+for text and attribute values alike.
 
-**Pfade sind relativ, nicht absolut.** Jede Seite kennt ihr `base`: `""`
-auf der Startseite, `"../"` in einem Unterordner. Ein Verweis auf eine
-Datei läuft über `asset('images/…')`, einer auf eine andere Seite über
-`page_link('archiv')`. Wer stattdessen `images/…` direkt ins Markup
-schreibt, baut einen Link, der von der Startseite aus stimmt und aus jedem
-Unterordner ins Leere zeigt — `make check` löst deshalb jeden Verweis
-relativ zu der Seite auf, in der er steht.
+**Paths are relative, not absolute.** Every page knows its `base`: `""` on
+the home page, `"../"` in a subfolder. A reference to a file goes through
+`asset('images/…')`, one to another page through `page_link('archiv')`.
+Write `images/…` straight into the markup instead and you have built a link
+that is right from the home page and points nowhere from every subfolder —
+which is why `make check` resolves every reference relative to the page it
+stands in.
 
-`public/` kommt in keinem dieser Pfade vor: die Wurzel der ausgelieferten
-Seite *ist* `public/`, und im Browser heißt sie `/`.
+`public/` appears in none of those paths: the root of the served site *is*
+`public/`, and in a browser it is called `/`.
 
-Die Startseite ist die einzige mit Hero. Alle anderen beginnen mit
-`page-hero` — demselben dunklen Band, nur ohne Foto und ohne volle
-Fensterhöhe: es trägt Titel und Vorspann.
+The home page is the only one with a hero. All the others begin with
+`page-hero` — the same dark band, only without a photo and without the full
+viewport height: it carries the title and the lead.
 
-Die Kopfleiste ist ein eigener Abschnitt und kein Schleier über dem Hero:
-sie bringt ihren dunklen Grund selbst mit, liegt fest oben, und ihre Höhe
-steht als `--header-h` in `public/css/01-tokens.css`. Drei Stellen rechnen
-mit ihr — `<body>` hält sie als `padding-top` frei, der Hero zieht sie von
-der Fensterhöhe ab, und jedes Sprungziel hält sie als `scroll-margin-top`
-frei. Wer die Leiste höher haben will, ändert genau dieses eine Token.
+The header bar is a section of its own and not a veil over the hero: it
+brings its own dark ground, is fixed to the top, and its height lives as
+`--header-h` in `public/css/01-tokens.css`. Three places do arithmetic with
+it — `<body>` keeps it free as `padding-top`, the hero subtracts it from
+the viewport height, and every jump target keeps it free as
+`scroll-margin-top`. If you want a taller bar, change exactly that one
+token.
 
-## Die Stylesheets
+## The stylesheets
 
-`public/css/*.css` werden **einzeln verlinkt**, in Dateinamenfolge — die
-Reihenfolge und damit die Kaskade macht der Dateiname, nicht eine Liste,
-die man pflegen müsste. Ein neuer Abschnitt ist eine neue Datei in
-`public/css/` und sonst nichts; `sections/head.php` findet sie von selbst.
+`public/css/*.css` are **linked individually**, in filename order — the
+order and with it the cascade come from the filename, not from a list
+somebody would have to maintain. A new section is a new file in
+`public/css/` and nothing else; `sections/head.php` finds it by itself.
 
-Hinter jedem Namen steht die Änderungszeit der Datei (`?v=…`): so darf der
-Browser sie beliebig lange behalten und holt sie doch sofort neu, sobald
-sie bearbeitet wurde. `js/main.js` bekommt bewusst keinen — es lädt die
-übrigen Module selbst nach, und deren Pfade stehen in seinem Quelltext; ein
-Stempel am Elternteil würde ein Update von `slider.js` also nur scheinbar
-durchreichen.
+Behind each name stands the file's modification time (`?v=…`): the browser
+may keep it for as long as it likes and still fetches it again the moment it
+was edited. `js/main.js` deliberately gets none — it pulls in the remaining
+modules itself, and their paths live in its source; a stamp on the parent
+would therefore only appear to pass an update to `slider.js` through.
 
-Statt 17 Dateien eine zusammengesetzte auszuliefern wäre eine Anfrage
-weniger — dafür bräuchte es wieder etwas, das zusammensetzt, mit eigenen
-Kopfzeilen fürs Zwischenspeichern. Über HTTP/2 laufen die 17 über dieselbe
-Verbindung; das ist der bessere Tausch.
+Serving one concatenated file instead of 17 would be one request fewer —
+but that would need something doing the concatenating again, with cache
+headers of its own. Over HTTP/2 the 17 travel over the same connection;
+that is the better trade.
 
-## Befehle
+## Commands
 
 ```bash
-make check          # Syntax, Pfade, Sprungziele, alt-Texte, Pflichtangaben
+make check          # syntax, paths, jump targets, alt texts, legal details
 make serve          # http://localhost:8000
 
-make images         # zeigt, was die Fotos wiegen
-make images-apply   # verkleinert sie (überschreibt public/images/!)
-make icons          # Favicon, Homescreen-Symbol und Marke aus dem Logo
-make fonts          # Anton & Inter neu nach public/fonts/ holen
+make images         # show what the photos weigh
+make images-apply   # shrink them (overwrites public/images/!)
+make icons          # favicon, home-screen icon and mark from the logo
+make fonts          # fetch Anton & Inter into public/fonts/ again
 ```
 
-`make check` rendert jede Seite im Speicher — genau das, was auch
-ausgeliefert wird — und prüft daran:
+`make check` renders every page into memory — exactly what gets served —
+and checks against it:
 
-* jeden Verweis, aufgelöst relativ zu der Seite, in der er steht — auch
-  die Bilderfolge in `data-crossfade` und die `url()` in den Stylesheets
-  (dort steckt der Pfad zu den Schriften);
-* je Seite genau eine `<h1>` und einen eigenen `<title>`, und keine zwei
-  Seiten mit demselben;
-* Sprungziele und `aria`-Verweise je Seite;
-* `<img>` ohne `alt`, `target="_blank"` ohne `rel="noopener"`;
-* dass zu jedem Eintrag in `pages()` eine Datei unter `public/` gehört, die
-  auch diese Seite aufruft — und umgekehrt;
-* die Pflichtangaben aus `content/legal.json` (als **Fehler**, nicht als
-  Hinweis);
-* den Vertrag aus `js/classes.js` gegen CSS und Markup;
-* die Datumsangaben in `content/shows.json` — und ob unter `upcoming` noch
-  ein Termin steht, der längst vorbei ist.
+* every reference, resolved relative to the page it stands in — including
+  the image sequence in `data-crossfade` and the `url()` values in the
+  stylesheets (that is where the path to the fonts sits);
+* exactly one `<h1>` and a `<title>` of its own per page, and no two pages
+  sharing one;
+* jump targets and `aria` references per page;
+* `<img>` without `alt`, `target="_blank"` without `rel="noopener"`;
+* that every entry in `pages()` has a file under `public/` that actually
+  calls that page — and the other way round;
+* the mandatory details from `content/legal.json` (as an **error**, not a
+  note);
+* the contract from `js/classes.js` against CSS and markup;
+* the dates in `content/shows.json` — and whether `upcoming` still holds a
+  date that passed long ago.
 
-Davor läuft `php -l` über jede PHP-Datei. Das ist keine Formalität: ohne
-Build ist ein Tippfehler in einer PHP-Datei keine halbe Seite, sondern eine
-leere.
+Before that, `php -l` runs over every PHP file. That is no formality:
+without a build, a typo in a PHP file is not half a page but an empty one.
 
-**Nicht per Doppelklick öffnen.** Über `file://` führt niemand das PHP aus,
-und Chrome blockiert dort außerdem die Schriften und die ES-Module. Also
-`make serve` — das liefert `public/` als Wurzel aus, also genauso wie live,
-und `tools/router.php` übernimmt dabei die zwei Adressen, die auf dem
-Server die `.htaccess` umschreibt.
+**Do not open this by double-clicking.** Over `file://` nobody runs the
+PHP, and Chrome additionally blocks the fonts and the ES modules there. So
+`make serve` — that serves `public/` as the root, exactly as live, and
+`tools/router.php` takes over the two addresses that `.htaccess` rewrites
+on the server.
 
-## Navigationspunkt ändern
+## Changing a navigation item
 
-`nav` in `content/site.json`: Reihenfolge und Beschriftung stehen dort
-einmal. Der Footer zeigt alle Punkte, die Kopfleiste die mit
-`"inHeader": true`. `"page"` ist der Ordnername der Seite — es muss ihn in
-`pages()` geben, sonst meldet `make check` es. Umgekehrt warnt `make check`
-auch bei einer Seite, die in keiner Navigation steht: die findet dann
-niemand.
+`nav` in `content/site.json`: order and labels stand there once. The footer
+shows every item, the header bar the ones with `"inHeader": true`. `"page"`
+is the folder name of the page — it has to exist in `pages()`, otherwise
+`make check` reports it. Conversely, `make check` also warns about a page
+that appears in no navigation: nobody will find that one.
 
-`legalNav` sind Impressum und Datenschutz. Die stehen unten im Footer und
-absichtlich nicht in der Kopfleiste.
+`legalNav` is the Impressum and the privacy policy. Those live at the
+bottom of the footer and deliberately not in the header bar.
 
-## Eine Seite hinzufügen
+## Adding a page
 
-1. `sections/<name>.php` schreiben — HTML mit Löchern, nach dem Muster von
-   `contact.php` oder `dates.php`. Prosa gehört dorthin, nicht nach
-   `content/`: dort läse sie sich als Ballast, hier als Text.
-2. In `lib/pages.php` einen Eintrag ergänzen (`title`, `description`,
-   `sections`).
-3. `public/<slug>/index.php` anlegen — die zwei Zeilen von oben.
-4. In `content/site.json` unter `nav` einen Punkt mit demselben `page`
-   ergänzen.
+1. Write `sections/<name>.php` — HTML with holes, following the pattern of
+   `contact.php` or `dates.php`. Prose belongs there, not in `content/`:
+   there it would read as ballast, here as text.
+2. Add an entry in `lib/pages.php` (`title`, `description`, `sections`).
+3. Create `public/<slug>/index.php` — the two lines from above.
+4. Add an item with the same `page` under `nav` in `content/site.json`.
 5. `make check`
 
-Die Ausnahme von Schritt 4 ist `404`: die Seite wird nicht angesteuert,
-sondern von Apache eingesetzt, und gehört deshalb in keine Navigation.
-`make check` kennt sie als Ausnahme (`$unlisted` in `check_nav`).
+The exception to step 4 is `404`: that page is not navigated to but
+inserted by Apache, and therefore belongs in no navigation. `make check`
+knows it as an exception (`$unlisted` in `check_nav`).
 
-## Neue Show hinzufügen
+## Adding a new show
 
-1. Ordner `public/images/shows/YYYY-MM-DD/` anlegen und die Fotos als
-   `1.jpg`, `2.jpg`, … ablegen. Vorher verkleinern: `make images-apply`.
-2. In `content/shows.json` unter `past` einen Block nach dem Muster der
-   bestehenden ergänzen — Datum, Titel, Ort, Spieler, ein Eintrag je Foto.
+1. Create the folder `public/images/shows/YYYY-MM-DD/` and put the photos
+   in as `1.jpg`, `2.jpg`, … Shrink them first: `make images-apply`.
+2. Add a block under `past` in `content/shows.json`, following the pattern
+   of the existing ones — date, title, venue, cast, one entry per photo.
 3. `make check`
 
-Artikel, Slider, `aria-label`, alt-Texte und der JSON-LD-Eintrag entstehen
-daraus automatisch; Slider-Pfeile und Lightbox kommen aus `public/js/`.
+Article, slider, `aria-label`, alt texts and the JSON-LD entry all follow
+from that automatically; slider arrows and lightbox come from `public/js/`.
 
-**alt-Texte.** Bleibt `"alt": ""` leer, steht als Notbehelf
-„Impro-Szene 3 – Show vom 21.04.2026" im Bild. Für Screenreader ist eine
-laufende Nummer fast nichts — ein halber Satz zum Bild ist deutlich
-besser. `make check` sagt, wie viele noch offen sind.
+**alt texts.** If `"alt": ""` stays empty, the stopgap
+"Impro-Szene 3 – Show vom 21.04.2026" ends up on the image. For screen
+readers a running number is next to nothing — half a sentence about the
+picture is considerably better. `make check` says how many are still open.
 
-## Nächste Show ankündigen
+## Announcing the next show
 
-`upcoming` in `content/shows.json` von `null` auf einen Block setzen (das
-Beispiel steht als Kommentar daneben). Der Abschnitt „Nächste Show" zeigt
-dann Datum, Titel und einen Ticket-Button statt des Platzhalters, und das
-JSON-LD bekommt ein weiteres `TheaterEvent`. Ein `git push` genügt — es
-gibt nichts zu bauen.
+Set `upcoming` in `content/shows.json` from `null` to a block (the example
+stands next to it as a comment). The "Nächste Show" section then shows
+date, title and a ticket button instead of the placeholder, and the JSON-LD
+gains another `TheaterEvent`. A `git push` is enough — there is nothing to
+build.
 
-**Nach der Show** verschwindet der Termin von selbst: `upcoming_show()` in
-`lib/data.php` gibt ihn nur heraus, solange sein Datum nicht vorbei ist
-(gezählt bis zum Ende des Showtags). Die Startseite fällt danach auf den
-Platzhalter zurück, statt weiter für einen gelaufenen Abend zu werben —
-und `make check` erinnert daran, den Eintrag nach `past` umzuräumen.
+**After the show** the date disappears by itself: `upcoming_show()` in
+`lib/data.php` only hands it out while its date has not passed (counted to
+the end of the show day). The home page then falls back to the placeholder
+instead of going on advertising an evening already played — and `make
+check` is the reminder to move the entry to `past`.
 
-Optional je Show: `"durationMinutes"` (sonst 120, fürs `endDate` im
-JSON-LD) und `"price"` als Zahl in Euro, wenn eine `ticketUrl` dabeisteht.
+Optional per show: `"durationMinutes"` (otherwise 120, for the `endDate` in
+the JSON-LD) and `"price"` as a number in euros, if there is a `ticketUrl`
+alongside.
 
-## Die Domain
+## The domain
 
-`"url"` in `content/site.json` steht auf `https://www.impro-sturmfrei.de`.
-Daraus entstehen `canonical` und `og:url` je Seite, absolute URLs im
-JSON-LD, die Brotkrumen sowie `/robots.txt` und `/sitemap.xml`. Impressum
-und Datenschutz stehen absichtlich nicht in der Sitemap: sie sind `noindex`
-und gehören in den Footer, nicht in den Index.
+`"url"` in `content/site.json` is set to `https://www.impro-sturmfrei.de`.
+From it come `canonical` and `og:url` per page, the absolute URLs in the
+JSON-LD, the breadcrumbs as well as `/robots.txt` and `/sitemap.xml`.
+Impressum and privacy policy are deliberately absent from the sitemap: they
+are `noindex` and belong in the footer, not in the index.
 
-Beim Aufsetzen bei netcup noch zu erledigen:
+Still to be done when setting things up at netcup:
 
-* **Das Git-Deployment einrichten** — siehe „Deploy" unten. Mehr als das
-  PHP, das der Webspace ohnehin mitbringt, braucht die Seite nicht.
-* **`impro-sturmfrei.de` auf `www.impro-sturmfrei.de` umleiten** (301) und
-  **HTTPS erzwingen** — Let's Encrypt reicht. Beides steht als
-  auskommentierter Block in `.htaccess`; wenn netcup es im WCP anbietet,
-  gehört es dorthin und der Block bleibt aus. Das `canonical` zeigt auf die
-  www-Form; ohne Umleitung wären beide Formen erreichbar und Google müsste
-  raten. Den HTTPS-Zwang erst einschalten, wenn das Zertifikat steht —
-  vorher schaltet er die Seite ab.
-* **Die Postfächer anlegen.** `info@impro-sturmfrei.de` steht jetzt im
-  Impressum, in der Datenschutzerklärung, auf `/kontakt/` und hinter jedem
-  „Anfrage schicken"-Knopf. Eine Adresse, die niemand liest, ist im
-  Impressum schlimmer als keine.
+* **Set up the git deployment** — see "Deploy" below. The site needs
+  nothing beyond the PHP the webspace ships with anyway.
+* **Redirect `impro-sturmfrei.de` to `www.impro-sturmfrei.de`** (301) and
+  **force HTTPS** — Let's Encrypt is enough. Both stand as a commented-out
+  block in `.htaccess`; if netcup offers it in the WCP, it belongs there
+  and the block stays off. The `canonical` points at the www form; without
+  a redirect both forms would be reachable and Google would have to guess.
+  Only switch on the HTTPS enforcement once the certificate is in place —
+  before that it takes the site offline.
+* **Create the mailboxes.** `info@impro-sturmfrei.de` now stands in the
+  Impressum, in the privacy policy, on `/kontakt/` and behind every
+  "Anfrage schicken" button. An address nobody reads is worse in an
+  Impressum than none at all.
 
-Offen bleibt die Social-Karte: ein Bild als 1200×630 nach
-`public/images/og.jpg` legen und `"ogImage": "images/og.jpg"` setzen (der
-Pfad ist relativ zur Wurzel der Seite, also ohne `public/`). Ohne Bild
-bleibt `twitter:card` absichtlich auf `summary`, weil eine große leere
-Karte schlechter aussieht als eine kleine ohne Bild — `make check`
-erinnert daran.
+Still open is the social card: put an image at 1200×630 into
+`public/images/og.jpg` and set `"ogImage": "images/og.jpg"` (the path is
+relative to the root of the site, so without `public/`). Without an image,
+`twitter:card` deliberately stays on `summary`, because a large empty card
+looks worse than a small one without an image — `make check` is the
+reminder.
 
 ## Deploy
 
-netcup zieht das Repo selbst (WCP → Git-Deployment). Damit ist der Deploy
-fertig: **der Checkout *ist* die Seite**, es gibt nichts zu bauen und
-nichts zu installieren. Ein Veröffentlichen ist ein `git push`.
+netcup pulls the repo itself (WCP → git deployment). That makes the deploy
+complete: **the checkout *is* the site**, there is nothing to build and
+nothing to install. Publishing is a `git push`.
 
-Im Feld **„Zusätzliche Deployment-Aktionen"** steht trotzdem eine Zeile:
+The field **"Zusätzliche Deployment-Aktionen"** still holds one line:
 
 ```
 sh tools/deploy.sh
 ```
 
-Sie baut nicht, sie sieht nach: `php -l` über jede PHP-Datei, dann
-`tools/check.php`, dann eine Zeile nach `deploy.log` (Zeitstempel, Commit,
-Ergebnis). Findet sie etwas, ist es **schon online** — die Meldung sagt
-das auch. Deshalb: `make check` vor dem Push.
+It does not build, it looks: `php -l` over every PHP file, then
+`tools/check.php`, then one line into `deploy.log` (timestamp, commit,
+result). If it finds something, that something is **already online** — and
+the message says so. Hence: `make check` before the push.
 
-Genau dafür läuft dieselbe Prüfung zusätzlich bei GitHub
-(`.github/workflows/check.yml`, im Container `php:8.2-cli`, bei jedem Push
-und jedem Pull Request). Das ist die Stelle, an der ein Fehler auffallen
-kann, *bevor* netcup zieht — und sie braucht kein PHP auf dem Rechner, von
-dem aus gepusht wird. Fehlt `php` auf der
-Kommandozeile des Webspace, prüft das Skript nichts und sagt das; die Seite
-selbst läuft davon unberührt, denn sie braucht nur das PHP des Webservers.
+That is exactly why the same check additionally runs on GitHub
+(`.github/workflows/check.yml`, in the container `php:8.2-cli`, on every
+push and every pull request). That is the place where a mistake can show
+up *before* netcup pulls — and it needs no PHP on the machine you push
+from. If `php` is missing from the webspace's command line, the script
+checks nothing and says so; the site itself is unaffected, because it only
+needs the web server's PHP.
 
-**Der Checkout ist gleichzeitig das Webverzeichnis.** Ausgeliefert werden
-soll aber nur `public/`. Das erledigt die `.htaccess` im Projektstamm, und
-sie erledigt mit derselben Regel beides: jede Anfrage wird nach `public/`
-umgeschrieben, und was dort nicht liegt — `content/`, `lib/`, `sections/`,
-`tools/`, `.git/` — ist damit nicht „gesperrt", sondern nicht adressierbar
-und endet als 404. Eine Deny-Liste müsste man bei jeder neuen Quelldatei
-nachziehen; hier gibt es nichts nachzuziehen.
+**The checkout is at the same time the web directory.** But only `public/`
+is meant to be served. The `.htaccess` in the project root takes care of
+that, and with the same rule it takes care of both things: every request is
+rewritten into `public/`, and whatever does not lie there — `content/`,
+`lib/`, `sections/`, `tools/`, `.git/` — is thereby not "locked off" but
+not addressable, and ends as a 404. A deny list would have to be extended
+with every new source file; here there is nothing to extend.
 
-Daran hängt mehr als Ordnung: `content/*.json` und die PHP-Dateien in
-`lib/` und `sections/` werden vom Server **nie ausgeliefert und nie
-ausgeführt**, weil sie außerhalb des ausgelieferten Ordners liegen. Nur
-`public/` ist ein Einstiegspunkt, und dort steht in jeder Datei genau ein
-`render_page(...)`.
+More than tidiness hangs on that: `content/*.json` and the PHP files in
+`lib/` and `sections/` are **never served and never executed** by the
+server, because they lie outside the served folder. Only `public/` is an
+entry point, and every file there holds exactly one `render_page(...)`.
 
-Zwei Adressen brauchen je eine eigene Regel, weil sie die Endung tragen,
-die Suchmaschinen erwarten, und doch von PHP kommen: `/sitemap.xml` →
-`public/sitemap.php` und `/robots.txt` → `public/robots.php`.
+Two addresses need a rule each, because they carry the extension search
+engines expect and yet come from PHP: `/sitemap.xml` → `public/sitemap.php`
+and `/robots.txt` → `public/robots.php`.
 
-Ohne `mod_rewrite` greift nichts davon — dann steht die Seite nicht. Als
-Notbremse gibt es `Options -Indexes` und ein `RedirectMatch 404` auf
-`.git`.
+Without `mod_rewrite` none of that applies — and then the site is down. As
+an emergency brake there are `Options -Indexes` and a `RedirectMatch 404`
+on `.git`.
 
-Drei weitere Blöcke stehen in derselben Datei, jeder mit `<IfModule>`
-umschlossen, damit ein Server ohne das jeweilige Modul nicht aussteigt:
+Three further blocks stand in the same file, each wrapped in an
+`<IfModule>` so that a server without the module in question does not bail
+out:
 
-* **Zwischenspeichern.** Stylesheets, Schriften und Bilder ein Jahr mit
-  `immutable`, Module eine Woche, die Seiten selbst `no-cache`. Erst das
-  macht aus dem `?v=…` hinter jedem Stylesheet etwas: ohne diese Zeilen
-  fragte der Browser bei jedem Besuch für jede Datei einzeln nach.
-  Deshalb tragen jetzt auch Logo, Symbole und die Fotos mit festem
-  Dateinamen (Hero, Gruppe) einen Stempel — die Show-Fotos brauchen keinen,
-  sie liegen in Ordnern nach Datum.
-* **Komprimieren.** `mod_deflate` über HTML, CSS, JS und XML. Bilder und
-  Schriften stehen bewusst nicht drin, die sind es schon.
-* **Kopfzeilen zur Sicherheit.** `nosniff`, `Referrer-Policy`,
-  `Permissions-Policy` und eine Content-Security-Policy, die alles auf
-  `'self'` festnagelt. Die Seite lädt nichts von fremden Servern, hat kein
-  Formular und kein Skript im Markup — die Richtlinie beschreibt also nur,
-  was ohnehin gilt. Nach dem ersten Deploy trotzdem einmal jede Seite mit
-  offener Konsole aufrufen.
+* **Caching.** Stylesheets, fonts and images for a year with `immutable`,
+  modules for a week, the pages themselves `no-cache`. Only that makes
+  something of the `?v=…` behind every stylesheet: without these lines the
+  browser would ask about every file individually on every visit. Which is
+  also why the logo, the icons and the photos with fixed filenames (hero,
+  group) now carry a stamp — the show photos need none, they live in
+  folders by date.
+* **Compression.** `mod_deflate` over HTML, CSS, JS and XML. Images and
+  fonts are deliberately absent; those already are compressed.
+* **Security headers.** `nosniff`, `Referrer-Policy`,
+  `Permissions-Policy` and a Content-Security-Policy that nails everything
+  down to `'self'`. The site loads nothing from third-party servers, has no
+  form and no script in the markup — so the policy merely describes what
+  is true anyway. Still, open every page once with the console open after
+  the first deploy.
 
-Und `ErrorDocument 404 /404/`: eine falsche Adresse landet auf der eigenen
-404-Seite statt auf Apaches englischer Vorgabe. Der Status bleibt dabei 404.
+And `ErrorDocument 404 /404/`: a wrong address lands on the site's own 404
+page instead of Apache's English default. The status stays 404 throughout.
 
-**Eine Regel ist noch ungeprüft.** Der Block, der `/termine` auf
-`/termine/` umleitet, lässt sich nur auf einem echten Apache testen. Er
-soll verhindern, dass `mod_dir` den fehlenden Schrägstrich selbst anhängt
-und dabei kurz `/public/termine/` in die Adresszeile schreibt. Nach dem
-ersten Deploy einmal `http://…/termine` (ohne Schrägstrich) aufrufen und
-sehen, wo man landet. Geht etwas schief, sind es die drei Zeilen unter
-„Fehlender Schrägstrich am Ende" — löschen und es ist wie vorher.
+**One rule is still untested.** The block redirecting `/termine` to
+`/termine/` can only be tested on a real Apache. It is meant to keep
+`mod_dir` from appending the missing slash itself and briefly writing
+`/public/termine/` into the address bar. After the first deploy, open
+`http://…/termine` (without the slash) once and see where you land. If
+something goes wrong, it is the three lines under "Missing trailing slash"
+— delete them and things are as they were.
 
-Liegt das Webverzeichnis später **neben** dem Checkout, nimmt das Skript
-das Ziel als Argument: `sh tools/deploy.sh ~/httpdocs` spiegelt den
-Projektordner dorthin (`rsync -a --delete`, sonst `cp`) — mitsamt `lib/`,
-`sections/`, `content/` und `.htaccess`, denn `public/` allein läuft nicht.
+If the web directory later sits **next to** the checkout, the script takes
+the target as an argument: `sh tools/deploy.sh ~/httpdocs` mirrors the
+project folder there (`rsync -a --delete`, otherwise `cp`) — including
+`lib/`, `sections/`, `content/` and `.htaccess`, because `public/` alone
+does not run.
 
-**PHP-Version:** gebraucht wird 8.0 oder neuer (`str_starts_with`,
-`match`-freie Syntax, `??=`). Erweiterungen braucht die Seite gar keine
-außer `json`, das fest eingebaut ist.
+**PHP version:** 8.0 or newer is required (`str_starts_with`,
+`match`-free syntax, `??=`). The site needs no extensions at all beyond
+`json`, which is built in.
 
-## Impressum und Datenschutz
+## Impressum and privacy policy
 
-Beide Seiten stehen und sind vollständig. Die Angaben kommen aus
-`content/legal.json`, nicht aus dem Markup:
+Both pages exist and are complete. The details come from
+`content/legal.json`, not from the markup:
 
-* `impressum.responsible`, `street`, `postalCode`, `city` — die
-  ladungsfähige Anschrift. Steht auf `/impressum/`, wie § 5 DDG es verlangt.
-* `impressum.entity` — nur, wenn es eine Rechtsform gibt (e. V., GbR).
-  Solange `null`, steht dort nur die Person.
-* `impressum.publishAddressInSchema` — steht auf `false`. Die vollständige
-  Anschrift bleibt damit auf dem Impressum und wandert **nicht** ins
-  JSON-LD. Dort trägt die Gruppe nur Ort und Land: es ist eine
-  Privatanschrift und keine Spielstätte, und Google würde sie sonst als
-  Anschrift der Gruppe in Karten und Wissenspanel anzeigen können.
-* `impressum.publishPhoneInSchema` — steht auf `false`, aus demselben
-  Grund wie die Anschrift eine Zeile höher. Die Nummer stand vorher ohne
-  Rückfrage im JSON-LD, während die Anschrift geschützt war; das war ein
-  Widerspruch, keine Entscheidung. Sie steht weiterhin im Impressum und
-  auf `/kontakt/` — nur nicht mehr maschinenlesbar für das Wissenspanel.
-  Auf `true` setzen, wenn sie dort stehen soll.
-* `privacy.host`, `serverLocation` — netcup GmbH, Server in Nürnberg.
-  Gehört in die Erklärung, weil dort die Server-Logs anfallen.
-* `privacy.logRetentionDays` — noch `null`. Solange bleibt der Satz
-  allgemein („richtet sich nach dessen eigenen Angaben"). Steht die Frist
-  in netcups Datenschutzangaben, hier eintragen — eine konkrete Zahl ist
-  besser als ein Verweis.
-* `privacy.processingAgreement` — steht auf `false`. Sobald der Vertrag
-  über die Auftragsverarbeitung (Art. 28 DSGVO) mit netcup geschlossen ist,
-  auf `true` setzen; dann nennt die Erklärung ihn. Vorher behauptet die
-  Seite ihn nicht.
+* `impressum.responsible`, `street`, `postalCode`, `city` — the address at
+  which legal documents can be served. Stands on `/impressum/`, as § 5 DDG
+  requires.
+* `impressum.entity` — only if there is a legal form (e. V., GbR). While it
+  is `null`, only the person is shown.
+* `impressum.publishAddressInSchema` — set to `false`. The full address
+  therefore stays on the Impressum and does **not** travel into the
+  JSON-LD. There the group carries only town and country: it is a private
+  address and not a venue, and Google would otherwise be able to show it as
+  the group's address in maps and the knowledge panel.
+* `impressum.publishPhoneInSchema` — set to `false`, for the same reason as
+  the address a line above. The number used to sit in the JSON-LD without
+  anyone being asked while the address was protected; that was a
+  contradiction, not a decision. It still stands in the Impressum and on
+  `/kontakt/` — just no longer machine-readable for the knowledge panel.
+  Set it to `true` if it should be there.
+* `privacy.host`, `serverLocation` — netcup GmbH, servers in Nuremberg.
+  Belongs in the policy, because that is where the server logs accrue.
+* `privacy.logRetentionDays` — still `null`. While it is, the sentence
+  stays general ("depends on the provider's own statements"). Once the
+  retention period is in netcup's privacy statement, enter it here — a
+  concrete number is better than a pointer.
+* `privacy.processingAgreement` — set to `false`. As soon as the data
+  processing agreement (Art. 28 GDPR) with netcup is signed, set it to
+  `true`; the policy then names it. Before that the site does not claim it.
 
-Fehlt eine Pflichtangabe, steht an ihrer Stelle **sichtbar auf der Seite**,
-dass sie fehlt, und `make check` meldet es als **FEHLER** — nicht als
-Hinweis. Eine Seite mit erfundener Anschrift wäre schlimmer als eine, die
-sagt, was noch fehlt.
+If a mandatory detail is missing, the fact that it is missing stands
+**visibly on the page** in its place, and `make check` reports it as an
+**ERROR** — not as a note. A page with a made-up address would be worse
+than one that says what is still missing.
 
-Der Text der Datenschutzerklärung beschreibt, was diese Seite tatsächlich
-tut: keine Cookies, keine Zugriffsmessung, keine fremden Schriften, kein
-Formular. Am Serverseitigen ändert sich dadurch nichts, dass jetzt PHP die
-Seite zusammensetzt: es entstehen keine anderen Daten als vorher, nur die
-Zugriffsprotokolle des Anbieters. Das ist eine belastbare Grundlage, aber
-kein Rechtsrat — lasst ihn einmal ansehen, bevor die Domain live geht.
+The text of the privacy policy describes what this site actually does: no
+cookies, no analytics, no third-party fonts, no form. Nothing changes on
+the server side now that PHP assembles the page: no data arises other than
+before, only the provider's access logs. That is a solid basis but not
+legal advice — have it looked over before the domain goes live.
 
-**`content/booking.json` ist ein Entwurf.** Formate, Dauer, Personenzahl
-und die Antworten unter `faq` sind geraten. Prüft sie und setzt dann
-`"reviewed": true` — bis dahin weist `make check` darauf hin.
+**`content/booking.json` is a draft.** Formats, durations, head counts and
+the answers under `faq` are guesses. Review them and then set
+`"reviewed": true` — until that happens, `make check` points it out.
 
-## Konventionen
+## Conventions
 
-* **`esc()` um jeden Wert**, der aus `content/` ins Markup geht. Ein
-  Abschnitt, der einen Wert ohne `esc()` ausgibt, ist ein Fehler, auch wenn
-  der Wert heute harmlos aussieht.
-* **Keine Farbe im Klartext** in den Komponenten-CSS-Dateien. Wer eine
-  andere Deckkraft braucht, nimmt das Kanal-Token:
-  `rgb(var(--accent-rgb) / 0.35)`. Sonst wandert die Farbe im Dark Mode
-  nicht mit.
-* **Zustandsklassen** (`is-visible`, `is-scrolled`, …) und **Haken im
-  Markup** (`data-reveal`, `data-slider`, …) stehen in
-  `public/js/classes.js` und sind der Vertrag zwischen JS, CSS und HTML.
-  Die Module bauen ihre Selektoren daraus (`hook("slider")`), `make check`
-  liest dieselbe Datei und meldet, wenn eine Seite davon fehlt.
-* **Abgestimmte Zahlen** (Scrollschwellen, Standzeiten, Wischdistanz)
-  gehören in `public/js/config.js`, nicht mitten in die Logik.
-* **Progressive Enhancement:** ohne JS bleibt die Seite vollständig
-  lesbar, die Slider scrollen weiter, und jede Kachel ist ein Link auf
-  das Originalfoto. Bedienelemente, die ohne JS nichts täten (die
-  Slider-Pfeile), baut erst das JS.
+* **`esc()` around every value** that goes from `content/` into the markup.
+  A section that prints a value without `esc()` is a bug, even if the value
+  looks harmless today.
+* **No colour written out in the clear** in the component CSS files. If you
+  need a different opacity, take the channel token:
+  `rgb(var(--accent-rgb) / 0.35)`. Otherwise the colour will not travel
+  along in dark mode.
+* **State classes** (`is-visible`, `is-scrolled`, …) and **hooks in the
+  markup** (`data-reveal`, `data-slider`, …) live in `public/js/classes.js`
+  and are the contract between JS, CSS and HTML. The modules build their
+  selectors from it (`hook("slider")`), and `make check` reads the same
+  file and reports when one of them is missing from a page.
+* **Tuned numbers** (scroll thresholds, hold times, swipe distance) belong
+  in `public/js/config.js`, not in the middle of the logic.
+* **Progressive enhancement:** without JS the page stays fully readable,
+  the sliders still scroll, and every tile is a link to the original photo.
+  Controls that would do nothing without JS (the slider arrows) are only
+  built by the JS.
+* **Language:** the site is German — every string a visitor reads stays
+  German, including alt texts, `aria-label`s and the prepared enquiry mail.
+  Documentation, code comments and developer-facing tool output are
+  English.

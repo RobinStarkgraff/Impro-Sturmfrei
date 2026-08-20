@@ -1,17 +1,17 @@
 /* ============================================================
    0. FONTS
 
-   Selbst gehostet, damit beim Seitenaufruf keine Besucher-IP an Google
-   geht (LG München I, 3 O 17493/20). Die Dateien liegen in public/fonts/
-   und enthalten latin + latin-ext in einem Stück — deshalb hier bewusst kein
-   unicode-range: das würde Zeichen ausblenden, die in der Datei stehen.
+   Self-hosted, so that no visitor IP goes to Google when the page is
+   loaded (LG München I, 3 O 17493/20). The files live in public/fonts/ and
+   contain latin + latin-ext in one piece — hence deliberately no
+   unicode-range here: that would hide characters the file does contain.
 
-   display: swap, damit der Text sofort steht. Anton wird im <head>
-   vorgeladen, der Austausch ist dadurch praktisch nie zu sehen.
+   display: swap, so the text is there immediately. Anton is preloaded in
+   the <head>, which means the swap is practically never visible.
 
-   Die url() sind relativ zu dieser Datei: sie wird direkt ausgeliefert
-   (public/css/00-fonts.css), es gibt keine zusammengesetzte style.css mehr.
-   Deshalb steht davor ein "../".
+   The url() values are relative to this file: it is served directly
+   (public/css/00-fonts.css), there is no concatenated style.css any more.
+   Hence the leading "../".
    ============================================================ */
 
 @font-face {

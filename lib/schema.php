@@ -2,23 +2,24 @@
 /* ------------------------------------------------------------
    JSON-LD
 
-   Damit Google die Gruppe als Entität und die Shows als Events versteht
-   (Voraussetzung für Event-Rich-Results). Die Gruppe steht auf jeder
-   Seite (sie ist überall dieselbe Entität), die Events nur dort, wo sie
-   auch sichtbar sind: die nächste Show auf Start und Termine, die
-   vergangenen im Archiv.
+   So that Google understands the group as an entity and the shows as
+   events (the prerequisite for event rich results). The group appears on
+   every page (it is the same entity everywhere), the events only where
+   they are actually visible: the next show on the home and dates pages,
+   the past ones in the archive.
    ------------------------------------------------------------ */
 
 /**
- * Die Anschrift der Gruppe.
+ * The group's address.
  *
- * Standardmäßig nur Ort und Land. Die vollständige Anschrift steht im
- * Impressum, weil das Gesetz sie dort verlangt — sie zusätzlich als
- * strukturierte Daten auszugeben, ist eine andere Entscheidung: Google
- * könnte sie dann als Anschrift der Gruppe in Karten und Wissenspanel
- * anzeigen, und es ist eine Privatanschrift, keine Spielstätte.
+ * By default only town and country. The full address is in the Impressum
+ * because the law demands it there — emitting it as structured data on
+ * top of that is a separate decision: Google could then show it as the
+ * group's address in maps and the knowledge panel, and it is a private
+ * address, not a venue.
  *
- * Wer das will, setzt in content/legal.json "publishAddressInSchema": true.
+ * If that is what you want, set "publishAddressInSchema": true in
+ * content/legal.json.
  */
 function group_address(): array
 {
@@ -39,11 +40,11 @@ function group_address(): array
 }
 
 /**
- * Die Anschrift einer Spielstätte.
+ * A venue's address.
  *
- * Nur Ort und Land: content/shows.json kennt den Namen des Hauses, nicht
- * dessen Straße. Hier die Anschrift der Gruppe einzusetzen wäre bequem und
- * falsch — sie würde behaupten, das Kulturschloss Wandsbek liege in der
+ * Town and country only: content/shows.json knows the name of the house,
+ * not its street. Putting the group's address here would be convenient
+ * and wrong — it would claim that the Kulturschloss Wandsbek stands in
  * Schlettstadter Straße.
  */
 function venue_address(): array
@@ -56,12 +57,12 @@ function venue_address(): array
 }
 
 /**
- * Zeitstempel mit Zonenversatz: 2026-01-09T20:00+01:00.
+ * Timestamp with a zone offset: 2026-01-09T20:00+01:00.
  *
- * Ohne Versatz ist "20:00" für Google eine Ortszeit ohne Ort — es rät dann,
- * und im Sommerhalbjahr rät es eine Stunde daneben. Welcher Versatz gilt,
- * hängt am Datum (Winterzeit +01:00, Sommerzeit +02:00); das weiß die
- * Zeitzone, nicht wir.
+ * Without an offset, "20:00" is a local time without a locality as far as
+ * Google is concerned — it guesses, and in the summer half of the year it
+ * guesses an hour off. Which offset applies depends on the date (winter
+ * time +01:00, summer time +02:00); the time zone knows that, we don't.
  */
 function berlin_stamp(string $date, ?string $time): string
 {
@@ -69,18 +70,18 @@ function berlin_stamp(string $date, ?string $time): string
 
     $when = date_create_immutable("{$date}T{$time}", new DateTimeZone('Europe/Berlin'));
 
-    // Kaputtes Datum oder kaputte Zeit: lieber ohne Versatz als gar nichts.
-    // tools/check.php meldet solche Einträge ohnehin als Fehler.
+    // Broken date or broken time: better without an offset than nothing at
+    // all. tools/check.php reports such entries as errors anyway.
     return $when ? $when->format('c') : "{$date}T{$time}";
 }
 
 /**
- * Wie lange eine Show dauert, wenn nichts anderes dasteht.
+ * How long a show runs when nothing else is stated.
  *
- * Google möchte zu jedem Event ein endDate. Eine Abendshow mit Pause liegt
- * bei rund zwei Stunden — das ist geschätzt, aber es ist die Schätzung, die
- * auch im Programm stünde. "durationMinutes" je Show in content/shows.json
- * sticht sie.
+ * Google wants an endDate for every event. An evening show with an
+ * interval runs about two hours — that is a guess, but it is the guess the
+ * programme would print too. "durationMinutes" per show in
+ * content/shows.json overrides it.
  */
 const SHOW_MINUTES = 120;
 
@@ -95,9 +96,9 @@ function theater_event(array $show): array
         'description' => $show['title'] . ' — Improvisationstheater von '
             . site()['brand']['name'] . ' im ' . $show['venue'] . ', ' . site()['city'] . '.',
         'startDate' => berlin_stamp($show['date'], $time),
-        // Vergangene Abende sind nicht "geplant". EventScheduled heißt: findet
-        // wie angekündigt statt — bei einer Show von vorletztem Januar ist das
-        // keine Aussage mehr, die jemand brauchen kann.
+        // Past evenings are not "scheduled". EventScheduled means: takes
+        // place as announced — for a show from the January before last that
+        // is no longer a statement anybody can use.
         'eventStatus' => $show['date'] >= today()
             ? 'https://schema.org/EventScheduled'
             : 'https://schema.org/EventCompleted',
@@ -127,10 +128,10 @@ function theater_event(array $show): array
             'availability' => 'https://schema.org/InStock',
         ];
 
-        // Ohne Preis ist das Angebot für Google unvollständig. Steht in
-        // content/shows.json ein "price", kommt er samt Währung dazu;
-        // sonst bleibt es beim reinen Verweis auf den Ticketshop — eine
-        // erfundene Zahl wäre schlimmer.
+        // Without a price the offer is incomplete as far as Google is
+        // concerned. If content/shows.json carries a "price", it goes in
+        // along with the currency; otherwise it stays a plain pointer at
+        // the ticket shop — an invented number would be worse.
         if (isset($show['price'])) {
             $event['offers']['price'] = (string) $show['price'];
             $event['offers']['priceCurrency'] = 'EUR';
@@ -156,11 +157,11 @@ function theater_group(): array
 
     if ($home = canonical('index')) $group['url'] = $home;
     if (og_image()) $group['image'] = og_image();
-    // Wie bei der Anschrift eine Ecke höher: die Nummer steht im Impressum,
-    // weil das Gesetz sie dort verlangt. Sie zusätzlich als strukturierte
-    // Daten auszugeben ist eine zweite Entscheidung — Google trägt sie dann
-    // ins Wissenspanel, und es ist eine private Mobilnummer. Wer das will,
-    // setzt in content/legal.json "publishPhoneInSchema": true.
+    // Same as the address a little further up: the number is in the
+    // Impressum because the law demands it there. Emitting it as structured
+    // data on top of that is a second decision — Google then puts it in the
+    // knowledge panel, and it is a private mobile number. If that is what
+    // you want, set "publishPhoneInSchema": true in content/legal.json.
     $impressum = legal()['impressum'];
 
     if (!empty($impressum['publishPhoneInSchema']) && $impressum['phone']) {
@@ -170,7 +171,7 @@ function theater_group(): array
     return $group;
 }
 
-/** Brotkrumen — sagt Google, wo die Unterseite in der Seite hängt. */
+/** Breadcrumbs — tells Google where the subpage hangs within the site. */
 function breadcrumbs(string $slug, array $page): ?array
 {
     if ($slug === 'index' || !canonical($slug)) return null;
@@ -189,8 +190,8 @@ function structured_data(string $slug, array $page): array
     $graph = [theater_group()];
     $schema = $page['schema'] ?? [];
 
-    // upcoming_show() statt shows()['upcoming']: ein Termin, der vorbei ist,
-    // gehört nicht mehr als geplantes Event ins JSON-LD.
+    // upcoming_show() rather than shows()['upcoming']: a date that has
+    // passed no longer belongs in the JSON-LD as a scheduled event.
     if (in_array('upcoming', $schema, true) && ($next = upcoming_show())) {
         $graph[] = theater_event($next);
     }
@@ -205,11 +206,11 @@ function structured_data(string $slug, array $page): array
 }
 
 /**
- * Der fertige <script>-Inhalt, zwei Leerzeichen eingerückt.
+ * The finished <script> content, indented by two spaces.
  *
- * json_encode rückt mit vier Leerzeichen ein und lässt sich darin nicht
- * umstimmen; der Rest der Seite rückt mit zwei ein. Also einmal halbieren,
- * damit im Quelltext der Seite keine Stufe aus der Reihe fällt.
+ * json_encode indents by four and cannot be talked out of it; the rest of
+ * the page indents by two. So halve it once, and no step falls out of line
+ * in the page source.
  */
 function json_ld(string $slug, array $page): string
 {

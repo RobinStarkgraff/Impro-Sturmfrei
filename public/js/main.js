@@ -1,12 +1,12 @@
 /* ============================================================
    STURMFREI IMPRO — js/main.js
 
-   Einstiegspunkt. Jedes Modul ist für sich lauffähig, prüft selbst, ob
-   sein Markup vorhanden ist, und tut sonst nichts.
+   Entry point. Every module runs on its own, checks for its own markup,
+   and otherwise does nothing.
 
-   Alles hier ist Progressive Enhancement: ohne JS bleibt die Seite
-   vollständig lesbar, die Slider scrollen weiterhin, die Kacheln sind
-   Links auf die Originalfotos, und nichts ist versteckt.
+   All of this is progressive enhancement: without JS the page stays fully
+   readable, the sliders still scroll, the tiles are links to the original
+   photos, and nothing is hidden.
    ============================================================ */
 
 import { CSS_CLASS } from "./classes.js";

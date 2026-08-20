@@ -1,18 +1,17 @@
 <?php
 /* ------------------------------------------------------------
-   Das Archiv.
+   The archive.
 
-   Je vergangene Show ein Artikel mit Slider. Artikel, Slider, aria-label
-   und alt-Texte entstehen aus content/shows.json — Fotos gehören nach
-   public/images/shows/<datum>/.
+   One article with a slider per past show. Article, slider, aria-label
+   and alt texts all come from content/shows.json — photos belong in
+   public/images/shows/<date>/.
 
-   Die Slider gehen bewusst über die ganze Breite und stehen nicht in
-   einer Karte: die Fotos sind der Inhalt dieser Seite, alles andere ist
-   Beschriftung.
+   The sliders deliberately run the full width and do not sit in a card:
+   the photos are the content of this page, everything else is caption.
 
-   Neueste zuerst: im Archiv sucht man den letzten Abend, nicht den ersten.
-   Die Reihenfolge in content/shows.json bleibt chronologisch — dort ist
-   sie beim Eintragen die natürliche.
+   Newest first: in an archive you are looking for the latest evening, not
+   the first. The order in content/shows.json stays chronological — that is
+   the natural one while typing entries in.
    ------------------------------------------------------------ */
 
 $past = $shows['past'];
@@ -39,15 +38,16 @@ foreach ($past as $show) {
         </p>
       </div>
 
-      <!-- Voller Breite und ohne Karte: der Slider ist selbst der Scrollbereich,
-           die Innenabstände richten die erste Kachel am Text darüber aus. -->
+      <!-- Full width and no card: the slider is the scroll container itself,
+           and its padding aligns the first tile with the text above. -->
       <div class="slider-wrap slider-wrap--bleed">
         <div class="slider" data-slider tabindex="0" role="group"
              aria-label="Fotos der Show vom <?= esc($when) ?>">
 <?php foreach ($show['photos'] as $i => $photo):
     $src = asset("images/shows/{$show['date']}/{$photo['file']}");
-    /* Ohne eigenen Text bleibt die laufende Nummer als Notbehelf. Ein echter
-       Satz gehört in content/shows.json; `make check` zählt die offenen. */
+    /* Without a text of its own the running number remains as a stopgap. A
+       real sentence belongs in content/shows.json; `make check` counts the
+       ones still open. */
     $alt = $photo['alt'] ?: 'Impro-Szene ' . ($i + 1) . ' – Show vom ' . $when;
     ?>
         <a class="slide" href="<?= esc($src) ?>" aria-label="<?= esc($alt) ?> – Bild vergrößern">
@@ -62,7 +62,7 @@ foreach ($past as $show) {
     $articles[] = rtrim((string) ob_get_clean(), "\n");
 }
 ?>
-  <!-- ================= ARCHIV ================= -->
+  <!-- ================= ARCHIVE ================= -->
   <section class="section" id="shows">
 
 <?= implode("\n\n", $articles) ?>

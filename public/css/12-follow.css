@@ -53,9 +53,9 @@
   transform: translateX(4px);
 }
 
-/* Auf einer Lesebreite (Termine) nebeneinander zu drei Karten von je gut
-   200 px — da bleibt vom Hinweistext nichts übrig. Dort also gestapelt und
-   waagerecht gelesen. */
+/* At reading width (dates), three cards side by side come to a little over
+   200 px each — which leaves nothing of the hint text. So stacked there,
+   and read horizontally. */
 .follow-grid--stack {
   grid-template-columns: 1fr;
 }

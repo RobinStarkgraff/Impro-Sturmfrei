@@ -1,13 +1,15 @@
 <?php
 /* ------------------------------------------------------------
-   Die Lightbox.
+   The lightbox.
 
-   Steht nur auf Seiten mit Slidern ("lightbox" => true in lib/pages.php);
-   js/lightbox.js findet sie über die ID und tut ohne sie nichts.
+   Only present on pages with sliders ("lightbox" => true in
+   lib/pages.php); js/lightbox.js finds it by its ID and does nothing
+   without it.
 
-   Die drei Knöpfe unterscheiden sich in drei Werten — deshalb eine Liste
-   und eine Schleife. Der Name steht in der Klasse und im data-Attribut,
-   über das js/lightbox.js den Knopf findet.
+   The three buttons differ in three values — hence a list and a loop. The
+   name goes into the class and into the data attribute through which
+   js/lightbox.js finds the button. The labels are read out to visitors, so
+   they stay German.
    ------------------------------------------------------------ */
 
 $buttons = [
@@ -20,9 +22,9 @@ $buttons = [
 <dialog class="lightbox" id="lightbox" aria-label="Bildansicht">
   <div class="lightbox__stage">
 
-    <!-- Ohne src-Attribut, nicht mit einem leeren: ein leeres lädt sonst die
-         Seite selbst noch einmal als Bild. js/lightbox.js setzt Quelle und
-         alt-Text beim Öffnen. -->
+    <!-- No src attribute at all, rather than an empty one: an empty one would
+         load the page itself a second time as an image. js/lightbox.js sets
+         source and alt text on opening. -->
     <img class="lightbox__img" id="lightbox-img" alt=""/>
 <?php foreach ($buttons as [$kind, $glyph, $label]): ?>
 
@@ -32,9 +34,9 @@ $buttons = [
     </button>
 <?php endforeach; ?>
 
-    <!-- role="status": beim Blättern wechseln Bild und alt-Text lautlos.
-         So liest ein Screenreader wenigstens vor, an welcher Stelle der
-         Gruppe man gerade steht. -->
+    <!-- role="status": while paging through, image and alt text change
+         silently. This way a screen reader at least announces where in the
+         group you currently are. -->
     <p class="lightbox__counter" id="lightbox-counter" role="status"></p>
 
   </div>

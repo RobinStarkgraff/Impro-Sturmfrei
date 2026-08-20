@@ -1,43 +1,43 @@
 <?php declare(strict_types=1);
 /* ============================================================
-   Der Anfang jeder Seite.
+   Where every page begins.
 
-   Eine Seite unter public/ ist eine Datei mit zwei Zeilen: sie holt
-   diese Datei und sagt, welche Seite sie ist. Alles andere — Daten,
-   Werkzeug, <head>, Kopfleiste, Abschnitte, Footer — hängt hier dran.
+   A page under public/ is a two-line file: it pulls in this one and
+   says which page it is. Everything else — data, tooling, <head>,
+   header bar, sections, footer — hangs off here.
 
-   Es gibt keinen Build. Die Seite entsteht bei jedem Aufruf aus
-   content/*.json und sections/*.php; im Repo steht damit genau das,
-   was ausgeliefert wird, und nichts daneben, das erst erzeugt werden
-   müsste.
+   There is no build. A page is assembled on every request from
+   content/*.json and sections/*.php; the repo therefore holds exactly
+   what gets served, and nothing beside it that would have to be
+   generated first.
 
-   Was wo liegt:
+   What lives where:
 
-     content/*.json    die Angaben, die mehr als einmal vorkommen
-     lib/              dieses Werkzeug: Daten, Pfade, HTML, JSON-LD
-     sections/*.php    je ein Abschnitt der Seite, als HTML mit Löchern
-     public/           was ausgeliefert wird: die Seiten, css/, js/,
+     content/*.json    the values that occur more than once
+     lib/              this tooling: data, paths, HTML, JSON-LD
+     sections/*.php    one section of the page each, HTML with holes
+     public/           what gets served: the pages, css/, js/,
                        images/, fonts/
 
-   public/ ist der Docroot (siehe .htaccess). content/, lib/ und
-   sections/ liegen darüber und sind damit nicht adressierbar — nicht
-   „gesperrt", sondern für den Webserver nicht vorhanden.
+   public/ is the docroot (see .htaccess). content/, lib/ and sections/
+   sit above it and are therefore not addressable — not "locked off",
+   but non-existent as far as the web server is concerned.
    ============================================================ */
 
 define('SITE_ROOT', dirname(__DIR__));
 
 /* ------------------------------------------------------------
-   Wenn etwas schiefgeht
+   When something goes wrong
 
-   Ohne Build ist ein Komma zu viel in content/shows.json kein halber
-   Build, sondern eine Ausnahme mitten im Seitenaufbau. Was der Besucher
-   davon sieht, darf nicht vom PHP-Standard des Webspace abhängen: dort
-   steht display_errors oft auf On, und dann steht der absolute Pfad
-   dieses Verzeichnisses samt Aufrufliste im Netz.
+   Without a build, one comma too many in content/shows.json is not
+   half a build but an exception in the middle of assembling the page.
+   What the visitor sees of it must not depend on the webspace's PHP
+   defaults: there display_errors is often On, and then the absolute
+   path of this directory lands on the web along with a stack trace.
 
-   Also: im Browser ein Satz und ein 500er, im Fehlerprotokoll die
-   Einzelheiten. Auf der Kommandozeile bleibt alles sichtbar — `make
-   check` soll laut sein.
+   So: one sentence and a 500 in the browser, the details in the error
+   log. On the command line everything stays visible — `make check` is
+   meant to be loud.
    ------------------------------------------------------------ */
 
 if (PHP_SAPI !== 'cli') {

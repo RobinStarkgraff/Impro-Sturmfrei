@@ -1,16 +1,17 @@
 {
   "$comment": [
-    "Alles, was die Seite /buchen/ als Aufzählung zeigt: Formate, was ihr",
-    "vor Ort braucht, und die häufigen Fragen. Prosa steht wie überall in",
-    "sections/*.php — hier steht nur, was sich wiederholt oder wächst.",
+    "Everything the /buchen/ page shows as a list: formats, what is needed",
+    "on site, and the frequently asked questions. Prose lives in",
+    "sections/*.php as it does everywhere — only what repeats or grows",
+    "lives here. The values themselves are website content and stay German.",
     "",
-    "!!! ACHTUNG: formats, needs und faq sind ENTWÜRFE. Dauer, Personenzahl",
-    "und Antworten sind geraten und müssen von euch geprüft werden. Solange",
-    "\"reviewed\": false steht, weist `make check` darauf hin.",
+    "!!! NOTE: formats, needs and faq are DRAFTS. Durations, head counts and",
+    "answers are guesses and have to be reviewed by you. While",
+    "\"reviewed\": false stands here, `make check` points it out.",
     "",
-    "Preise stehen bewusst nirgends: \"auf Anfrage\" ist ehrlicher als eine",
-    "Zahl, die dann doch nicht stimmt. Sobald ihr eine Spanne nennen wollt,",
-    "kommt sie hier als \"price\" je Format dazu."
+    "Prices deliberately appear nowhere: \"on request\" is more honest than a",
+    "number that then turns out to be wrong. As soon as you want to name a",
+    "range, it goes in here as \"price\" per format."
   ],
 
   "reviewed": false,

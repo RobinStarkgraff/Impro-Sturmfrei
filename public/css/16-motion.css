@@ -2,8 +2,8 @@
    16. SCROLL REVEAL & MOTION
    ============================================================ */
 
-/* Nur mit .js von js/main.js — ohne JS ist der Inhalt von Anfang an
-   sichtbar und kann nie im versteckten Zustand hängen bleiben. */
+/* Only with .js from js/main.js — without JS the content is visible from
+   the start and can never get stuck in its hidden state. */
 .js [data-reveal] {
   opacity: 0;
   transform: translateY(1.5rem);

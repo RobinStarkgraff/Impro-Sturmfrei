@@ -48,8 +48,8 @@ p:last-child {
   line-height: 1.6;
 }
 
-/* Datumszeile über einem Showtitel — im Rückblick und in der Karte für
-   die nächste Show dieselbe, deshalb hier und nicht in einer Komponente. */
+/* Date line above a show title — the same one in the archive and in the
+   card for the next show, hence here and not in a component. */
 .date-line {
   font-family: var(--font-body);
   font-size: var(--text-meta);

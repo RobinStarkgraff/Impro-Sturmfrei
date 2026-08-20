@@ -1,5 +1,5 @@
-# Damit Einrückung und Zeilenenden nicht vom Editor abhängen.
-# https://editorconfig.org — von IntelliJ, VS Code & Co. direkt gelesen.
+# So that indentation and line endings do not depend on the editor.
+# https://editorconfig.org — read directly by IntelliJ, VS Code and others.
 
 root = true
 
@@ -14,9 +14,9 @@ indent_size = 2
 [Makefile*]
 indent_style = tab
 
-# Die Abschnitte in sections/ sind HTML mit Löchern: ihre Einrückung ist die
-# des Markups, also zwei wie überall. Die Logik in lib/ und tools/ rückt
-# PHP-üblich mit vier ein — dort gibt es kein Markup, an dem sie hängt.
+# The sections in sections/ are HTML with holes: their indentation is that of
+# the markup, so two like everywhere else. The logic in lib/ and tools/
+# indents by four as is usual for PHP — there is no markup there to hang on.
 [{lib,tools}/*.php]
 indent_size = 4
 

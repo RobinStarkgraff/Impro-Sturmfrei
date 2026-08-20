@@ -7,8 +7,8 @@
   isolation: isolate;
   display: grid;
   align-items: center;
-  /* Der Rest des Fensters unter der Kopfleiste: die füllt ihre Höhe selbst,
-     der Hero darf sie nicht ein zweites Mal beanspruchen. */
+  /* The rest of the window below the header bar: the bar fills its own
+     height, and the hero must not claim it a second time. */
   min-height: calc(100vh - var(--header-h));
   min-height: calc(100svh - var(--header-h));
   padding-block: var(--space-3xl);
@@ -19,8 +19,8 @@
     linear-gradient(165deg, var(--hero-top) 0%, var(--hero-mid) 55%, var(--hero-bottom) 100%);
 }
 
-/* Dasselbe Foto, weichgezeichnet — reine Atmosphäre, die Auflösung spielt
-   daher keine Rolle. Liegt unter dem Schleier. */
+/* The same photo, blurred — pure atmosphere, so the resolution does not
+   matter. Sits below the scrim. */
 .hero__backdrop {
   position: absolute;
   inset: -12%;
@@ -33,8 +33,8 @@
   pointer-events: none;
 }
 
-/* Der Schleier hält den Text auf vollem Kontrast, was die Weichzeichnung
-   auch ausspuckt. */
+/* The scrim keeps the text at full contrast, whatever the blur spits
+   out. */
 .hero::before {
   content: "";
   position: absolute;
@@ -65,9 +65,9 @@
   max-width: 46rem;
 }
 
-/* Das Foto bleibt so groß, wie die Vorlage es scharf füllen kann. Die
-   Vorlagen liegen bei 1600 px, bei 44rem (704 px) ist auf einem Retina-
-   Schirm also noch Reserve. */
+/* The photo stays as large as the source can fill sharply. The sources are
+   1600 px, so at 44rem (704 px) there is still headroom on a retina
+   screen. */
 .hero__figure {
   margin: 0;
   position: relative;
@@ -85,7 +85,7 @@
   border: 1px solid rgb(var(--white-rgb) / 0.14);
 }
 
-/* Warmer Schein hinter dem Foto, der den Backstein aufnimmt. */
+/* Warm glow behind the photo, picking up the brick. */
 .hero__figure::before {
   content: "";
   position: absolute;
@@ -111,8 +111,8 @@
 }
 
 .hero__text {
-  /* Der einzige Absatz im Hero, der wirklich gelesen wird — er bleibt auf
-     Lesebreite, auch wenn die Spalte daneben breiter geworden ist. */
+  /* The only paragraph in the hero that actually gets read — it stays at
+     reading width, even though the column beside it has grown wider. */
   max-width: var(--measure-prose);
   font-size: var(--text-lead);
   line-height: 1.55;
@@ -123,7 +123,7 @@
   margin-top: var(--space-2xl);
 }
 
-/* Hinweis zum Weiterscrollen */
+/* Cue to keep scrolling */
 .scroll-cue {
   display: inline-flex;
   align-items: center;
@@ -159,18 +159,18 @@
 
 
 /* ============================================================
-   7b. SEITENKOPF DER UNTERSEITEN
+   7b. PAGE HERO OF THE SUBPAGES
 
-   Das Band, mit dem jede Seite ohne Hero beginnt: Titel und Vorspann auf
-   demselben dunklen Grund, den Hero und Kopfleiste tragen. Es steht in
-   derselben Datei wie der Hero, weil es dessen Farben teilt und nicht
-   getrennt davon umgefärbt werden darf.
+   The band every page without a hero begins with: title and lead on the
+   same dark ground that hero and header bar carry. It lives in the same
+   file as the hero because it shares its colours and must not be
+   recoloured separately from it.
 
-   Früher war es außerdem Bedingung: die Kopfleiste war über dem Hero
-   durchsichtig und brauchte dunkle Pixel unter sich, sonst stand ihr
-   weißer Text auf Creme. Die Leiste bringt ihren Grund inzwischen selbst
-   mit (siehe css/06-header.css) — dieses Band ist jetzt Gestaltung, und
-   eine Seite ohne es wäre nur unschön, nicht unlesbar.
+   It used to be a requirement as well: the header bar was transparent over
+   the hero and needed dark pixels beneath it, or its white text stood on
+   cream. The bar now brings its own ground (see css/06-header.css) — so
+   this band is design now, and a page without it would merely be ugly, not
+   unreadable.
    ============================================================ */
 
 .page-hero {
@@ -204,8 +204,8 @@
   margin-top: var(--space-xl);
 }
 
-/* Der Übergang in die helle Seite. Ohne die Kante wirkt das Band wie ein
-   abgeschnittenes Foto; mit ihr wie eine Bühne, von der man heruntergeht. */
+/* The transition into the light page. Without the edge the band looks like
+   a cropped photo; with it, like a stage you step down from. */
 .page-hero::after {
   content: "";
   position: absolute;

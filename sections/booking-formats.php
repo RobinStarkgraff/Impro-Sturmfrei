@@ -1,7 +1,7 @@
 <?php
-/* Die Formate aus content/booking.json. */
+/* The formats from content/booking.json. */
 ?>
-  <!-- ================= FORMATE ================= -->
+  <!-- ================= FORMATS ================= -->
   <section class="section" id="formate">
     <div class="wrap">
 

@@ -1,13 +1,13 @@
 <?php
 /* ------------------------------------------------------------
-   Das Ensemble.
+   The ensemble.
 
-   Die Bilderfolge steht in content/site.json unter "about.crossfade" und
-   wird von js/crossfade.js aus data-crossfade gelesen.
+   The image sequence lives in content/site.json under "about.crossfade"
+   and is read by js/crossfade.js from data-crossfade.
    ------------------------------------------------------------ */
 
-// Mit Änderungsstempel, aus demselben Grund wie im Hero: feste
-// Dateinamen in images/group/ und ein Jahr Ablage im Browser.
+// With a modification stamp, for the same reason as in the hero: fixed
+// filenames in images/group/ and a year of storage in the browser.
 $layers = array_map('asset_versioned', $site['about']['crossfade']);
 ?>
   <!-- ================= ABOUT ================= -->
@@ -21,10 +21,10 @@ $layers = array_map('asset_versioned', $site['about']['crossfade']);
 
       <div class="about-layout">
 
-        <!-- Zwei gestapelte Ebenen: die Überblendung zeigt so nie eine leere Box.
-             Die zweite hat bewusst gar kein src-Attribut. Ein leeres löst der
-             Browser gegen die Adresse der Seite auf und lädt sie ein zweites
-             Mal als Bild — js/crossfade.js setzt es beim ersten Wechsel. -->
+        <!-- Two stacked layers: that way the crossfade never shows an empty box.
+             The second deliberately has no src attribute at all. An empty one is
+             resolved by the browser against the page's own address and loads it a
+             second time as an image — js/crossfade.js sets it on the first swap. -->
         <div class="about-media"
              data-reveal
              data-crossfade="<?= esc(json_encode($layers, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) ?>">

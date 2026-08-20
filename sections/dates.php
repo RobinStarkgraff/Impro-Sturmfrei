@@ -1,16 +1,16 @@
 <?php
 /* ------------------------------------------------------------
-   Die Termine.
+   The dates.
 
-   Oben die nächste Show (oder der Hinweis, dass keine feststeht), darunter
-   die Kanäle, auf denen neue Termine zuerst auftauchen.
+   At the top the next show (or the note that none is fixed), below it the
+   channels where new dates turn up first.
    ------------------------------------------------------------ */
 
-/* upcoming_show() statt $shows["upcoming"]: ein Termin, der vorbei ist,
-   ist kein nächster Termin mehr. Siehe lib/data.php. */
+/* upcoming_show() rather than $shows["upcoming"]: a date that has passed
+   is no longer a next date. See lib/data.php. */
 $next = upcoming_show();
 ?>
-  <!-- ================= TERMINE ================= -->
+  <!-- ================= DATES ================= -->
   <section class="section" id="termine">
     <div class="wrap wrap--prose">
 

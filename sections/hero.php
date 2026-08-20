@@ -1,20 +1,20 @@
 <?php
 /* ------------------------------------------------------------
-   Der Hero — nur auf der Startseite.
+   The hero — home page only.
 
-   Foto und alt-Text stehen in content/site.json unter "hero".
+   Photo and alt text live in content/site.json under "hero".
    ------------------------------------------------------------ */
 
-// Mit Änderungsstempel: images/group/ trägt feste Dateinamen, und die
-// .htaccess lässt Bilder ein Jahr im Browser liegen. Ohne Stempel bekäme
-// niemand ein ausgetauschtes Hero-Foto zu sehen.
+// With a modification stamp: images/group/ carries fixed filenames, and
+// the .htaccess lets images sit in the browser for a year. Without the
+// stamp nobody would get to see a replaced hero photo.
 $photo = asset_versioned($site['hero']['photo']);
 ?>
   <!-- ================= HERO ================= -->
   <section class="section hero" id="top">
 
-    <!-- Dasselbe Foto, stark weichgezeichnet: liefert die Bühnenfarben als
-         Atmosphäre, ohne dass die Auflösung eine Rolle spielt. -->
+    <!-- The same photo, heavily blurred: it delivers the stage colours as
+         atmosphere, and the resolution does not matter. -->
     <img class="hero__backdrop" src="<?= esc($photo) ?>" alt="" aria-hidden="true"/>
 
     <div class="wrap hero__inner">

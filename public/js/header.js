@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------
-   Kopfleiste: Scrollzustand und Mobilmenü.
+   Header bar: scroll state and mobile menu.
    ------------------------------------------------------------ */
 
 import { CSS_CLASS, DATA_KEY } from "./classes.js";
@@ -24,9 +24,10 @@ function bindScrollState(header) {
 }
 
 function bindMobileMenu(toggle, nav) {
-  // Das offene Menü legt sich über die Seite, also geht alles dahinter auf
-  // inert: damit bleiben Tab und Screenreader im Menü, ohne handgebauten
-  // Focus-Trap. Browser ohne inert ignorieren die Eigenschaft einfach.
+  // The open menu covers the page, so everything behind it goes inert:
+  // that keeps Tab and the screen reader inside the menu without a
+  // hand-built focus trap. Browsers without inert simply ignore the
+  // property.
   const behind = [
     document.getElementById("main"),
     document.querySelector(".site-footer")
@@ -46,7 +47,7 @@ function bindMobileMenu(toggle, nav) {
 
   toggle.addEventListener("click", () => setOpen(!isOpen()));
 
-  // Nach der Zielwahl zu, und auf Escape.
+  // Close after picking a destination, and on Escape.
   nav.addEventListener("click", (event) => {
     if (event.target.closest("a")) setOpen(false);
   });

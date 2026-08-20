@@ -1,5 +1,5 @@
 <?php
-/* Die zwei Knöpfe im Seitenkopf von /buchen/. */
+/* The two buttons in the page header of /buchen/. */
 ?>
 <div class="btn-row">
   <a class="btn btn--primary" href="<?= esc(booking_mailto()) ?>">Anfrage schicken</a>

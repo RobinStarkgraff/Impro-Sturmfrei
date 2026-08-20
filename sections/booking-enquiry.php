@@ -1,7 +1,7 @@
 <?php
-/* Der einzige Schritt: die Anfrage per Mail. */
+/* The only step: the enquiry by mail. */
 ?>
-  <!-- ================= ANFRAGE ================= -->
+  <!-- ================= ENQUIRY ================= -->
   <section class="section" id="anfrage">
     <div class="wrap wrap--prose">
 

@@ -40,7 +40,7 @@
   transition: opacity var(--fast) var(--ease);
 }
 
-/* Von js/lightbox.js gesetzt, bis die Datei in voller Größe da ist. */
+/* Set by js/lightbox.js until the full-size file has arrived. */
 .lightbox.is-loading .lightbox__img {
   opacity: 0;
 }
@@ -60,8 +60,8 @@
   to { transform: rotate(1turn); }
 }
 
-/* Form und Anstrich kommen von .icon-btn / .icon-btn--glass, hier steht
-   nur noch, wo die drei Buttons sitzen. */
+/* Shape and paint come from .icon-btn / .icon-btn--glass; all that is left
+   here is where the three buttons sit. */
 .lightbox__btn {
   position: absolute;
   z-index: 2;

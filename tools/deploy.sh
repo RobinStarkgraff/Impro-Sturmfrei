@@ -1,38 +1,37 @@
 #!/bin/sh
 # ============================================================
-# Der Befehl, den netcup nach jedem Deploy aufruft.
+# The command netcup runs after every deploy.
 #
-#   WCP → Git-Deployment → "Zusätzliche Deployment-Aktionen":
+#   WCP → Git deployment → "Zusätzliche Deployment-Aktionen":
 #
 #     sh tools/deploy.sh
 #
-# Reines sh und sonst nichts — auf einem Webspace ist selten mehr da.
+# Plain sh and nothing else — a webspace rarely has more.
 #
-# Gebaut wird hier nichts. Was im Repo steht, ist die Seite: der
-# Checkout ist der Deploy, und in dem Moment, in dem netcup gezogen hat,
-# ist der neue Stand schon online. Dieses Skript kann ihn deshalb nicht
-# mehr aufhalten — es sieht nach, ob er in Ordnung ist, und schreibt das
-# Ergebnis ins Protokoll.
+# Nothing is built here. What is in the repo is the site: the checkout is
+# the deploy, and the moment netcup has pulled, the new state is already
+# online. So this script can no longer stop it — it looks whether things
+# are in order and writes the result to the log.
 #
-# Daraus folgt die Reihenfolge der Arbeit: `make check` gehört vor den
-# Push, nicht danach. Hier ist es die zweite Meldung, nicht die erste.
+# Which dictates the order of work: `make check` belongs before the push,
+# not after it. Here it is the second report, not the first.
 #
-# Zwei Aufbauten, ein Skript:
+# Two setups, one script:
 #
-#   sh tools/deploy.sh            Docroot IST der Checkout. Die .htaccess im
-#                                 Projektstamm liefert public/ aus.
-#   sh tools/deploy.sh <ziel>     Docroot liegt woanders: der Projektordner
-#                                 wird zusätzlich dorthin gespiegelt — mit
-#                                 lib/ und content/, denn die Seite braucht
-#                                 sie neben public/.
+#   sh tools/deploy.sh            The docroot IS the checkout. The .htaccess
+#                                 in the project root serves public/.
+#   sh tools/deploy.sh <target>   The docroot is elsewhere: the project
+#                                 folder is additionally mirrored there —
+#                                 including lib/ and content/, because the
+#                                 site needs them next to public/.
 #
-# Aufruf von Hand tut dasselbe und ist zum Ausprobieren gedacht.
+# Running it by hand does the same and is meant for trying things out.
 # ============================================================
 
 set -eu
 
-# Der Projektstamm liegt über diesem Skript — egal, aus welchem Verzeichnis
-# netcup uns aufruft.
+# The project root sits above this script — no matter which directory
+# netcup calls us from.
 root=$(cd "$(dirname "$0")/.." && pwd)
 cd "$root"
 
@@ -43,40 +42,40 @@ say() {
   echo "  $*"
 }
 
-fertig() {
-  # $1 = Ergebnis fürs Protokoll, $2 = Exit-Code
-  commit="unbekannt"
+done_with() {
+  # $1 = result for the log, $2 = exit code
+  commit="unknown"
   if command -v git >/dev/null 2>&1 && [ -d .git ]; then
-    commit=$(git rev-parse --short HEAD 2>/dev/null || echo "unbekannt")
+    commit=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
   fi
 
-  echo "$(date '+%Y-%m-%d %H:%M:%S')  commit=$commit  ziel=${target:-checkout}  $1" >> "$log"
-  echo "Fertig: $1 (Protokoll: deploy.log)"
+  echo "$(date '+%Y-%m-%d %H:%M:%S')  commit=$commit  target=${target:-checkout}  $1" >> "$log"
+  echo "Done: $1 (log: deploy.log)"
   exit "$2"
 }
 
 echo "Deploy: $root"
 
 # ------------------------------------------------------------
-# 1. PHP suchen
+# 1. Find PHP
 #
-# Der PATH einer Deployment-Aktion ist karg. Ohne php auf der Kommandozeile
-# lässt sich hier nichts prüfen — die Seite selbst läuft dann trotzdem, denn
-# sie braucht nur das PHP des Webservers.
+# The PATH of a deployment action is sparse. Without php on the command line
+# nothing can be checked here — the site itself still runs, because it only
+# needs the web server's PHP.
 # ------------------------------------------------------------
 php=""
-for kandidat in php php8.3 php8.2 php8.1 php8.0; do
-  if command -v "$kandidat" >/dev/null 2>&1; then
-    php=$kandidat
+for candidate in php php8.3 php8.2 php8.1 php8.0; do
+  if command -v "$candidate" >/dev/null 2>&1; then
+    php=$candidate
     break
   fi
 done
 
 if [ -z "$php" ]; then
-  echo "HINWEIS: kein php auf der Kommandozeile — es wird nichts geprüft."
-  echo "         Die Seite läuft davon unberührt: sie braucht nur das PHP"
-  echo "         des Webservers, nicht das der Shell."
-  fertig "ungeprueft" 0
+  echo "NOTE: no php on the command line — nothing will be checked."
+  echo "      The site is unaffected: it only needs the web server's PHP,"
+  echo "      not the shell's."
+  done_with "unchecked" 0
 fi
 
 say "$($php -v | head -n 1)"
@@ -84,66 +83,66 @@ say "$($php -v | head -n 1)"
 # ------------------------------------------------------------
 # 2. Syntax
 #
-# Ein Tippfehler in einer PHP-Datei ist hier kein halber Build, sondern
-# eine leere Seite. Deshalb steht diese Prüfung vor allem anderen.
+# A typo in a PHP file is not half a build here but an empty page. Which is
+# why this check comes before everything else.
 # ------------------------------------------------------------
-kaputt=0
+broken=0
 
-for datei in $(find lib sections public tools -name '*.php' 2>/dev/null); do
-  if ! $php -l "$datei" >/dev/null 2>&1; then
-    echo "FEHLER: $datei hat einen Syntaxfehler:"
-    $php -l "$datei" 2>&1 | sed 's/^/        /'
-    kaputt=1
+for file in $(find lib sections public tools -name '*.php' 2>/dev/null); do
+  if ! $php -l "$file" >/dev/null 2>&1; then
+    echo "ERROR: $file has a syntax error:"
+    $php -l "$file" 2>&1 | sed 's/^/       /'
+    broken=1
   fi
 done
 
-if [ "$kaputt" -ne 0 ]; then
+if [ "$broken" -ne 0 ]; then
   echo
-  echo "        Die Seite ist damit gerade kaputt. Zurück: den Commit"
-  echo "        rückgängig machen und neu pushen."
-  fertig "syntax-fehler" 1
+  echo "       The site is broken right now. Way back: revert the commit"
+  echo "       and push again."
+  done_with "syntax-error" 1
 fi
 
-say "Syntax in Ordnung"
+say "syntax is fine"
 
 # ------------------------------------------------------------
-# 3. Prüfen
+# 3. Check
 #
-# check.php rendert jede Seite, löst jeden Verweis auf und prüft die
-# Pflichtangaben aus content/legal.json. Exit 1 heißt echter Fehler;
-# Hinweise allein sind Exit 0.
+# check.php renders every page, resolves every reference and checks the
+# mandatory details from content/legal.json. Exit 1 means a real error;
+# notes alone are exit 0.
 # ------------------------------------------------------------
-say "prüfe die Seiten"
+say "checking the pages"
 if ! $php tools/check.php; then
   echo
-  echo "FEHLER: 'check.php' hat Probleme gemeldet (siehe oben)."
-  echo "        Sie sind schon online — dieser Stand gehört korrigiert."
-  fertig "check-fehler" 1
+  echo "ERROR: 'check.php' reported problems (see above)."
+  echo "       They are already online — this state needs fixing."
+  done_with "check-error" 1
 fi
 
 # ------------------------------------------------------------
-# 4. Spiegeln, wenn der Docroot woanders liegt
+# 4. Mirror, if the docroot is elsewhere
 # ------------------------------------------------------------
 if [ -n "$target" ]; then
   if [ ! -d "$target" ]; then
-    echo "FEHLER: Ziel '$target' ist kein Verzeichnis."
-    fertig "ziel-fehlt" 1
+    echo "ERROR: target '$target' is not a directory."
+    done_with "target-missing" 1
   fi
 
-  # Gespiegelt wird public/ — aber die Seite braucht lib/, sections/ und
-  # content/ daneben, und die liegen eine Ebene höher. Deshalb wandert
-  # alles mit, und im Ziel liegt dieselbe .htaccess wie hier.
+  # What gets mirrored is public/ — but the site needs lib/, sections/ and
+  # content/ next to it, and those live one level up. So everything travels
+  # along, and the target ends up with the same .htaccess as here.
   if command -v rsync >/dev/null 2>&1; then
-    say "spiegle den Projektordner → $target (rsync)"
+    say "mirroring the project folder → $target (rsync)"
     rsync -a --delete --exclude '.git' --exclude 'deploy.log' ./ "$target"/
   else
-    # cp kann nicht löschen: was hier verschwindet, bleibt im Ziel liegen.
-    # Das soll man wissen, statt es zu entdecken.
-    say "kein rsync — kopiere mit cp; verwaiste Dateien im Ziel bleiben liegen"
+    # cp cannot delete: whatever disappears here stays behind in the target.
+    # Better to know that than to discover it.
+    say "no rsync — copying with cp; orphaned files in the target stay behind"
     cp -R ./. "$target"/
   fi
 else
-  say "kein Ziel angegeben — Docroot liegt auf dem Checkout, .htaccess liefert public/ aus"
+  say "no target given — docroot is the checkout, .htaccess serves public/"
 fi
 
-fertig "ok" 0
+done_with "ok" 0

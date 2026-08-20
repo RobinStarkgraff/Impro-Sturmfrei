@@ -1,14 +1,14 @@
 <?php
 /* ------------------------------------------------------------
-   Die Punkte einer Navigationsliste.
+   The items of a navigation list.
 
-   Beschriftung und Ziel stehen einmal in content/site.json. Der Footer
-   zeigt alle Punkte, die Kopfleiste die mit "inHeader". aria-current
-   markiert die Seite, auf der man gerade steht.
+   Label and target live once in content/site.json. The footer shows every
+   item, the header bar the ones marked "inHeader". aria-current marks the
+   page you are currently on.
 
-   $pad         Einrückung, damit der Quelltext der Seite lesbar bleibt
-   $headerOnly  nur die Punkte mit "inHeader"
-   $items       welche Liste (Standard: die Hauptnavigation)
+   $pad         indentation, to keep the page source readable
+   $headerOnly  only the items marked "inHeader"
+   $items       which list (default: the main navigation)
    ------------------------------------------------------------ */
 
 $pad = $pad ?? '';

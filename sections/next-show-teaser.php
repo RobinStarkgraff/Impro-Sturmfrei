@@ -1,16 +1,16 @@
 <?php
 /* ------------------------------------------------------------
-   Kurzer Blick auf den nächsten Termin — die ganze Liste steht auf
-   /termine/. Hier reicht: steht einer an oder nicht.
+   A quick look at the next date — the full list is on /termine/. All that
+   is needed here: is one coming up or not.
 
-   "upcoming" in content/shows.json ist null, solange nichts feststeht.
+   "upcoming" in content/shows.json is null while nothing is fixed.
    ------------------------------------------------------------ */
 
-/* upcoming_show() statt $shows["upcoming"]: ein Termin, der vorbei ist,
-   ist kein nächster Termin mehr. Siehe lib/data.php. */
+/* upcoming_show() rather than $shows["upcoming"]: a date that has passed
+   is no longer a next date. See lib/data.php. */
 $next = upcoming_show();
 ?>
-  <!-- ================= NÄCHSTE SHOW (Teaser) ================= -->
+  <!-- ================= NEXT SHOW (teaser) ================= -->
   <section class="section section--tight" id="naechste-show">
     <div class="wrap wrap--prose">
 

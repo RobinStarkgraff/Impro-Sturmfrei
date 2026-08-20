@@ -1,17 +1,17 @@
 <?php declare(strict_types=1);
 /* ============================================================
-   Nur für `make serve`.
+   For `make serve` only.
 
-   Der eingebaute Server von PHP kennt keine .htaccess. Zwei Adressen
-   sind dort umgeschrieben — /sitemap.xml und /robots.txt zeigen auf
-   PHP-Dateien —, und das erledigt dieses Skript, damit lokal dasselbe
-   erreichbar ist wie live.
+   PHP's built-in server knows nothing about .htaccess. Two addresses are
+   rewritten there — /sitemap.xml and /robots.txt point at PHP files — and
+   this script takes care of that, so the same things are reachable locally
+   as they are live.
 
-   Alles andere gibt es unverändert weiter: `return false` heißt für den
-   eingebauten Server "liefere die Datei selbst aus".
+   Everything else it passes through unchanged: `return false` tells the
+   built-in server "serve the file yourself".
 
-   Auf dem Webspace läuft diese Datei nicht. Sie liegt in tools/ und ist
-   damit ohnehin nicht adressierbar.
+   This file does not run on the webspace. It sits in tools/ and is
+   therefore not addressable anyway.
    ============================================================ */
 
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
@@ -20,16 +20,16 @@ $public = dirname(__DIR__) . '/public';
 if ($path === '/sitemap.xml') { require "$public/sitemap.php"; return; }
 if ($path === '/robots.txt')  { require "$public/robots.php"; return; }
 
-// Was es nicht gibt, ist ein 404 — auch lokal. Der eingebaute Server würde
-// sonst für /gibtsnicht/ die Startseite ausliefern, und ein toter Link fiele
-// erst live auf.
+// What does not exist is a 404 — locally too. Otherwise the built-in server
+// would serve the home page for /doesnotexist/, and a dead link would only
+// show up live.
 //
-// Gezeigt wird dieselbe Seite, die auf dem Server das ErrorDocument der
-// .htaccess einsetzt: sonst sähe man die 404-Seite lokal nie und merkte
-// nicht, wenn sie kaputt ist.
-$ziel = rtrim($public . rawurldecode($path), '/');
+// What gets shown is the same page the .htaccess ErrorDocument inserts on
+// the server: otherwise you would never see the 404 page locally and would
+// not notice when it breaks.
+$target = rtrim($public . rawurldecode($path), '/');
 
-if ($path !== '/' && !file_exists($ziel)) {
+if ($path !== '/' && !file_exists($target)) {
     http_response_code(404);
     require "$public/404/index.php";
 

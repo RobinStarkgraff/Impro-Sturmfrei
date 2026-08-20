@@ -1,25 +1,25 @@
 /* ============================================================
    1. TOKENS
 
-   Regel für alle Komponenten weiter unten: keine Farbe im Klartext.
-   Wer eine andere Deckkraft braucht, nimmt das passende Kanal-Token —
-   rgb(var(--accent-rgb) / 0.35) — und nicht rgba(184, 57, 31, 0.35).
-   Sonst wandert die Farbe beim nächsten Umfärben (und im Dark Mode)
-   nicht mit.
+   The rule for every component further down: no colour written out in the
+   clear. If you need a different opacity, take the matching channel token
+   — rgb(var(--accent-rgb) / 0.35) — and not rgba(184, 57, 31, 0.35).
+   Otherwise the colour will not travel along with the next recolouring
+   (or with dark mode).
    ============================================================ */
 
 :root {
   color-scheme: light dark;
 
-  /* --- Kanäle: eine Farbe, viele Deckkraftstufen --- */
+  /* --- Channels: one colour, many levels of opacity --- */
   --accent-rgb: 184 57 31;
   --white-rgb:  255 255 255;
   --shadow-rgb: 0 25 45;
   --scrim-rgb:  0 15 26;
 
-  /* Derselbe Backstein, aber festgenagelt: der Hero ist in beiden Modi
-     gleich dunkel, deshalb darf sein Schimmer nicht mit dem Farbschema
-     wandern. --accent-rgb dreht im Dark Mode mit, --brick-rgb nie. */
+  /* The same brick, but nailed down: the hero is equally dark in both
+     modes, so its glow must not travel with the colour scheme.
+     --accent-rgb turns with dark mode, --brick-rgb never does. */
   --brick-rgb: 184 57 31;
 
   /* --- brand --- */
@@ -30,13 +30,13 @@
 
   --accent: rgb(var(--accent-rgb));
 
-  /* Der Backstein muss zwei verschiedene Jobs machen, und ein Wert kann
-     nicht für beide den Kontrast schaffen. Flächen tragen weißen Text;
-     -text sitzt auf der Seite selbst. Geprüft gegen den Sky-Hintergrund
-     und die Glasflächen. */
-  --accent-fill:       rgb(var(--accent-rgb)); /* Weiß darauf: 5.8:1 */
+  /* The brick has to do two different jobs, and one value cannot provide
+     the contrast for both. Filled areas carry white text; -text sits on
+     the page itself. Checked against the sky background and the glass
+     surfaces. */
+  --accent-fill:       rgb(var(--accent-rgb)); /* white on it: 5.8:1 */
   --accent-fill-hover: #8f2a15;
-  --accent-text:       #7a2413;                /* darauf auf Sky: 5.1:1 */
+  --accent-text:       #7a2413;                /* it on sky: 5.1:1 */
 
   /* --- page (light) --- */
   --page-top:    var(--cream);
@@ -55,20 +55,20 @@
   --bar-border: rgb(var(--white-rgb) / 0.14);
   --on-bar:     #ffffff;
 
-  /* --- Glas auf dunklem Grund ---------------------------------------
-     Die Behandlung, die sich Kopfleisten-Button, Hero-Button und die
-     Lightbox-Buttons teilen. Diese Flächen sitzen immer auf dunklen
-     Pixeln (Foto, Leiste, Lightbox) und drehen im Dark Mode bewusst
-     NICHT mit — dort ist es schon dunkel. */
+  /* --- Glass on a dark ground ---------------------------------------
+     The treatment shared by the header-bar button, the hero button and
+     the lightbox buttons. These surfaces always sit on dark pixels
+     (photo, bar, lightbox) and deliberately do NOT turn with dark mode —
+     it is already dark there. */
   --glass:        rgb(var(--white-rgb) / 0.12);
   --glass-hover:  rgb(var(--white-rgb) / 0.26);
   --glass-border: rgb(var(--white-rgb) / 0.30);
 
-  /* --- Hero: eigene Bühne, eigene Grundfarben --- */
+  /* --- Hero: its own stage, its own base colours --- */
   --hero-top:    #06263d;
   --hero-mid:    #001b2e;
   --hero-bottom: #000f1a;
-  --hero-accent: #ffb8a2; /* aufgehellter Backstein für die H1-Zeile */
+  --hero-accent: #ffb8a2; /* lightened brick for the H1 line */
 
   /* --- type --- */
   --font-display: "Anton", "Arial Narrow", "Haettenschweiler", Impact, sans-serif;
@@ -96,25 +96,25 @@
   --section-y: clamp(4rem, 9vw, 8rem);
   --gutter:    clamp(1.25rem, 4vw, 4rem);
 
-  /* Die Höhe der Kopfleiste. Sie ist ein eigener Abschnitt und liegt fest
-     oben; <body> hält genau diese Höhe als padding-top frei, der Hero zieht
-     sie von der Fensterhöhe ab, und jedes Sprungziel hält sie als
-     scroll-margin frei. Deshalb steht sie hier und nicht in 06-header.css:
-     drei Dateien rechnen mit ihr. */
+  /* The height of the header bar. It is a section of its own and fixed to
+     the top; <body> keeps exactly this height free as padding-top, the hero
+     subtracts it from the viewport height, and every jump target keeps it
+     free as scroll-margin. Hence it lives here and not in 06-header.css:
+     three files do arithmetic with it. */
   --header-h: clamp(4.5rem, 3.2rem + 3.4vw, 6.75rem);
 
-  /* --- Breiten: zwei Maße und ein Ausbruch ---------------------------------
-     Ein einziges --measure musste vorher zwei Aufgaben erfüllen: wie breit
-     die Seite auf einem großen Schirm werden darf, UND wie lang eine
-     Textzeile werden darf. Das eine will breit, das andere schmal — mit
-     einem Wert gewinnt immer der Text, und die Seite steht als schmale
-     Spalte in einem weiten Feld.
+  /* --- Widths: two measures and one breakout ------------------------------
+     A single --measure previously had to do two jobs: how wide the page may
+     grow on a large screen, AND how long a line of text may run. One wants
+     wide, the other narrow — with a single value the text always wins, and
+     the page stands as a narrow column in a wide field.
 
-     Deshalb: -page für alles Gerasterte (Raster, Fotos, Hero), -prose für
-     Lesetext. Was ganz nach außen soll (die Slider im Archiv), nimmt
-     .slider-wrap--bleed und gar kein Maß. */
-  --measure-page:  82rem;   /* 1312 px — Raster, Hero, Kartenreihen */
-  --measure-prose: 48rem;   /*  768 px — Lesetext, ~75 Zeichen       */
+     Hence: -page for everything laid out in a grid (grids, photos, hero),
+     -prose for reading text. Whatever should go right to the edge (the
+     sliders in the archive) takes .slider-wrap--bleed and no measure at
+     all. */
+  --measure-page:  82rem;   /* 1312 px — grids, hero, card rows       */
+  --measure-prose: 48rem;   /*  768 px — reading text, ~75 characters */
 
   /* --- radii --- */
   --radius-sm:   0.625rem;
@@ -159,11 +159,11 @@
     --bar:        rgb(4 16 26 / 0.82);
     --bar-border: rgb(var(--white-rgb) / 0.10);
 
-    --accent-fill:       #c0401f; /* Weiß darauf: 5.3:1 */
+    --accent-fill:       #c0401f; /* white on it: 5.3:1 */
     --accent-fill-hover: #a03318;
-    --accent-text:       #f0866a; /* darauf auf der dunklen Seite: 5.9:1 */
+    --accent-text:       #f0866a; /* it on the dark page: 5.9:1 */
 
-    /* Dunkler Grund braucht kräftigere Schatten, nicht nur schwarze. */
+    /* A dark ground needs stronger shadows, not just black ones. */
     --shadow-lg: 0 4px 8px rgb(var(--shadow-rgb) / 0.30),
                  0 18px 40px rgb(var(--shadow-rgb) / 0.45);
     --shadow-xl: 0 8px 16px rgb(var(--shadow-rgb) / 0.35),

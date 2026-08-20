@@ -1,10 +1,10 @@
 <?php
 /* ------------------------------------------------------------
-   Der <head> jeder Seite.
+   The <head> of every page.
 
-   Bekommt $slug und $page aus lib/pages.php. Zwei Dinge hängen von der
-   Seite ab: das Hero-Foto wird nur auf der Startseite vorgeladen, und
-   Impressum und Datenschutz stehen auf noindex.
+   Receives $slug and $page from lib/pages.php. Two things depend on the
+   page: the hero photo is only preloaded on the home page, and Impressum
+   and privacy policy are set to noindex.
    ------------------------------------------------------------ */
 
 $meta = $site['meta'];
@@ -22,9 +22,9 @@ $og = og_image();
 <?php endif; ?>
 
 <?php if (!$canonical): ?>
-  <!-- og:url, canonical, robots.txt und sitemap.xml entstehen automatisch,
-       sobald in content/site.json "url" auf die endgültige Domain zeigt.
-       Für die Social-Karte zusätzlich "ogImage" setzen (1200x630). -->
+  <!-- og:url, canonical, robots.txt and sitemap.xml appear automatically as
+       soon as "url" in content/site.json points at the final domain. For the
+       social card, also set "ogImage" (1200x630). -->
 <?php else: ?>
   <link rel="canonical" href="<?= esc($canonical) ?>"/>
 <?php endif; ?>
@@ -42,22 +42,22 @@ $og = og_image();
   <meta property="og:image:width" content="1200"/>
   <meta property="og:image:height" content="630"/>
 <?php endif; ?>
-  <!-- Ohne Bild bleibt es bei der kleinen Karte: eine große leere ist schlechter. -->
+  <!-- Without an image it stays the small card: a large empty one is worse. -->
   <meta name="twitter:card" content="<?= $og ? 'summary_large_image' : 'summary' ?>"/>
 
-  <!-- Die Symbole in klein. Das Logo selbst ist 2240 px breit und wiegt
-       258 KB — als Favicon und als Symbol fürs Homescreen ist das ein
-       Vielfaches dessen, was angezeigt wird, und es ist nicht quadratisch.
-       `make icons` legt die kleinen Fassungen daneben; solange sie fehlen,
-       bleibt es beim Logo (asset_or in lib/paths.php). -->
+  <!-- The icons, small. The logo itself is 2240 px wide and weighs 258 KB —
+       as a favicon and as a home-screen icon that is many times what gets
+       displayed, and it is not square. `make icons` puts the small versions
+       next to it; while they are missing it stays with the logo (asset_or in
+       lib/paths.php). -->
   <link rel="icon" href="<?= esc(asset_versioned(asset_or('images/logo/favicon.png', $brand['logo']))) ?>"/>
   <link rel="apple-touch-icon" href="<?= esc(asset_versioned(asset_or('images/logo/apple-touch-icon.png', $brand['logo']))) ?>"/>
 
-  <!-- Fonts: ein Display-Schnitt für Headlines, ein Grotesk für den Text.
-       Selbst gehostet aus public/fonts/ — @font-face steht in public/css/00-fonts.css.
-       Bitte nichts wieder auf fonts.googleapis.com umstellen: das überträgt
-       die IP jedes Besuchers an Google. Anton wird vorgeladen, weil es in der
-       H1 jeder Seite direkt über dem Falz steckt. -->
+  <!-- Fonts: one display face for headlines, one grotesque for body text.
+       Self-hosted from public/fonts/ — @font-face lives in public/css/00-fonts.css.
+       Please do not switch this back to fonts.googleapis.com: that hands every
+       visitor's IP to Google. Anton is preloaded because it sits in the H1 of
+       every page, right above the fold. -->
   <link rel="preload" as="font" type="font/woff2"
         href="<?= esc(asset('fonts/anton-v27-latin_latin-ext-regular.woff2')) ?>" crossorigin/>
 <?php if ($slug === 'index'): ?>
@@ -65,20 +65,20 @@ $og = og_image();
   <link rel="preload" as="image" href="<?= esc(asset_versioned($site['hero']['photo'])) ?>" fetchpriority="high"/>
 <?php endif; ?>
 
-  <!-- Die Stylesheets einzeln, in Dateinamenfolge: die Reihenfolge macht der
-       Dateiname, nicht eine Liste, die man pflegen müsste. Der Stempel hinter
-       jedem Namen ist die Änderungszeit der Datei — so darf der Browser sie
-       beliebig lange behalten und holt sie doch sofort neu, sobald sie
-       bearbeitet wurde. -->
+  <!-- The stylesheets individually, in filename order: the order comes from
+       the filename, not from a list somebody would have to maintain. The stamp
+       behind each name is the file's modification time — so the browser may
+       keep it for as long as it likes and still fetches it again the moment it
+       was edited. -->
 <?php foreach (stylesheets() as $sheet): ?>
   <link rel="stylesheet" href="<?= esc(asset_versioned($sheet)) ?>"/>
 <?php endforeach; ?>
 
-  <!-- Strukturierte Daten: damit Google die Gruppe als Entität und die Shows
-       als Events versteht (Voraussetzung für Event-Rich-Results). Entsteht aus
-       content/shows.json — neue Show dort eintragen, nicht hier.
-       Die Spielernamen stehen bewusst nicht als Person-Entitäten drin —
-       im Sichtbaren reichen die Vornamen, maschinenlesbar müssen sie nicht. -->
+  <!-- Structured data: so that Google understands the group as an entity and
+       the shows as events (the prerequisite for event rich results). Built from
+       content/shows.json — enter a new show there, not here.
+       The performers' names deliberately do not appear as Person entities —
+       first names are enough on screen, they need not be machine-readable. -->
   <script type="application/ld+json">
 <?= json_ld($slug, $page) ?>
 

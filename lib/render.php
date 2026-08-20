@@ -1,24 +1,23 @@
 <?php declare(strict_types=1);
 /* ------------------------------------------------------------
-   Zusammensetzen
+   Assembling
 
-   Eine Seite besteht aus Abschnitten, und ein Abschnitt ist eine Datei
-   in sections/. Diese Datei setzt sie zusammen: <head>, Kopfleiste, die
-   Abschnitte der Seite in ihrer Reihenfolge, Footer.
+   A page consists of sections, and a section is a file in sections/. This
+   file puts them together: <head>, header bar, the page's sections in
+   their order, footer.
 
-   Jeder Abschnitt sieht $site, $shows, $booking und $legal — die Daten
-   aus content/ — und zusätzlich das, was in lib/pages.php neben seinem
-   Namen steht. Mehr braucht er nicht zu wissen, insbesondere nicht, auf
-   welcher Seite er steht.
+   Every section sees $site, $shows, $booking and $legal — the data from
+   content/ — plus whatever stands next to its name in lib/pages.php. It
+   does not need to know more, and in particular not which page it is on.
    ------------------------------------------------------------ */
 
-/** Ein Abschnitt als Zeichenkette, ohne Leerzeilen am Ende. */
+/** One section as a string, without trailing blank lines. */
 function section_html(string $name, array $vars = []): string
 {
     $file = SITE_ROOT . "/sections/$name.php";
 
     if (!is_file($file)) {
-        throw new RuntimeException("Abschnitt fehlt: sections/$name.php");
+        throw new RuntimeException("Section missing: sections/$name.php");
     }
 
     $site = site();
@@ -26,9 +25,9 @@ function section_html(string $name, array $vars = []): string
     $booking = booking();
     $legal = legal();
 
-    // Die Angaben aus lib/pages.php als Variablen: aus ['title' => 'Termine']
-    // wird $title. EXTR_SKIP, damit ein Abschnitt die Daten oben nicht
-    // versehentlich überschreiben kann.
+    // The values from lib/pages.php as variables: ['title' => 'Termine']
+    // becomes $title. EXTR_SKIP, so that a section cannot accidentally
+    // overwrite the data above.
     extract($vars, EXTR_SKIP);
 
     ob_start();
@@ -37,17 +36,17 @@ function section_html(string $name, array $vars = []): string
     return rtrim((string) ob_get_clean(), "\n");
 }
 
-/** Denselben Abschnitt direkt ausgeben. */
+/** The same section, printed straight out. */
 function section(string $name, array $vars = []): void
 {
     echo section_html($name, $vars);
 }
 
 /**
- * Die Abschnitte einer Seite, mit einer Leerzeile dazwischen.
+ * The sections of a page, with a blank line between them.
  *
- * Ein Eintrag ist entweder ein Name ("hero") oder ein Paar aus Name und
- * Angaben (['page-hero', [...]]).
+ * An entry is either a name ("hero") or a pair of name and values
+ * (['page-hero', [...]]).
  */
 function sections_html(array $entries): string
 {
@@ -62,17 +61,17 @@ function sections_html(array $entries): string
 }
 
 /**
- * Die ganze Seite.
+ * The whole page.
  *
- * Das ist, was eine Datei unter public/ aufruft — mehr steht dort nicht
- * drin als ihr eigener Name.
+ * This is what a file under public/ calls — nothing else stands in there
+ * but its own name.
  */
 function render_page(string $slug): void
 {
     $pages = pages();
 
     if (!isset($pages[$slug])) {
-        throw new RuntimeException("Keine Seite \"$slug\" in lib/pages.php");
+        throw new RuntimeException("No page \"$slug\" in lib/pages.php");
     }
 
     current_slug($slug);
@@ -82,14 +81,14 @@ function render_page(string $slug): void
     echo '<html lang="', esc(site()['meta']['lang']), '">', "\n";
     echo <<<HTML
     <!--
-         Diese Seite wird bei jedem Aufruf zusammengesetzt — es gibt keinen
-         Build und keine erzeugte Datei. Sie besteht aus:
+         This page is assembled on every request — there is no build and no
+         generated file. It consists of:
 
-           content/*.json     die Angaben (Links, Termine, Formate, Rechtliches)
-           sections/*.php     die Abschnitte, aus denen sie zusammengesetzt ist
-           public/…/index.php die zwei Zeilen, die beides zusammenrufen
+           content/*.json     the values (links, dates, formats, legal)
+           sections/*.php     the sections it is assembled from
+           public/…/index.php the two lines that call both together
 
-         Bearbeitet wird also dort, nicht hier.
+         So that is where you edit, not here.
     -->
     HTML;
     echo "\n";
@@ -116,11 +115,11 @@ function render_page(string $slug): void
         echo "\n\n";
     }
 
-    // Ohne Änderungsstempel, anders als die Stylesheets: main.js lädt die
-    // übrigen Module selbst nach, und deren Pfade stehen in seinem
-    // Quelltext — ein Stempel am Elternteil würde ein Update von
-    // slider.js also nur scheinbar durchreichen. Für js/ gilt daher die
-    // normale Rückfrage des Browsers (Last-Modified).
+    // No modification stamp, unlike the stylesheets: main.js pulls in the
+    // remaining modules itself, and their paths live in its source — so a
+    // stamp on the parent would only appear to pass an update to slider.js
+    // through. js/ therefore relies on the browser's normal revalidation
+    // (Last-Modified).
     echo '<script type="module" src="', esc(asset('js/main.js')), '"></script>', "\n";
     echo "</body>\n";
     echo "</html>\n";

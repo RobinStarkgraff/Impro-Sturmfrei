@@ -1,12 +1,12 @@
 <?php
 /* ------------------------------------------------------------
-   Der Footer.
+   The footer.
 
-   Zeigt alle Navigationspunkte (nicht nur die der Kopfleiste), die
-   Kanäle aus content/site.json und unten die Pflichtseiten.
+   Shows every navigation item (not just the ones in the header bar), the
+   channels from content/site.json, and the mandatory pages at the bottom.
 
-   Die Linklisten sind <nav> mit Namen: so tauchen sie in der
-   Landmark-Übersicht von Screenreadern auf.
+   The link lists are <nav> elements with names: that way they show up in a
+   screen reader's landmark overview.
    ------------------------------------------------------------ */
 ?>
 <!-- ================= FOOTER ================= -->
@@ -52,9 +52,9 @@
 
     <div class="footer-bottom">
       <p class="footer-bottom__note">
-        <?php /* Das Gründungsjahr steht in content/site.json, das laufende kommt
-                 vom Server: sonst steht im Januar auf jeder Seite die
-                 Jahreszahl von gestern, und niemand meldet es. */ ?>
+        <?php /* The founding year lives in content/site.json, the current one
+                 comes from the server: otherwise every page carries last
+                 year's number through January and nobody reports it. */ ?>
         © <?= esc(max((int) $site['copyrightYear'], (int) date('Y'))) ?> <?= esc($site['brand']['name']) ?>. Alles improvisiert, nichts garantiert.
       </p>
       <nav aria-label="Rechtliches">

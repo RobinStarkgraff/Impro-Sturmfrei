@@ -53,8 +53,8 @@
   background: var(--surface-hover);
 }
 
-/* Im Hero sitzt der Button auf dem dunklen Foto. Der Rand ist heller als
-   --glass-border, weil hier direkt das Foto dahinter liegt. */
+/* In the hero the button sits on the dark photo. Its border is lighter
+   than --glass-border because the photo lies directly behind it. */
 .btn--on-dark {
   background: var(--glass);
   border-color: rgb(var(--white-rgb) / 0.45);
@@ -79,12 +79,12 @@
 
 
 /* ------------------------------------------------------------
-   Runder Icon-Button
+   Round icon button
 
-   Slider-Pfeile und Lightbox-Buttons teilen dieselbe Form: rundes
-   Kästchen, zentriertes Glyph, ein Rand, weicher Übergang. Die steht hier
-   einmal; --light und --glass sind die zwei Anstriche. Wo der Button
-   sitzt, bestimmt die jeweilige Komponente — hier steht keine Position.
+   Slider arrows and lightbox buttons share the same shape: round box,
+   centred glyph, a border, a soft transition. It stands here once;
+   --light and --glass are the two coats of paint. Where the button sits is
+   decided by the respective component — no position is set here.
    ------------------------------------------------------------ */
 
 .icon-btn {
@@ -101,7 +101,7 @@
     background-color var(--fast) var(--ease);
 }
 
-/* Auf der hellen Seite: weiße Scheibe mit Schatten (Slider-Pfeile). */
+/* On the light page: white disc with a shadow (slider arrows). */
 .icon-btn--light {
   background: rgb(var(--white-rgb) / 0.85);
   border-color: var(--border);
@@ -113,7 +113,7 @@
   background: var(--white);
 }
 
-/* Auf dunklem Grund: Milchglas (Lightbox). */
+/* On a dark ground: frosted glass (lightbox). */
 .icon-btn--glass {
   background: var(--glass);
   border-color: var(--glass-border);

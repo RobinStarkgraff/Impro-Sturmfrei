@@ -1,17 +1,16 @@
 # ============================================================
-# `make check` bei jedem Push und jedem Pull Request.
+# `make check` on every push and every pull request.
 #
-# Warum das hier steht: netcup zieht das Repo selbst, und der Checkout IST
-# die Seite. Ein Push ist damit die Veröffentlichung — tools/deploy.sh läuft
-# danach und sagt das auch ("Sie sind schon online"). Die Prüfung gehört
-# also davor, und der Rechner, von dem aus gepusht wird, hat kein PHP.
+# Why this exists: netcup pulls the repo itself, and the checkout IS the
+# site. A push is therefore the publication — tools/deploy.sh runs afterwards
+# and says as much ("They are already online"). So the check belongs before
+# it, and the machine you push from has no PHP.
 #
-# Hier hat er eins. Ein roter Haken am Commit erreicht euch, bevor jemand
-# die Seite aufruft.
+# Here it has one. A red mark on the commit reaches you before anybody opens
+# the site.
 #
-# Gebaut wird nichts, installiert wird nichts: die Seite braucht kein
-# Composer, kein npm und keine Erweiterung über das hinaus, was jede
-# PHP-Installation mitbringt.
+# Nothing is built, nothing is installed: the site needs no Composer, no npm
+# and no extension beyond what every PHP installation ships with.
 # ============================================================
 
 name: check
@@ -23,22 +22,22 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
-    # Dasselbe PHP wie auf dem Webspace. Läuft es hier, läuft es dort.
+    # The same PHP as on the webspace. If it runs here, it runs there.
     container: php:8.2-cli
 
     steps:
       - uses: actions/checkout@v4
 
-      # make ist im schlanken PHP-Image nicht dabei; die zwei Schritte aus
-      # dem check-Ziel direkt auszuführen ist ehrlicher als ein apt-get für
-      # eine einzige Zeile.
+      # make is not part of the slim PHP image; running the two steps from
+      # the check target directly is more honest than an apt-get for a
+      # single line.
       - name: Syntax
         run: |
-          fehler=0
-          for datei in $(find lib sections public tools -name '*.php'); do
-            php -l "$datei" > /dev/null 2>&1 || { php -l "$datei"; fehler=1; }
+          failed=0
+          for file in $(find lib sections public tools -name '*.php'); do
+            php -l "$file" > /dev/null 2>&1 || { php -l "$file"; failed=1; }
           done
-          [ $fehler -eq 0 ] || { echo "Erst den Syntaxfehler, dann alles andere."; exit 1; }
+          [ $failed -eq 0 ] || { echo "The syntax error first, then everything else."; exit 1; }
 
-      - name: Seiten prüfen
+      - name: Check the pages
         run: php tools/check.php

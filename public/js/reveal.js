@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------
-   Einblenden beim Scrollen.
+   Fade in while scrolling.
    ------------------------------------------------------------ */
 
 import { CSS_CLASS, hook } from "./classes.js";
@@ -12,7 +12,7 @@ export function initReveal() {
 
   const showAll = () => targets.forEach((el) => el.classList.add(CSS_CLASS.revealed));
 
-  // Kein Observer oder reduzierte Bewegung: einfach alles zeigen.
+  // No observer, or reduced motion: simply show everything.
   if (prefersReducedMotion() || !("IntersectionObserver" in window)) {
     showAll();
     return;
@@ -28,7 +28,7 @@ export function initReveal() {
 
   targets.forEach((el) => observer.observe(el));
 
-  // Umschalten mitten im Besuch: nichts mehr verstecken, was noch kommt.
+  // Switched mid-visit: stop hiding anything that is still to come.
   onMotionPreferenceChange(() => {
     if (!prefersReducedMotion()) return;
     observer.disconnect();

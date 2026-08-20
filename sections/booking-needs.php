@@ -1,7 +1,7 @@
 <?php
-/* Was es vor Ort braucht — die Liste steht in content/booking.json. */
+/* What is needed on site — the list lives in content/booking.json. */
 ?>
-  <!-- ================= WAS WIR BRAUCHEN ================= -->
+  <!-- ================= WHAT WE NEED ================= -->
   <section class="section" id="voraussetzungen">
     <div class="wrap">
 

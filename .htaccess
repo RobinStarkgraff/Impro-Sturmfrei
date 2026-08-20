@@ -1,96 +1,95 @@
 # ============================================================
-# Sturmfrei Impro — Apache-Regeln für das Webverzeichnis
+# Sturmfrei Impro — Apache rules for the web directory
 #
-# Bei netcup ist der Git-Checkout gleichzeitig das Webverzeichnis: diese
-# Datei liegt also im Projektstamm und landet mit dem Deploy oben im
-# Docroot. Ausgeliefert werden soll aber nur public/.
+# On netcup the git checkout is at the same time the web directory: this
+# file therefore sits in the project root and lands at the top of the
+# docroot with the deploy. But only public/ is meant to be served.
 #
-# Das erledigt eine Regel, und sie erledigt beides zugleich: jede Anfrage
-# wird nach public/ umgeschrieben. Was dort nicht liegt — content/, lib/,
-# sections/, tools/, .git/, README.md, Makefile — ist damit nicht "gesperrt",
-# sondern schlicht nicht adressierbar und endet als 404. Eine Deny-Liste
-# müsste man bei jeder neuen Quelldatei nachziehen; hier gibt es nichts
-# nachzuziehen.
+# One rule takes care of that, and it takes care of both things at once:
+# every request is rewritten into public/. Whatever does not lie there —
+# content/, lib/, sections/, tools/, .git/, README.md, Makefile — is
+# therefore not "locked off" but simply not addressable, and ends as a 404.
+# A deny list would have to be extended with every new source file; here
+# there is nothing to extend.
 #
-# Genau daran hängt die Sicherheit dieses Aufbaus: content/*.json und die
-# PHP-Dateien in lib/ und sections/ werden vom Server nie ausgeliefert und
-# nie ausgeführt, weil sie außerhalb des ausgelieferten Ordners liegen.
+# The security of this setup hangs on exactly that: content/*.json and the
+# PHP files in lib/ and sections/ are never served and never executed by
+# the server, because they lie outside the served folder.
 #
-# Der Preis: ohne mod_rewrite greift nichts davon. Deshalb steht unten
-# trotzdem eine Notbremse für .git, und Options -Indexes verhindert, dass
-# im Fehlerfall der Projektordner als Liste im Netz steht.
+# The price: without mod_rewrite none of it applies. Which is why there is
+# an emergency brake for .git below anyway, and Options -Indexes keeps the
+# project folder from being listed on the web if things go wrong.
 # ============================================================
 
 Options -Indexes
 DirectoryIndex index.php index.html
 
-# Falsche Adresse: die eigene 404-Seite statt Apaches englischer Vorgabe.
-# /404/ wird von der Regel unten nach public/404/ umgeschrieben; der Status
-# bleibt dabei 404, es ist keine Weiterleitung.
+# Wrong address: our own 404 page instead of Apache's English default.
+# /404/ is rewritten to public/404/ by the rule below; the status stays 404,
+# this is not a redirect.
 ErrorDocument 404 /404/
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
 
-  # /public/… von außen: einmal 301 auf die saubere Adresse. Sonst wäre jede
-  # Seite unter zwei Adressen erreichbar, und das canonical zeigt nur auf
-  # eine davon.
+  # /public/… from outside: one 301 to the clean address. Otherwise every
+  # page would be reachable under two addresses, and the canonical only
+  # points at one of them.
   RewriteCond %{ENV:REDIRECT_STATUS} ^$
   RewriteRule ^public/(.*)$ /$1 [R=301,L]
 
-  # Zwei Dateien tragen die Endung, die Suchmaschinen erwarten, und werden
-  # doch von PHP erzeugt: sie brauchen die Domain aus content/site.json und
-  # die Liste der Seiten aus lib/pages.php. Deshalb je eine eigene Regel,
-  # vor der allgemeinen darunter.
+  # Two files carry the extension search engines expect and are yet produced
+  # by PHP: they need the domain from content/site.json and the list of pages
+  # from lib/pages.php. Hence a rule each, before the general one below.
   RewriteRule ^sitemap\.xml$ public/sitemap.php [L]
   RewriteRule ^robots\.txt$ public/robots.php [L]
 
-  # Fehlender Schrägstrich am Ende: /termine → /termine/, einmal 301.
+  # Missing trailing slash: /termine → /termine/, one 301.
   #
-  # Ohne diese Regel würde /termine erst nach public/termine umgeschrieben;
-  # dort ist es ein Ordner, und mod_dir hängt den Schrägstrich selbst an —
-  # aber an die *umgeschriebene* Adresse. Der Besucher sähe kurz
-  # /public/termine/, das die Regel ganz oben dann noch einmal umleitet.
-  # Zwei Weiterleitungen und dazwischen der interne Pfad in der Adresszeile.
+  # Without this rule, /termine would first be rewritten to public/termine;
+  # there it is a folder, and mod_dir appends the slash itself — but to the
+  # *rewritten* address. The visitor would briefly see /public/termine/,
+  # which the rule at the very top then redirects once more. Two redirects,
+  # and the internal path in the address bar in between.
   #
-  # Greift nur bei Adressen ohne Punkt (also keine Datei) und ohne
-  # Schrägstrich am Ende — deshalb kann sie sich nicht selbst auslösen.
+  # Only applies to addresses without a dot (so not a file) and without a
+  # trailing slash — which is why it cannot trigger itself.
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteRule ^([^.]+[^/])$ /$1/ [R=301,L]
 
-  # Alles andere nach public/. Die Bedingung ist nicht Zierde: /termine/ wird
-  # zu public/termine/, darauf schlägt DirectoryIndex zu und fragt intern
-  # public/termine/index.php nach — ohne die Bedingung würde daraus
+  # Everything else into public/. The condition is not decoration: /termine/
+  # becomes public/termine/, DirectoryIndex then kicks in and internally asks
+  # for public/termine/index.php — without the condition that would turn into
   # public/public/termine/index.php.
   RewriteCond %{REQUEST_URI} !^/public/
   RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
 
 # ------------------------------------------------------------
-# Zwischenspeichern
+# Caching
 #
-# Hinter jedem Stylesheet steht seine Änderungszeit (?v=… aus
-# asset_versioned() in lib/paths.php). Erst diese Kopfzeilen machen daraus
-# etwas: der Browser darf die Datei ein Jahr behalten und holt sie doch
-# sofort neu, sobald der Stempel sich ändert. Ohne sie fragt er bei jedem
-# Besuch für jede Datei einzeln nach — bei 17 Stylesheets, 9 Modulen,
-# 4 Schriften und den Fotos sind das reihenweise 304er vor dem ersten Pixel.
+# Behind every stylesheet stands its modification time (?v=… from
+# asset_versioned() in lib/paths.php). Only these headers make something of
+# that: the browser may keep the file for a year and still fetches it again
+# the moment the stamp changes. Without them it asks about every file
+# individually on every visit — with 17 stylesheets, 9 modules, 4 fonts and
+# the photos, that is 304s by the row before the first pixel.
 #
-# Die Show-Fotos tragen keinen Stempel und brauchen keinen: sie liegen in
-# Ordnern nach Datum, ein anderes Foto ist dort immer eine andere Datei.
-# Wo der Dateiname dagegen festliegt und der Inhalt wechseln kann — Logo,
-# Symbole, Hero- und Gruppenfotos —, hängt der Stempel dran (siehe
-# asset_versioned in sections/hero.php, about.php, head.php und header.php).
-# Ohne ihn bekäme ein ausgetauschtes Foto ein Jahr lang niemand zu sehen.
+# The show photos carry no stamp and need none: they live in folders by
+# date, so a different photo there is always a different file. Where the
+# filename is fixed and the content can change, on the other hand — logo,
+# icons, hero and group photos — the stamp is attached (see asset_versioned
+# in sections/hero.php, about.php, head.php and header.php). Without it
+# nobody would get to see a replaced photo for a year.
 #
-# js/ bekommt bewusst kein "immutable": main.js lädt die übrigen Module
-# selbst nach, deren Pfade in seinem Quelltext stehen, und ein Stempel am
-# Elternteil würde ein Update von slider.js nur scheinbar durchreichen.
-# Eine Woche mit Rückfrage ist der ehrliche Kompromiss.
+# js/ deliberately gets no "immutable": main.js pulls in the remaining
+# modules itself, their paths live in its source, and a stamp on the parent
+# would only appear to pass an update to slider.js through. A week with
+# revalidation is the honest compromise.
 #
-# Die Seiten selbst nie: sie entstehen bei jedem Aufruf neu, und ein
-# zwischengespeicherter Termin wäre ein falscher Termin.
+# The pages themselves never: they are rebuilt on every request, and a
+# cached date would be a wrong date.
 # ------------------------------------------------------------
 <IfModule mod_headers.c>
   <FilesMatch "\.(css|woff2|jpg|jpeg|png|gif|svg|ico)$">
@@ -107,12 +106,12 @@ ErrorDocument 404 /404/
 </IfModule>
 
 # ------------------------------------------------------------
-# Komprimieren
+# Compression
 #
-# Die Seiten sind Text, die Stylesheets sind Text mit vielen Kommentaren —
-# genau das, was gzip auf ein Viertel bringt. Bilder und Schriften stehen
-# absichtlich nicht in der Liste: woff2 und jpg sind bereits komprimiert,
-# ein zweiter Durchgang kostet nur Rechenzeit.
+# The pages are text, the stylesheets are text with a lot of comments —
+# exactly what gzip takes down to a quarter. Images and fonts are
+# deliberately absent from the list: woff2 and jpg are already compressed,
+# and a second pass only costs compute.
 # ------------------------------------------------------------
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
@@ -121,20 +120,20 @@ ErrorDocument 404 /404/
 </IfModule>
 
 # ------------------------------------------------------------
-# Kopfzeilen zur Sicherheit
+# Security headers
 #
-# Die Richtlinie unten ist so eng, wie sie nur sein kann, und das ist keine
-# Strenge, sondern eine Beschreibung: diese Seite lädt nichts von fremden
-# Servern, hat kein Formular, kein Analytics, keine Schrift von Google und
-# kein einziges Skript im Markup. Alles kommt von 'self'.
+# The policy below is as tight as it can possibly be, and that is not
+# strictness but a description: this site loads nothing from third-party
+# servers, has no form, no analytics, no font from Google and not a single
+# script in the markup. Everything comes from 'self'.
 #
-# Das JSON-LD im <head> ist ein <script type="application/ld+json"> und
-# damit ein Datenblock, kein Skript — es wird nicht ausgeführt und fällt
-# nicht unter script-src. Nach dem Einschalten trotzdem einmal jede Seite
-# mit offener Konsole aufrufen.
+# The JSON-LD in the <head> is a <script type="application/ld+json"> and
+# therefore a data block, not a script — it is not executed and does not
+# fall under script-src. After switching this on, still open every page once
+# with the console open.
 #
-# form-action 'none': es gibt kein Formular auf der Seite. Steht später
-# eines da, gehört hier 'self' hin.
+# form-action 'none': there is no form on the site. If one appears later,
+# 'self' belongs here.
 # ------------------------------------------------------------
 <IfModule mod_headers.c>
   Header always set X-Content-Type-Options "nosniff"
@@ -143,16 +142,16 @@ ErrorDocument 404 /404/
   Header always set Content-Security-Policy "default-src 'self'; img-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
 </IfModule>
 
-# Notbremse, falls mod_rewrite fehlt und oben nichts greift.
+# Emergency brake in case mod_rewrite is missing and nothing above applies.
 RedirectMatch 404 ^/\.git(/|$)
 
 # ------------------------------------------------------------
-# Noch nicht einschalten: erst wenn das Let's-Encrypt-Zertifikat steht.
-# Vorher schaltet der HTTPS-Zwang die Seite ab. Beides kann netcup auch im
-# WCP erledigen — wenn es das dort gibt, gehört es dorthin und nicht hier.
+# Do not switch this on yet: only once the Let's Encrypt certificate is in
+# place. Before that, forcing HTTPS takes the site offline. netcup can also
+# handle both in the WCP — if it offers that, it belongs there and not here.
 #
-# Die www-Form ist die richtige: das canonical und og:url aus
-# content/site.json zeigen auf https://www.impro-sturmfrei.de/.
+# The www form is the right one: the canonical and og:url from
+# content/site.json point at https://www.impro-sturmfrei.de/.
 # ------------------------------------------------------------
 # <IfModule mod_rewrite.c>
 #   RewriteCond %{HTTPS} !=on

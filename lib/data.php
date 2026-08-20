@@ -1,18 +1,18 @@
 <?php declare(strict_types=1);
 /* ------------------------------------------------------------
-   Die Daten aus content/.
+   The data from content/.
 
-   Vier Dateien, vier Funktionen. Gelesen wird je Aufruf einmal —
-   `static` hält das Ergebnis, damit zehn Abschnitte nicht zehnmal
-   dieselbe Datei aufmachen.
+   Four files, four functions. Read once per request — `static` holds
+   on to the result so that ten sections don't open the same file ten
+   times.
 
-   $comment-Schlüssel sind Kommentare in den Datendateien, keine
-   Daten, und werden hier entfernt. Auf jeder Ebene: ein $comment in
-   "links" würde sonst als Follow-Karte, als Footer-Link und als
-   sameAs-Eintrag im JSON-LD landen.
+   $comment keys are comments in the data files, not data, and are
+   stripped here. At every level: a $comment inside "links" would
+   otherwise end up as a follow card, as a footer link and as a sameAs
+   entry in the JSON-LD.
    ------------------------------------------------------------ */
 
-/** Eine Datei aus content/, ohne die Kommentarschlüssel. */
+/** One file from content/, without the comment keys. */
 function read_json(string $name): array
 {
     $path = SITE_ROOT . "/content/$name.json";
@@ -21,7 +21,7 @@ function read_json(string $name): array
     return strip_comments($data);
 }
 
-/** Entfernt jeden Schlüssel, der mit $comment beginnt — rekursiv. */
+/** Strips every key starting with $comment — recursively. */
 function strip_comments(array $data): array
 {
     $clean = [];
@@ -40,10 +40,10 @@ function booking(): array { static $d; return $d ??= read_json('booking'); }
 function legal(): array   { static $d; return $d ??= read_json('legal'); }
 
 /* ------------------------------------------------------------
-   Datum
+   Dates
    ------------------------------------------------------------ */
 
-/** Ist das ein Datum in der Form 2026-01-09 — und gibt es den Tag? */
+/** Is this a date in the form 2026-01-09 — and does that day exist? */
 function is_iso_date(string $value): bool
 {
     if (!preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $value, $m)) return false;
@@ -51,7 +51,7 @@ function is_iso_date(string $value): bool
     return checkdate((int) $m[2], (int) $m[3], (int) $m[1]);
 }
 
-/** Heute, als 2026-08-19. Eine Stelle, damit `make check` dieselbe Grenze zieht. */
+/** Today, as 2026-08-19. One place, so `make check` draws the same line. */
 function today(): string
 {
     return date('Y-m-d');
@@ -60,9 +60,9 @@ function today(): string
 /**
  * 2026-01-09 → 09.01.2026
  *
- * Steht dort etwas anderes als ein Datum, bleibt es stehen, wie es ist:
- * eine kaputte Zeile ist besser als eine Seite, die daran abbricht.
- * `make check` meldet solche Einträge ohnehin als Fehler.
+ * If it holds something other than a date, it is left as it is: a broken
+ * line is better than a page that dies on it. `make check` reports such
+ * entries as errors anyway.
  */
 function date_de(string $iso): string
 {
@@ -74,23 +74,23 @@ function date_de(string $iso): string
 }
 
 /* ------------------------------------------------------------
-   Die Shows
+   The shows
    ------------------------------------------------------------ */
 
 /**
- * Die nächste Show — oder null, wenn keine feststeht.
+ * The next show — or null if none is fixed.
  *
- * Der Datumsvergleich ist der Punkt dieser Funktion. In content/shows.json
- * bleibt ein Termin stehen, bis ihn jemand von Hand nach "past" schiebt;
- * bis dahin würde die Startseite am Morgen nach der Show weiterhin
- * „Nächste Show" über ein vergangenes Datum schreiben, mit einem
- * Ticket-Knopf auf eine geschlossene Veranstaltung und einem JSON-LD, das
- * sie als geplant meldet.
+ * The date comparison is the whole point of this function. In
+ * content/shows.json a date stays put until somebody moves it to "past"
+ * by hand; until then the home page would keep writing "Nächste Show"
+ * above a date gone by on the morning after the show, with a ticket
+ * button pointing at a closed event and a JSON-LD announcing it as
+ * scheduled.
  *
- * Gezählt wird bis zum Ende des Tages: wer am Showtag auf die Seite
- * schaut, soll den Termin noch sehen.
+ * Counted to the end of the day: whoever looks at the site on the day of
+ * the show should still see the date.
  *
- * `make check` erinnert daran, den Eintrag danach umzuräumen.
+ * `make check` is the reminder to move the entry afterwards.
  */
 function upcoming_show(): ?array
 {
@@ -101,13 +101,13 @@ function upcoming_show(): ?array
     return $next['date'] >= today() ? $next : null;
 }
 
-/** Fotos über alle vergangenen Shows. */
+/** Photos across all past shows. */
 function photo_count(): int
 {
     return array_sum(array_map(fn(array $show) => count($show['photos']), shows()['past']));
 }
 
-/** „09.01.2026 · 20:00 Uhr" — oder nur das Datum, wenn keine Zeit steht. */
+/** "09.01.2026 · 20:00 Uhr" — or just the date if no time is given. */
 function when_line(array $show): string
 {
     return empty($show['time'])

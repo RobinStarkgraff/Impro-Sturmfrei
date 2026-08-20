@@ -2,12 +2,12 @@
 /* ------------------------------------------------------------
    sitemap.xml
 
-   Erreichbar als /sitemap.xml — die .htaccess schreibt die Adresse auf
-   diese Datei um. Ohne Domain in content/site.json gibt es keine
-   Sitemap: eine mit halben Adressen wäre schlechter als keine.
+   Reachable as /sitemap.xml — the .htaccess rewrites the address onto this
+   file. Without a domain in content/site.json there is no sitemap: one
+   with half-finished addresses would be worse than none.
 
-   Impressum und Datenschutz stehen absichtlich nicht drin: sie sind
-   noindex und gehören in den Footer, nicht in den Index.
+   Impressum and privacy policy are deliberately absent: they are noindex
+   and belong in the footer, not in the index.
    ------------------------------------------------------------ */
 
 require dirname(__DIR__) . '/lib/boot.php';
@@ -15,22 +15,22 @@ require dirname(__DIR__) . '/lib/boot.php';
 if (!site()['url']) {
     http_response_code(404);
     header('Content-Type: text/plain; charset=UTF-8');
-    echo "Keine sitemap.xml: in content/site.json steht noch keine Domain.\n";
+    echo "No sitemap.xml: content/site.json does not name a domain yet.\n";
     exit;
 }
 
 header('Content-Type: application/xml; charset=UTF-8');
 
 /**
- * Wann diese Seite sich zuletzt geändert hat.
+ * When this page last changed.
  *
- * Ohne Build gibt es kein Erzeugungsdatum, aber es gibt die Dateien, aus
- * denen die Seite entsteht: ihre Abschnitte, die Liste in lib/pages.php und
- * die Angaben aus content/ (aus denen Kopfleiste und Footer jeder Seite
- * kommen). Die jüngste davon ist die ehrliche Antwort.
+ * Without a build there is no generation date, but there are the files the
+ * page is made from: its sections, the list in lib/pages.php and the values
+ * from content/ (which every page's header bar and footer come from). The
+ * most recent of those is the honest answer.
  *
- * Das ist der Hinweis, wegen dessen ein Crawler nach einer neuen Show
- * zeitnah wiederkommt, statt nach seinem eigenen Takt.
+ * This is the hint that brings a crawler back promptly after a new show
+ * instead of on its own schedule.
  */
 function last_change(array $page): int
 {

@@ -2,9 +2,9 @@
 /* ------------------------------------------------------------
    robots.txt
 
-   Erreichbar als /robots.txt — die .htaccess schreibt die Adresse auf
-   diese Datei um. Der Verweis auf die Sitemap braucht eine absolute
-   Adresse, also die Domain aus content/site.json.
+   Reachable as /robots.txt — the .htaccess rewrites the address onto this
+   file. The pointer to the sitemap needs an absolute address, so it needs
+   the domain from content/site.json.
    ------------------------------------------------------------ */
 
 require dirname(__DIR__) . '/lib/boot.php';

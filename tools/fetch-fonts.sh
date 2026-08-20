@@ -1,18 +1,17 @@
 #!/usr/bin/env bash
 # ============================================================
-# Holt Anton und Inter als woff2 nach public/fonts/ und macht die Seite damit
-# unabhängig von Googles Servern.
+# Fetches Anton and Inter as woff2 into public/fonts/, making the site
+# independent of Google's servers.
 #
-# Warum: Der <link> auf fonts.googleapis.com überträgt bei jedem Besuch die
-# IP-Adresse der Besucher an Google — ohne Einwilligung. Das LG München I hat
-# genau dafür Schadensersatz zugesprochen (3 O 17493/20). Selbst gehostet ist
-# das Thema erledigt, und die Seite lädt schneller: zwei preconnects und ein
-# blockierendes Stylesheet fallen weg.
+# Why: the <link> to fonts.googleapis.com hands every visitor's IP address to
+# Google on every visit — without consent. The LG München I awarded damages
+# for exactly that (3 O 17493/20). Self-hosted, the matter is settled, and
+# the page loads faster: two preconnects and one blocking stylesheet go away.
 #
 #   bash tools/fetch-fonts.sh
 #
-# Danach die im Skript ausgegebenen zwei Änderungen an sections/head.php
-# und public/css/00-fonts.css übernehmen.
+# Afterwards, apply the two changes to sections/head.php and
+# public/css/00-fonts.css that the script prints out.
 # ============================================================
 
 set -euo pipefail
@@ -20,7 +19,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p public/fonts
 
-# Latin-Subsets aus dem google-webfonts-helper (liefert direkt woff2).
+# Latin subsets from the google-webfonts-helper (serves woff2 directly).
 BASE="https://gwfh.mranftl.com/api/fonts"
 
 fetch() { # $1 = family-slug, $2 = variant list
@@ -36,28 +35,28 @@ fetch anton regular
 fetch inter regular,600,700
 
 echo
-echo "Geladen:"
+echo "Fetched:"
 ls -1sh public/fonts/*.woff2
 
 cat <<'NEXT'
 
-Wenn sich dabei Dateinamen geändert haben, hängen zwei Stellen daran:
+If any filenames changed in the process, two places depend on them:
 
-1. sections/head.php — der Preload des Display-Schnitts (er steckt in der
-   H1 jeder Seite):
+1. sections/head.php — the preload of the display face (it sits in the
+   H1 of every page):
 
      <link rel="preload" as="font" type="font/woff2"
            href="<?= esc(asset('fonts/…woff2')) ?>" crossorigin/>
 
-2. public/css/00-fonts.css — die @font-face-Blöcke. Die url() dort sind
-   relativ zu dieser Datei, deshalb mit "../":
+2. public/css/00-fonts.css — the @font-face blocks. The url() values there
+   are relative to that file, hence the "../":
 
      src: url("../fonts/…woff2") format("woff2");
 
-Beide Namen müssen zu dem passen, was oben wirklich in public/fonts/ liegt;
-`make check` merkt einen falschen Preload-Pfad, einen falschen im CSS nicht.
+Both names have to match what actually ended up in public/fonts/ above;
+`make check` notices a wrong preload path, but not a wrong one in the CSS.
 
-Es geht keine Anfrage an Google: die Schriften liegen auf demselben Server
-wie die Seite. Mit den DevTools (Netzwerk-Tab, Filter "fonts.g")
-gegenprüfen, wenn hier etwas geändert wurde.
+No request goes to Google: the fonts sit on the same server as the site.
+Verify with the DevTools (network tab, filter "fonts.g") whenever something
+here was changed.
 NEXT

@@ -1,17 +1,18 @@
 /* ------------------------------------------------------------
-   Bilder vorladen — für die Überblendung, für den Spinner der Lightbox
-   und zum Vorwärmen der Nachbarbilder.
+   Preloading images — for the crossfade, for the lightbox spinner, and to
+   warm up neighbouring images.
    ------------------------------------------------------------ */
 
 /**
- * Startet den Download und sagt sofort, ob die Datei schon im Cache lag.
+ * Starts the download and says straight away whether the file was already
+ * cached.
  *
- * `cached` ist wichtig für die Lightbox: bei einem Treffer darf sie den
- * Spinner nicht erst zeigen und im nächsten Frame wieder wegnehmen —
- * das flackert bei jedem Schritt zurück durch die Bildergruppe.
+ * `cached` matters for the lightbox: on a hit it must not show the spinner
+ * only to take it away again on the next frame — that flickers on every
+ * step back through a group of images.
  *
- * `done` erfüllt sich immer, auch bei einem Cache-Treffer und auch wenn
- * die Datei fehlt; der Wert sagt dann, ob es geklappt hat.
+ * `done` always settles, on a cache hit as well as when the file is
+ * missing; its value then says whether it worked.
  *
  * @param {string} src
  * @returns {{ cached: boolean, done: Promise<boolean> }}
@@ -31,7 +32,7 @@ export function loadImage(src) {
   return { cached, done };
 }
 
-/** Nur anstoßen, Ergebnis interessiert nicht. */
+/** Just kick it off; the result is of no interest. */
 export function warmImage(src) {
   loadImage(src);
 }

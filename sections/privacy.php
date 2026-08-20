@@ -1,11 +1,11 @@
 <?php
 /* ------------------------------------------------------------
-   Die Datenschutzerklärung.
+   The privacy policy.
 
-   Der Text beschreibt, was diese Seite tatsächlich tut: keine Cookies,
-   keine Zugriffsmessung, keine fremden Schriften, kein Formular. Drei
-   Sätze hängen an content/legal.json und werden nur behauptet, wenn dort
-   auch etwas steht — eine Angabe zu erfinden wäre schlimmer als die Lücke.
+   The text describes what this site actually does: no cookies, no
+   analytics, no third-party fonts, no form. Three sentences hang off
+   content/legal.json and are only claimed if something is actually stored
+   there — inventing a detail would be worse than the gap.
    ------------------------------------------------------------ */
 
 ['host' => $host, 'serverLocation' => $serverLocation, 'hostOutsideEU' => $hostOutsideEU,
@@ -20,7 +20,7 @@ $retention = $logRetentionDays
 
 $where = $serverLocation ? '; die Server stehen in ' . esc($serverLocation) : '';
 ?>
-  <!-- ================= DATENSCHUTZ ================= -->
+  <!-- ================= PRIVACY ================= -->
   <section class="section" id="datenschutz">
     <div class="wrap wrap--prose prose">
 
@@ -69,14 +69,14 @@ $where = $serverLocation ? '; die Server stehen in ' . esc($serverLocation) : ''
         zusammen.
       </p>
 <?php if ($hostOutsideEU): ?>
-      <!-- Nur eine Übermittlung in ein Drittland braucht eine Rechtsgrundlage. -->
+      <!-- Only a transfer to a third country needs a legal basis. -->
       <p>
         Der Anbieter sitzt außerhalb der Europäischen Union. Die Übermittlung erfolgt auf
         Grundlage der Standardvertragsklauseln der EU-Kommission.
       </p>
 <?php endif; ?>
 <?php if ($processingAgreement): ?>
-      <!-- Wird erst behauptet, wenn der Vertrag wirklich geschlossen ist. -->
+      <!-- Only claimed once the agreement has actually been signed. -->
       <p>
         Mit dem Anbieter besteht ein Vertrag über die Auftragsverarbeitung nach
         Art. 28 DSGVO.

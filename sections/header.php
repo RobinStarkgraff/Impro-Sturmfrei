@@ -1,13 +1,13 @@
 <?php
 /* ------------------------------------------------------------
-   Die Kopfleiste.
+   The header bar.
 
-   Ein eigener Abschnitt und kein Schleier über dem Hero: sie bringt ihren
-   dunklen Grund selbst mit, liegt fest oben, und ihre Höhe steht als
-   --header-h in public/css/01-tokens.css.
+   A section of its own and not a veil over the hero: it brings its own
+   dark ground, is fixed to the top, and its height lives as --header-h in
+   public/css/01-tokens.css.
 
-   Start steht bewusst nicht in der Kopfleiste: dort ist die Wortmarke
-   links der Weg zurück, ein zusätzlicher Punkt wäre derselbe Link zweimal.
+   Home deliberately does not appear in the header bar: the wordmark on the
+   left is the way back, an extra item would be the same link twice.
    ------------------------------------------------------------ */
 ?>
 <!-- ================= HEADER ================= -->

@@ -1,24 +1,23 @@
 #!/usr/bin/env bash
 # ============================================================
-# Verkleinert die Show- und Gruppenfotos auf Webmaß.
+# Shrinks the show and group photos to web size.
 #
-# Die Slider zeigen die Bilder mit rund 300 px Breite an, auf Retina also
-# 600 px. Die Lightbox liefert dieselbe Datei aus und ist damit der einzige
-# Ort, an dem mehr Auflösung überhaupt sichtbar wird — 1600 px reichen dafür
-# mit Reserve. Aktuell liegen hier ~14 MB, danach sollten es unter 2 MB sein.
+# The sliders display the images at around 300 px wide, so 600 px on retina.
+# The lightbox serves the same file and is therefore the only place where
+# more resolution becomes visible at all — 1600 px covers that with room to
+# spare. There is currently ~14 MB here; afterwards it should be under 2 MB.
 #
-# Gemessen wird die LANGE Seite, nicht die Breite. Das ist der Unterschied
-# zwischen "tut etwas" und "tut nichts": die Show-Fotos sind hochkant. Das
-# größte ist 1536 x 2048 — 1536 px breit, also unter jeder Breitengrenze
-# von 1600, und trotzdem doppelt so hoch wie nötig. Eine Regel auf die
-# Breite ließe genau die Dateien unangetastet, wegen derer es dieses
-# Skript überhaupt gibt.
+# What is measured is the LONG edge, not the width. That is the difference
+# between "does something" and "does nothing": the show photos are portrait.
+# The largest is 1536 x 2048 — 1536 px wide, so below any width limit of
+# 1600, and still twice as tall as needed. A rule on the width would leave
+# untouched exactly the files this script exists for.
 #
-#   bash tools/optimize-images.sh            # nur berichten, nichts ändern
-#   bash tools/optimize-images.sh --apply    # tatsächlich überschreiben
+#   bash tools/optimize-images.sh            # report only, change nothing
+#   bash tools/optimize-images.sh --apply    # actually overwrite
 #
-# --apply überschreibt die Originale. Vorher committen, dann ist ein
-# `git checkout -- public/images/` immer noch der Rückweg.
+# --apply overwrites the originals. Commit first, and a
+# `git checkout -- public/images/` is still the way back.
 # ============================================================
 
 set -euo pipefail
@@ -31,10 +30,10 @@ APPLY=0
 
 cd "$(dirname "$0")/.."
 
-# --- Werkzeug suchen: ImageMagick, sonst Pillow ---------------------------
+# --- Find a tool: ImageMagick, otherwise Pillow --------------------------
 if command -v magick >/dev/null 2>&1; then
-  # "1600x1600>" heißt: in ein Quadrat von 1600 einpassen, und nur
-  # verkleinern. Das begrenzt die lange Seite, gleich ob quer oder hoch.
+  # "1600x1600>" means: fit into a square of 1600, and only shrink. That
+  # limits the long edge, whether landscape or portrait.
   resize() { magick "$1" -auto-orient -resize "${MAX_EDGE}x${MAX_EDGE}>" -strip -quality "$QUALITY" "$1"; }
   TOOL="ImageMagick (magick)"
 elif command -v convert >/dev/null 2>&1; then
@@ -47,8 +46,8 @@ import sys
 from PIL import Image, ImageOps
 path, max_edge, quality = sys.argv[1], int(sys.argv[2]), int(sys.argv[3])
 img = ImageOps.exif_transpose(Image.open(path)).convert("RGB")
-# contain() passt in das Quadrat ein und vergrößert nie - dieselbe Regel
-# wie "1600x1600>" bei ImageMagick, also auch für hochkante Fotos richtig.
+# contain() fits into the square and never enlarges - the same rule as
+# "1600x1600>" in ImageMagick, so correct for portrait photos too.
 if max(img.size) > max_edge:
     img = ImageOps.contain(img, (max_edge, max_edge), Image.LANCZOS)
 img.save(path, "JPEG", quality=quality, optimize=True, progressive=True)
@@ -56,16 +55,16 @@ PY
   }
   TOOL="Pillow"
 else
-  echo "Kein Bildwerkzeug gefunden."
+  echo "No image tool found."
   echo "  macOS:  brew install imagemagick"
   echo "  Debian: sudo apt install imagemagick"
-  echo "  oder:   pip install Pillow"
+  echo "  or:     pip install Pillow"
   exit 1
 fi
 
-echo "Werkzeug:  $TOOL"
-echo "Lange Seite: höchstens ${MAX_EDGE}px, Qualität ${QUALITY}"
-[[ $APPLY -eq 0 ]] && echo "Modus:     Testlauf (nichts wird geschrieben) — mit --apply ausführen"
+echo "Tool:      $TOOL"
+echo "Long edge: at most ${MAX_EDGE}px, quality ${QUALITY}"
+[[ $APPLY -eq 0 ]] && echo "Mode:      dry run (nothing is written) — run with --apply"
 echo
 
 before=$(du -sk public/images | cut -f1)
@@ -87,9 +86,9 @@ if [[ $APPLY -eq 1 ]]; then
   after=$(du -sk public/images | cut -f1)
   echo "public/images/: ${before} KB → ${after} KB"
   echo
-  echo "Ergebnis im Browser prüfen, besonders die Lightbox. Danach committen —"
-  echo "oder mit 'git checkout -- public/images/' zurückrollen."
+  echo "Check the result in a browser, the lightbox especially. Then commit —"
+  echo "or roll back with 'git checkout -- public/images/'."
 else
-  echo "public/images/ aktuell: ${before} KB"
-  echo "Zum Anwenden:  bash tools/optimize-images.sh --apply"
+  echo "public/images/ currently: ${before} KB"
+  echo "To apply:  bash tools/optimize-images.sh --apply"
 fi

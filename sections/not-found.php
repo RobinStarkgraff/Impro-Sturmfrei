@@ -1,14 +1,14 @@
 <?php
 /* ------------------------------------------------------------
-   Die 404-Seite.
+   The 404 page.
 
-   Kein Eintrag der Navigation, sondern die Antwort auf eine falsche
-   Adresse — .htaccess zeigt mit ErrorDocument hierher. Der Status bleibt
-   dabei 404; das ist wichtig, damit Suchmaschinen die Adresse aus dem
-   Index nehmen statt sie als Seite zu führen.
+   Not an entry in the navigation but the answer to a wrong address —
+   .htaccess points here with ErrorDocument. The status stays 404, and that
+   matters: it is what makes search engines drop the address from the index
+   instead of listing it as a page.
 
-   Was hier steht, ist deshalb kein Trost, sondern ein Weg weiter: die
-   drei Seiten, wegen derer Leute überhaupt kommen.
+   So what stands here is not consolation but a way onwards: the three
+   pages people come for in the first place.
    ------------------------------------------------------------ */
 ?>
   <!-- ================= 404 ================= -->

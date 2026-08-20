@@ -1,7 +1,7 @@
 <?php
-/* Was es kostet — bewusst ohne Zahl. */
+/* What it costs — deliberately without a number. */
 ?>
-  <!-- ================= PREIS ================= -->
+  <!-- ================= PRICE ================= -->
   <section class="section section--tight" id="preis">
     <div class="wrap wrap--prose">
 

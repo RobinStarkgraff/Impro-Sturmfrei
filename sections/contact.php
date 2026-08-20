@@ -1,14 +1,14 @@
 <?php
 /* ------------------------------------------------------------
-   Die Kontaktwege.
+   The ways to get in touch.
 
-   Telefon nur, wenn in content/legal.json eine Nummer steht — eine leere
-   Karte "Telefon" wäre schlechter als keine.
+   Phone only if content/legal.json holds a number — an empty "Telefon"
+   card would be worse than none.
    ------------------------------------------------------------ */
 
 $phone = $legal['impressum']['phone'];
 ?>
-  <!-- ================= KONTAKT ================= -->
+  <!-- ================= CONTACT ================= -->
   <section class="section" id="kontakt">
     <div class="wrap wrap--prose">
 

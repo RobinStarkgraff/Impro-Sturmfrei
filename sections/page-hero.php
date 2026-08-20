@@ -1,21 +1,21 @@
 <?php
 /* ------------------------------------------------------------
-   Dunkles Band am Kopf jeder Unterseite.
+   Dark band at the top of every subpage.
 
-   Nicht nur Gestaltung: die Kopfleiste ist über dem Hero durchsichtig und
-   setzt ihren Text auf Weiß. Ohne dunkle Pixel darunter stünde weiß auf
-   creme — deshalb hat jede Seite ohne Hero dieses Band.
+   Not just decoration: over the hero the header bar is transparent and
+   sets its text to white. Without dark pixels beneath it, that would be
+   white on cream — which is why every page without a hero has this band.
 
-   $eyebrow, $title   die beiden Zeilen
-   $lead              optionaler Vorspann
-   $actions           optionaler Abschnitt mit Knöpfen darunter
-                      (Name einer Datei aus sections/)
+   $eyebrow, $title   the two lines
+   $lead              optional lead paragraph
+   $actions           optional section with buttons below it
+                      (name of a file from sections/)
    ------------------------------------------------------------ */
 
 $lead = $lead ?? null;
 $actions = $actions ?? null;
 ?>
-  <!-- ================= SEITENKOPF ================= -->
+  <!-- ================= PAGE HERO ================= -->
   <section class="page-hero">
     <div class="wrap wrap--prose">
       <p class="eyebrow"><?= esc($eyebrow) ?></p>

@@ -1,8 +1,9 @@
 /* ------------------------------------------------------------
-   Show-Slider: Pfeile und Randverläufe.
+   Show slider: arrows and edge gradients.
 
-   Die Kacheln selbst stehen im Markup — dieses Modul baut nur noch die
-   Bedienelemente, die ohne JS keinen Sinn hätten.
+   The tiles themselves live in the markup — this module only builds the
+   controls that would make no sense without JS. Their labels are read out
+   to visitors, so they stay German.
    ------------------------------------------------------------ */
 
 import { CSS_CLASS, hook } from "./classes.js";
@@ -20,9 +21,9 @@ function setUpSlider(slider) {
   const prev = addArrow(wrap, slider, "prev", "Zurück", "‹");
   const next = addArrow(wrap, slider, "next", "Weiter", "›");
 
-  // scrollWidth und clientWidth abzufragen erzwingt ein Layout. Beim Scrollen
-  // ändern sich beide nicht, also nur messen, wenn sie sich ändern können:
-  // bei resize und wenn ein Bild nachträglich eintrifft.
+  // Reading scrollWidth and clientWidth forces a layout. Neither changes
+  // while scrolling, so only measure when they can change: on resize, and
+  // when an image arrives late.
   let maxScroll = 0;
 
   const update = () => {
@@ -55,9 +56,9 @@ function addArrow(wrap, slider, direction, label, glyph) {
   button.type = "button";
   button.className = `icon-btn icon-btn--light slider-nav slider-nav--${direction}`;
 
-  // textContent statt innerHTML: hier sind es feste Zeichen, aber ein
-  // Bausatz, der Markup aus Zeichenketten zusammenklebt, wird irgendwann
-  // mit Daten von außen gefüttert.
+  // textContent rather than innerHTML: these are fixed characters, but a
+  // kit that glues markup together from strings will sooner or later be fed
+  // data from outside.
   const icon = document.createElement("span");
   icon.setAttribute("aria-hidden", "true");
   icon.textContent = glyph;

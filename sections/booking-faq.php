@@ -1,5 +1,5 @@
 <?php
-/* Die häufigen Fragen aus content/booking.json. */
+/* The frequently asked questions from content/booking.json. */
 ?>
   <!-- ================= FAQ ================= -->
   <section class="section" id="fragen">

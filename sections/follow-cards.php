@@ -1,10 +1,10 @@
 <?php
 /* ------------------------------------------------------------
-   Karten mit den Kanälen, auf denen es weitergeht.
+   Cards for the channels where things carry on.
 
-   Stehen im Abschnitt "Folgt uns" und noch einmal auf /termine/ —
-   deshalb eine eigene Datei. $pad ist die Einrückung: die Karten sollen
-   im Quelltext der Seite dort stehen, wo sie hingehören.
+   Used in the "Folgt uns" section and once more on /termine/ — hence a
+   file of their own. $pad is the indentation: the cards should sit where
+   they belong in the page source.
    ------------------------------------------------------------ */
 
 $pad = $pad ?? '';

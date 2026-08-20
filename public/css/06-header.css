@@ -1,23 +1,24 @@
 /* ============================================================
    6. HEADER / NAV
 
-   Die Kopfleiste ist ein eigener Abschnitt, kein Schleier über dem Hero:
-   eigene Höhe (--header-h, die <body> als padding-top freihält), eigener
-   dunkler Grund aus der Hero-Palette, und unten dieselbe Backstein-Kante,
-   mit der auch das Kopfband der Unterseiten endet.
+   The header bar is a section of its own, not a veil over the hero: its
+   own height (--header-h, which <body> keeps free as padding-top), its own
+   dark ground from the hero palette, and at the bottom the same brick edge
+   that ends the header band of the subpages.
 
-   Vorher war sie über dem Hero durchsichtig und wurde erst nach 40 px
-   Scrollweg undurchsichtig. Das band jede Seite ohne Hero an ein dunkles
-   Band darunter — sonst stand weißer Leistentext auf Creme. Diese Kopplung
-   ist weg: die Leiste bringt ihren Grund selbst mit.
+   It used to be transparent over the hero and only turned opaque after 40
+   px of scrolling. That tied every page without a hero to a dark band
+   below it — otherwise white bar text stood on cream. That coupling is
+   gone: the bar brings its own ground.
    ============================================================ */
 
 .site-header {
   position: fixed;
   inset: 0 0 auto 0;
   z-index: 50;
-  /* Dieselben Grundfarben wie Hero und Kopfband: die Leiste gehört zu der
-     Familie dunkler Bänder oben auf der Seite — als eigenes Glied davon. */
+  /* The same base colours as the hero and the header band: the bar belongs
+     to the family of dark bands at the top of the page — as a member of it
+     in its own right. */
   background:
     radial-gradient(70% 200% at 6% 0%, rgb(var(--brick-rgb) / 0.30), transparent 68%),
     linear-gradient(165deg, var(--hero-top) 0%, var(--hero-mid) 100%);
@@ -25,8 +26,8 @@
   transition: box-shadow var(--slow) var(--ease);
 }
 
-/* Die Backstein-Kante nach unten — dasselbe Zeichen für „hier endet ein
-   Band" wie bei .page-hero, nur etwas leiser. */
+/* The brick edge at the bottom — the same signal for "a band ends here" as
+   on .page-hero, just a little quieter. */
 .site-header::after {
   content: "";
   position: absolute;
@@ -41,9 +42,9 @@
   );
 }
 
-/* Sobald die Seite unter der Leiste durchläuft, hebt ein Schatten sie ab.
-   Die Höhe bleibt dabei gleich: <body> hält genau --header-h frei, eine
-   schrumpfende Leiste würde dort eine Lücke aufreißen. */
+/* As soon as the page runs underneath the bar, a shadow lifts it off. Its
+   height stays the same throughout: <body> keeps exactly --header-h free,
+   and a shrinking bar would tear a gap open there. */
 .site-header.is-scrolled {
   box-shadow: var(--shadow-lg);
 }
@@ -69,8 +70,8 @@
   text-transform: uppercase;
 }
 
-/* Wächst mit der Leiste mit, bleibt aber immer kleiner als sie: sonst
-   drückt das Logo die Höhe, die --header-h vorgibt. */
+/* Grows with the bar, but always stays smaller than it: otherwise the logo
+   pushes past the height --header-h prescribes. */
 .brand__mark {
   width: clamp(2.5rem, 2rem + 1.3vw, 3.25rem);
   height: clamp(2.5rem, 2rem + 1.3vw, 3.25rem);
@@ -99,7 +100,7 @@
   transition: opacity var(--fast) var(--ease);
 }
 
-/* Unterstrich, der beim Überfahren von links wächst. */
+/* Underline that grows from the left on hover. */
 .nav-list a::after {
   content: "";
   position: absolute;
@@ -119,10 +120,10 @@
   transform: scaleX(1);
 }
 
-/* Die Seite, auf der man gerade steht. Der Unterstrich ist derselbe wie beim
-   Überfahren, nur schon ausgefahren und in der Akzentfarbe — so ist es
-   dieselbe Sprache und nicht ein zweites Zeichen für dieselbe Sache.
-   aria-current="page" steht ohnehin im Markup; hier wird es nur sichtbar. */
+/* The page you are currently on. The underline is the same as on hover,
+   only already extended and in the accent colour — so it is the same
+   language and not a second signal for the same thing. aria-current="page"
+   is in the markup anyway; here it merely becomes visible. */
 .nav-list a.is-here {
   cursor: default;
 }
@@ -189,8 +190,8 @@
   .site-nav {
     position: absolute;
     inset: 100% 0 auto 0;
-    /* Setzt den Grund der Leiste nach unten fort — das offene Menü ist
-       derselbe Abschnitt, nur ausgeklappt, und keine zweite Fläche. */
+    /* Continues the bar's ground downwards — the open menu is the same
+       section, just unfolded, and not a second surface. */
     background: linear-gradient(180deg, var(--hero-mid) 0%, var(--hero-bottom) 100%);
     border-bottom: 1px solid var(--bar-border);
     padding: var(--space-md) var(--gutter) var(--space-xl);
@@ -219,8 +220,8 @@
     display: none;
   }
 
-  /* Im Menü ist der Unterstrich abgeschaltet, die aktive Seite braucht also
-     ein anderes Zeichen: ein Balken davor, im Abstand des Textes. */
+  /* Inside the menu the underline is switched off, so the active page needs
+     a different signal: a bar in front of it, at the text's indent. */
   .nav-list a.is-here {
     padding-left: var(--space-md);
     box-shadow: inset 3px 0 0 var(--hero-accent);

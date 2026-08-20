@@ -1,5 +1,5 @@
 <?php
-/* Wo es nach der Seite weitergeht — steht auf Start und auf /kontakt/. */
+/* Where things carry on beyond the site — used on home and /kontakt/. */
 ?>
   <!-- ================= FOLLOW ================= -->
   <section class="section" id="follow">

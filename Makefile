@@ -1,18 +1,18 @@
 # ============================================================
-# Sturmfrei Impro — Aufgaben des Projekts
+# Sturmfrei Impro — the project's tasks
 #
-# Es gibt keinen Build. public/ ist die Seite und liegt im Repo; jede Seite
-# darin wird bei ihrem Aufruf aus content/*.json und sections/*.php
-# zusammengesetzt — von PHP, auf dem Server. Ein frischer Klon ist damit
-# sofort vollständig: `make serve` genügt.
+# There is no build. public/ is the site and lives in the repo; every page
+# in it is assembled on request from content/*.json and sections/*.php — by
+# PHP, on the server. A fresh clone is therefore complete straight away:
+# `make serve` is all it takes.
 #
-# Ausgeliefert wird public/ — sonst nichts. Bei netcup ist der Checkout
-# gleichzeitig das Webverzeichnis; .htaccess schreibt jede Anfrage dorthin
-# um, und content/, lib/ und sections/ liegen darüber und sind deshalb
-# nicht adressierbar (siehe README, "Deploy").
+# What gets served is public/ — nothing else. On netcup the checkout is at
+# the same time the web directory; .htaccess rewrites every request into it,
+# and content/, lib/ and sections/ sit above it and are therefore not
+# addressable (see README, "Deploy").
 #
-# Lokales (devcontainer o.ä.) gehört in Makefile.local — wird am Ende
-# eingebunden und ist nicht Teil des Repos.
+# Local things (devcontainer and the like) belong in Makefile.local — pulled
+# in at the end and not part of the repo.
 # ============================================================
 
 .DEFAULT_GOAL := help
@@ -20,31 +20,31 @@
 
 help:
 	@echo ""
-	@echo "  make check          Seiten prüfen (Syntax, Pfade, Sprungziele, alt-Texte)"
-	@echo "  make serve          Seite lokal auf http://localhost:8000 ausliefern"
+	@echo "  make check          check the pages (syntax, paths, jump targets, alt texts)"
+	@echo "  make serve          serve the site locally on http://localhost:8000"
 	@echo ""
-	@echo "  make images         zeigt, was die Fotos wiegen"
-	@echo "  make images-apply   verkleinert sie auf 1600 px lange Seite (überschreibt!)"
-	@echo "  make icons          Favicon, Homescreen-Symbol und Marke aus dem Logo"
-	@echo "  make fonts          Anton und Inter neu nach public/fonts/ holen"
+	@echo "  make images         show what the photos weigh"
+	@echo "  make images-apply   shrink them to a 1600 px long edge (overwrites!)"
+	@echo "  make icons          favicon, home-screen icon and mark from the logo"
+	@echo "  make fonts          fetch Anton and Inter into public/fonts/ again"
 	@echo ""
-	@echo "  make dev-help       devcontainer-Ziele (aus Makefile.local)"
+	@echo "  make dev-help       devcontainer targets (from Makefile.local)"
 	@echo ""
 
-# Zwei Schritte, und die Reihenfolge ist nicht beliebig: ein Syntaxfehler in
-# einer PHP-Datei ist keine halbe Seite, sondern eine leere. Deshalb erst
-# `php -l` über alles, dann die inhaltliche Prüfung.
+# Two steps, and the order is not arbitrary: a syntax error in a PHP file is
+# not half a page but an empty one. Hence `php -l` over everything first,
+# then the content check.
 check:
-	@fail=0; for datei in $$(find lib sections public tools -name '*.php'); do \
-	  php -l "$$datei" >/dev/null 2>&1 || { php -l "$$datei" | sed 's/^/  /'; fail=1; }; \
+	@fail=0; for file in $$(find lib sections public tools -name '*.php'); do \
+	  php -l "$$file" >/dev/null 2>&1 || { php -l "$$file" | sed 's/^/  /'; fail=1; }; \
 	done; \
-	[ $$fail -eq 0 ] || { echo; echo "  Erst den Syntaxfehler, dann alles andere."; exit 1; }
+	[ $$fail -eq 0 ] || { echo; echo "  The syntax error first, then everything else."; exit 1; }
 	@php tools/check.php
 
-# Nicht per Doppelklick öffnen: über file:// tut PHP nichts, und Chrome
-# blockiert dort die Schriften und die ES-Module. Wurzel ist public/, damit
-# die Pfade stimmen wie live; tools/router.php übernimmt die zwei Adressen,
-# die auf dem Server die .htaccess umschreibt.
+# Do not open this by double-clicking: over file:// nobody runs the PHP, and
+# Chrome blocks the fonts and the ES modules there as well. The root is
+# public/, so the paths are the same as live; tools/router.php takes over the
+# two addresses that .htaccess rewrites on the server.
 serve:
 	@echo "→ http://localhost:8000"
 	@php -S localhost:8000 -t public tools/router.php
@@ -55,9 +55,9 @@ images:
 images-apply:
 	@bash tools/optimize-images.sh --apply
 
-# Aus dem Logo die drei kleinen Fassungen schneiden. Ohne sie liefert jede
-# Seite das 258-KB-Logo als Favicon, als Homescreen-Symbol und als 52-px-Marke
-# aus; `make check` weist darauf hin, solange sie fehlen.
+# Cut the three small versions out of the logo. Without them every page
+# serves the 258 KB logo as the favicon, as the home-screen icon and as the
+# 52 px mark; `make check` points it out while they are missing.
 icons:
 	@bash tools/make-icons.sh
 

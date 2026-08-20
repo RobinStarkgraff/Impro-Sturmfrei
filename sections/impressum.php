@@ -1,10 +1,13 @@
 <?php
 /* ------------------------------------------------------------
-   Das Impressum (§ 5 DDG).
+   The Impressum (§ 5 DDG).
 
-   Jede Angabe kommt aus content/legal.json. Fehlt eine, steht an ihrer
-   Stelle sichtbar, dass sie fehlt — und `make check` meldet es als
-   Fehler. Eine Seite mit erfundener Anschrift wäre schlimmer.
+   Every detail comes from content/legal.json. If one is missing, the page
+   visibly says so in its place — and `make check` reports it as an error.
+   A page with a made-up address would be worse.
+
+   The labels handed to or_missing() and legal_gaps() appear on the page,
+   so they stay German.
    ------------------------------------------------------------ */
 
 ['entity' => $entity, 'responsible' => $responsible, 'street' => $street,

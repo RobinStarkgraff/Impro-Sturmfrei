@@ -1,21 +1,22 @@
 {
   "$comment": [
-    "Alle Shows an einer Stelle. Aus diesen Daten entstehen bei jedem Aufruf:",
-    "der Rückblick-Abschnitt, die Slider samt alt-Texten, das aria-label je",
-    "Slider und die TheaterEvent-Einträge im JSON-LD. Eine Änderung hier",
-    "wirkt sofort — es gibt keinen Build.",
+    "Every show in one place. On each request these values produce: the",
+    "archive section, the sliders with their alt texts, the aria-label per",
+    "slider and the TheaterEvent entries in the JSON-LD. A change here takes",
+    "effect immediately — there is no build.",
     "",
-    "alt: leer lassen heißt \"Impro-Szene N – Show vom TT.MM.JJJJ\" als",
-    "Notbehelf. Ein echter Satz zum Bild ist deutlich besser — Screenreader",
-    "können mit einer laufenden Nummer nichts anfangen. `make check` zählt,",
-    "wie viele noch offen sind."
+    "alt: leaving it empty means \"Impro-Szene N – Show vom TT.MM.JJJJ\" as a",
+    "stopgap. A real sentence about the image is far better — a screen reader",
+    "can do nothing with a running number. `make check` counts how many are",
+    "still open. Titles, venues and alt texts are website content and stay",
+    "German."
   ],
 
   "upcoming": null,
   "$comment_upcoming": [
-    "Steht der nächste Termin, hier eintragen — dann zeigt der Abschnitt",
-    "\"Nächste Show\" die echte Show statt des Platzhalters, und das JSON-LD",
-    "bekommt ein weiteres TheaterEvent:",
+    "Once the next date is fixed, enter it here — then the \"Nächste Show\"",
+    "section shows the real show instead of the placeholder, and the JSON-LD",
+    "gains another TheaterEvent:",
     "",
     "  \"upcoming\": {",
     "    \"date\": \"2026-09-19\",",
@@ -26,7 +27,7 @@
     "    \"note\": \"Einlass ab 19:30\"",
     "  }",
     "",
-    "time, ticketUrl und note sind optional."
+    "time, ticketUrl and note are optional."
   ],
 
   "past": [

@@ -1,13 +1,13 @@
 /* ============================================================
-   15. PROSA — Impressum und Datenschutz
+   15. PROSE — Impressum and privacy policy
 
-   Zwei Seiten, die niemand zum Vergnügen liest. Deshalb ohne Karten, ohne
-   Glas und ohne Einblendung: durchgehender Text mit sichtbarer Gliederung,
-   damit man die eine Angabe findet, die man sucht.
+   Two pages nobody reads for pleasure. Hence no cards, no glass and no
+   fade-in: continuous text with a visible structure, so that you find the
+   one detail you came for.
    ============================================================ */
 
-/* Überschriften auf diesen Seiten sind Zwischentitel im Text, keine
-   Abschnittsköpfe — sie brauchen die Anton-Größe von h2 nicht. */
+/* Headings on these pages are subheadings within the text, not section
+   heads — they do not need the Anton size of an h2. */
 .prose h2 {
   font-size: var(--text-h3);
   margin-top: var(--space-2xl);
@@ -44,11 +44,11 @@
   color: var(--accent-text);
 }
 
-/* --- Was noch fehlt --------------------------------------------------
-   Sichtbar, nicht als Kommentar im Quelltext: eine fehlende Anschrift im
-   Impressum ist ein Problem der Seite, nicht des Repos, und wer die Seite
-   ansieht, soll es sehen. Verschwindet von selbst, sobald die Angabe in
-   content/legal.json steht. */
+/* --- What is still missing ------------------------------------------
+   Visible, not as a comment in the source: a missing address in the
+   Impressum is a problem of the site, not of the repo, and whoever looks
+   at the site should see it. Disappears by itself as soon as the detail is
+   in content/legal.json. */
 
 .notice {
   padding: var(--space-lg);
@@ -64,8 +64,8 @@
   color: var(--accent-text);
 }
 
-/* <mark> statt einer eigenen Klasse: es ist wirklich eine Hervorhebung im
-   Fließtext, und Screenreader kündigen sie in modernen Browsern an. */
+/* <mark> rather than a class of its own: it really is a highlight within
+   running text, and screen readers announce it in modern browsers. */
 .todo {
   padding: 0.1em 0.4em;
   border-radius: var(--radius-sm);

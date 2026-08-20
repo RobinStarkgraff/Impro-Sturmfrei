@@ -29,8 +29,8 @@
   padding-bottom: var(--space-2xl);
 }
 
-/* Kein Überschriftenelement: die Zeilen benennen ihre Footerspalte, sie
-   sind keine Stufen in der Dokumentgliederung. Sehen aber so aus. */
+/* Not a heading element: these lines name their footer column, they are not
+   levels in the document outline. They do look like it, though. */
 .footer-col__title {
   font-family: var(--font-display);
   font-weight: 400;
@@ -42,10 +42,10 @@
   margin: 0 0 var(--space-md);
 }
 
-/* .meta ist auf der hellen Seite gedämpft; im Footer erbt es die
-   Footerfarbe. Gezielt .meta und nicht jedes <p> im Footer: sonst
-   überstimmt diese Regel die Spaltentitel und den Wortmarken-Absatz,
-   die beide ihre eigene Farbe mitbringen. */
+/* .meta is muted on the light page; in the footer it inherits the footer
+   colour. Deliberately .meta and not every <p> in the footer: otherwise
+   this rule would override the column titles and the wordmark paragraph,
+   both of which bring their own colour. */
 .site-footer .meta {
   color: inherit;
 }
@@ -83,8 +83,9 @@
   margin: 0;
 }
 
-/* Impressum und Datenschutz stehen hier unten, nicht in der Kopfleiste:
-   dort sucht sie niemand, und sie nähmen der Hauptnavigation Platz weg. */
+/* Impressum and privacy policy live down here, not in the header bar:
+   nobody looks for them there, and they would take space from the main
+   navigation. */
 .footer-legal {
   display: flex;
   flex-wrap: wrap;
@@ -94,8 +95,9 @@
   padding: 0;
 }
 
-/* Eine Spalte, sobald nebeneinander nicht mehr geht — sonst rutscht die
-   Zeile mit dem Copyright unter die Linkliste und wirkt wie ein Nachtrag. */
+/* One column as soon as side by side no longer works — otherwise the
+   copyright line slides below the link list and reads like an
+   afterthought. */
 @media (max-width: 34rem) {
   .footer-bottom {
     justify-content: center;

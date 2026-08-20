@@ -1,9 +1,9 @@
 /* ------------------------------------------------------------
-   Überblendung der Gruppenfotos.
+   Crossfade of the group photos.
 
-   Die Liste der Bilder steht nicht hier, sondern kommt als data-crossfade
-   aus dem Markup — und damit aus content/site.json. So muss die
-   Reihenfolge nicht zwischen Skript und HTML abgestimmt werden.
+   The list of images does not live here; it arrives as data-crossfade from
+   the markup — and thereby from content/site.json. That way the order does
+   not have to be kept in sync between script and HTML.
    ------------------------------------------------------------ */
 
 import { CSS_CLASS, DATA_HOOK, hook } from "./classes.js";
@@ -20,7 +20,7 @@ export function initCrossfade() {
   if (layers.length < 2 || photos.length < 2) return;
 
   let index = 0;
-  let front = 0; // welche Ebene gerade sichtbar ist
+  let front = 0; // which layer is currently visible
   let loading = false;
   let timer = null;
 
@@ -36,20 +36,20 @@ export function initCrossfade() {
   };
 
   const step = async () => {
-    // Im Hintergrundtab gibt es nichts zu überblenden.
+    // Nothing to crossfade in a background tab.
     if (document.hidden || loading) return;
 
     const next = (index + 1) % photos.length;
     loading = true;
 
-    // Erst laden, dann tauschen — die Blende zeigt so nie eine leere Box.
+    // Load first, then swap — that way the fade never shows an empty box.
     const { done } = loadImage(photos[next]);
     const ok = await done;
 
     loading = false;
 
-    // Eine Datei, die nicht lädt, darf keine Endstation werden: den Zeiger
-    // trotzdem weiterrücken, damit der nächste Takt das Bild danach nimmt.
+    // A file that fails to load must not become a dead end: advance the
+    // pointer anyway, so the next tick takes the image after it.
     if (ok) swap(next);
     else index = next;
   };
@@ -69,13 +69,13 @@ export function initCrossfade() {
 
   onMotionPreferenceChange(() => (prefersReducedMotion() ? stop() : start()));
 
-  /* Der Takt läuft nur, solange der Abschnitt zu sehen ist. document.hidden
-     deckt den Hintergrundtab ab, nicht den viel häufigeren Fall: sichtbarer
-     Tab, aber weit an "Wer sind wir?" vorbeigescrollt — dort dekodierte der
-     Browser bisher alle sechs Sekunden ein Foto für niemanden.
+  /* The tick only runs while the section is on screen. document.hidden
+     covers the background tab, not the far more common case: visible tab,
+     but scrolled well past "Wer sind wir?" — where the browser used to
+     decode a photo for nobody every six seconds.
 
-     Ohne IntersectionObserver läuft es wie vorher durch: lieber der alte
-     Takt als gar keine Überblendung. */
+     Without IntersectionObserver it runs straight through as before: better
+     the old tick than no crossfade at all. */
   if ("IntersectionObserver" in window) {
     new IntersectionObserver(
       ([entry]) => (entry.isIntersecting ? start() : stop()),

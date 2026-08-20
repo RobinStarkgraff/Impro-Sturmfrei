@@ -15,22 +15,22 @@ html {
 
 body {
   margin: 0;
-  /* Die Kopfleiste liegt fest oben und ist aus dem Fluss heraus — hier wird
-     ihr Platz freigehalten, damit sie ein eigener Abschnitt bleibt und nicht
-     als Schleier auf dem ersten Abschnitt liegt. */
+  /* The header bar is fixed to the top and out of the flow — this keeps its
+     space free, so that it stays a section of its own instead of lying over
+     the first section as a veil. */
   padding-top: var(--header-h);
-  /* clip, nicht hidden: hidden macht aus <body> einen Scroll-Container und
-     nimmt der fixierten Kopfleiste ihren Bezug. Gebraucht wird es für die
-     Slider im Archiv, die absichtlich bis an den Fensterrand gehen — die
-     paar Pixel, die eine sichtbare Scrollleiste dabei übrig lässt, sollen
-     keine zweite, waagerechte Leiste erzeugen. */
+  /* clip, not hidden: hidden turns <body> into a scroll container and robs
+     the fixed header bar of its reference. It is needed for the sliders in
+     the archive, which deliberately run to the window edge — the few pixels
+     a visible scrollbar leaves over should not produce a second,
+     horizontal one. */
   overflow-x: clip;
   font-family: var(--font-body);
   font-size: var(--text-body);
   line-height: 1.7;
   color: var(--text);
-  /* Der Hero deckt den ersten Bildschirm ab; der Übergang von Creme zu
-     Himmelblau liegt deshalb genau dort, wo man aus ihm herausscrollt. */
+  /* The hero covers the first screen; the transition from cream to sky blue
+     therefore sits exactly where you scroll out of it. */
   background:
     linear-gradient(
       180deg,
@@ -52,10 +52,10 @@ img {
   display: block;
 }
 
-/* !important mit Absicht: die Lightbox-Buttons stehen weiter unten in der
-   Datei und setzen display: grid. Ohne das hier würde [hidden] an ihnen
-   wirkungslos bleiben — und genau daran hängt, dass ‹ und › bei einer
-   einzelnen Aufnahme verschwinden. */
+/* !important on purpose: the lightbox buttons appear further down the file
+   and set display: grid. Without this, [hidden] on them would have no
+   effect — and that is precisely what makes ‹ and › disappear for a single
+   photo. */
 [hidden] {
   display: none !important;
 }
@@ -70,7 +70,7 @@ button {
   cursor: pointer;
 }
 
-/* Ein Fokusring, überall derselbe. */
+/* One focus ring, the same everywhere. */
 :focus-visible {
   outline: 3px solid var(--accent-text);
   outline-offset: 3px;
@@ -96,7 +96,7 @@ button {
   transform: translateY(0);
 }
 
-/* Ziel des Skip-Links: fokussierbar für den Sprung, aber ohne Ring. */
+/* Target of the skip link: focusable for the jump, but without a ring. */
 #main:focus {
   outline: none;
 }

@@ -1,10 +1,10 @@
 /* ------------------------------------------------------------
    Lightbox.
 
-   Jede Kachel ist im Markup ein Link auf die Originaldatei. Dieses Modul
-   fängt den Klick ab und zeigt das Bild im Dialog; ohne JS bleibt der
-   Link ein Link. Die Position innerhalb der Gruppe kommt aus der
-   Reihenfolge im DOM, nicht aus einem Attribut am Markup.
+   In the markup every tile is a link to the original file. This module
+   intercepts the click and shows the image in a dialog; without JS the
+   link stays a link. The position within the group comes from the order in
+   the DOM, not from an attribute on the markup.
    ------------------------------------------------------------ */
 
 import { CSS_CLASS, hook } from "./classes.js";
@@ -34,10 +34,10 @@ export function initLightbox() {
     image.src = item.src;
     image.alt = item.alt;
 
-    /* Der Zähler ist role="status" (siehe sections/lightbox.php): was hier
-       hineingeschrieben wird, liest ein Screenreader beim Blättern vor.
-       Sichtbar bleibt "3 / 9"; der alt-Text kommt unsichtbar dazu, sonst
-       wäre die Ansage eine Zahl ohne Gegenstand. */
+    /* The counter is role="status" (see sections/lightbox.php): whatever is
+       written into it is read out by a screen reader while paging through.
+       "3 / 9" stays visible; the alt text is added invisibly, otherwise the
+       announcement would be a number without a subject. */
     if (counter) {
       counter.textContent = "";
 
@@ -55,17 +55,17 @@ export function initLightbox() {
       button.hidden = group.length < 2;
     });
 
-    // Die Nachbarn vorwärmen, damit ‹ und › sofort reagieren.
+    // Warm up the neighbours, so ‹ and › respond immediately.
     [current - 1, current + 1].forEach((i) => {
       const neighbour = group[(i + group.length) % group.length];
       if (neighbour && neighbour !== item) warmImage(neighbour.src);
     });
 
-    // Das sind die Originale in voller Größe, auf einer langsamen Leitung
-    // also echtes Warten. Dann lieber einen Spinner zeigen als das alte
-    // Foto stehen lassen — das liest sich wie ein Bedienelement ohne
-    // Wirkung. Liegt die Datei im Cache, sofort abhaken: über das Event
-    // würde ein Frame bei Deckkraft 0 durchfallen und flackern.
+    // These are the full-size originals, so on a slow line there is real
+    // waiting involved. Better to show a spinner then than to leave the old
+    // photo standing — that reads like a control with no effect. If the file
+    // is cached, tick it off immediately: going via the event would let one
+    // frame slip through at opacity 0 and flicker.
     const { cached, done } = loadImage(item.src);
 
     if (cached) {
@@ -76,7 +76,7 @@ export function initLightbox() {
     dialog.classList.add(CSS_CLASS.loading);
     await done;
 
-    // Spät eingetroffen und der Blick ist längst weiter: ignorieren.
+    // Arrived late and the view has long moved on: ignore it.
     if (group[current] === item) dialog.classList.remove(CSS_CLASS.loading);
   };
 
@@ -85,10 +85,10 @@ export function initLightbox() {
     render();
   };
 
-  // Ein delegierter Listener deckt alle Slider der Seite ab.
+  // One delegated listener covers every slider on the page.
   document.addEventListener("click", (event) => {
-    // Mittelklick, Cmd- oder Ctrl-Klick heißt "in neuem Tab öffnen" — das
-    // bleibt dem Browser überlassen, der Link zeigt ja auf das Original.
+    // Middle click, Cmd or Ctrl click means "open in a new tab" — that is
+    // left to the browser; the link does point at the original.
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
       return;
     }
@@ -128,7 +128,7 @@ export function initLightbox() {
       }
     }
 
-    // Klick auf die Fläche drumherum (die Bühne, nicht das Foto) schließt.
+    // A click on the surrounding area (the stage, not the photo) closes.
     if (event.target === dialog || event.target.classList.contains("lightbox__stage")) {
       dialog.close();
     }
@@ -144,9 +144,9 @@ export function initLightbox() {
     }
   });
 
-  /* --- Wischen ---
-     Auf Touchgeräten sind die Slider-Pfeile ausgeblendet, dort ist die
-     Lightbox der Weg durch die Fotos. Eine Gestik wird da erwartet. */
+  /* --- Swiping ---
+     On touch devices the slider arrows are hidden, so the lightbox is the
+     way through the photos. A gesture is expected there. */
   let startX = null;
 
   dialog.addEventListener("touchstart", (event) => {
@@ -162,7 +162,7 @@ export function initLightbox() {
     if (group.length > 1 && Math.abs(dx) > LIGHTBOX.swipeMinPx) move(dx < 0 ? 1 : -1);
   }, { passive: true });
 
-  // Fokus zurück auf die Kachel, die geöffnet hat.
+  // Focus back on the tile that opened it.
   dialog.addEventListener("close", () => {
     if (opener) opener.focus();
     opener = null;

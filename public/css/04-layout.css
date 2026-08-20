@@ -1,14 +1,14 @@
 /* ============================================================
    4. LAYOUT PRIMITIVES
 
-   .wrap ist die Standardbreite der Seite (--measure-page): Raster,
-   Kartenreihen, Hero. .wrap--prose zieht auf Lesebreite ein
-   (--measure-prose). Wer keins von beiden will, sondern bis an den Rand
-   des Fensters, nimmt .slider-wrap--bleed in css/10-shows.css.
+   .wrap is the page's standard width (--measure-page): grids, card rows,
+   hero. .wrap--prose pulls in to reading width (--measure-prose). If you
+   want neither but the full window edge instead, take .slider-wrap--bleed
+   in css/10-shows.css.
 
-   Vorher gab es nur ein Maß für beides. Das Ergebnis war eine Seite, die
-   auf einem großen Schirm nie über 1152 px hinauskam und deren wichtigste
-   Abschnitte bei 768 px endeten — also bei gut der Hälfte des Fensters.
+   There used to be a single measure for both. The result was a page that
+   never grew past 1152 px on a large screen and whose most important
+   sections ended at 768 px — a good half of the window.
    ============================================================ */
 
 .wrap {
@@ -22,17 +22,16 @@
   max-width: var(--measure-prose);
 }
 
-/* Klasse, nicht das nackte <section>: sonst erbt jedes künftige <section>
-   irgendwo in der Seite den Abstand eines Hauptabschnitts. */
+/* A class, not the bare <section>: otherwise every future <section>
+   anywhere in the page inherits the spacing of a main section. */
 .section {
   padding-block: var(--section-y);
-  /* Ein Sprungziel muss unter der Leiste anfangen, nicht hinter ihr. */
+  /* A jump target has to start below the bar, not behind it. */
   scroll-margin-top: calc(var(--header-h) + var(--space-md));
 }
 
-/* Zwei Abschnitte, die inhaltlich zusammengehören, brauchen zwischen sich
-   nicht den ganzen Abstand — sonst liest sich Zusammengehöriges wie zwei
-   Themen. */
+/* Two sections that belong together do not need the full gap between them
+   — otherwise things that belong together read like two topics. */
 .section--tight {
   padding-block: calc(var(--section-y) * 0.5);
 }
@@ -47,33 +46,32 @@
   max-width: 44rem;
 }
 
-/* Ist der Kopf der ganze Abschnitt (z. B. Kontakt), braucht er darunter
-   keinen Abstand. */
+/* If the head is the whole section (contact, for instance), it needs no
+   spacing below it. */
 .section-head:last-child {
   margin-bottom: 0;
 }
 
-/* Ein zweiter Kopf mitten im Abschnitt (Termine, Buchen) braucht über
-   sich Luft — sonst klebt er an dem, was davor endete. */
+/* A second head in the middle of a section (dates, booking) needs air
+   above it — otherwise it sticks to whatever ended before it. */
 .wrap > * + .section-head {
   margin-top: var(--space-3xl);
 }
 
-/* Zentrierter Absatz unter einer zentrierten Überschrift. */
+/* Centred paragraph below a centred heading. */
 .section-head--center > .lead {
   max-width: 34rem;
   margin-inline: auto;
   margin-top: var(--space-lg);
 }
 
-/* Absatz unter einer linksbündigen Überschrift. */
+/* Paragraph below a left-aligned heading. */
 .section-head > .lead {
   margin-top: var(--space-lg);
 }
 
-/* Akzentlinie unter zentrierten Überschriften — nimmt den Backstein noch
-   einmal auf, damit er als Teil der Palette gelesen wird und nicht als
-   verirrte Buttonfarbe. */
+/* Accent rule below centred headings — it picks the brick up once more, so
+   that it reads as part of the palette and not as a stray button colour. */
 .section-head--center h2::after {
   content: "";
   display: block;

@@ -1,13 +1,14 @@
 <?php
 /* ------------------------------------------------------------
-   Der Hinweis, solange in content/legal.json Pflichtangaben fehlen.
+   The notice shown while mandatory details are missing from
+   content/legal.json.
 
-   Steht auf /impressum/ und auf /datenschutz/ — deshalb eine eigene
-   Datei. Welche Angaben offen sind, sagt legal_gaps() in lib/html.php;
-   hier steht nur, wie der Hinweis aussieht.
+   Used on /impressum/ and /datenschutz/ — hence a file of its own. Which
+   details are still open is answered by legal_gaps() in lib/html.php; all
+   that lives here is what the notice looks like.
 
-   $open  die Beschriftungen der fehlenden Angaben
-   $pad   Einrückung, damit der Quelltext der Seite lesbar bleibt
+   $open  the labels of the missing details
+   $pad   indentation, to keep the page source readable
    ------------------------------------------------------------ */
 
 $pad = $pad ?? '';

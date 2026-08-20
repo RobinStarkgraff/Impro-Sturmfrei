@@ -1,5 +1,5 @@
 <?php
-/* Für alle, die neu dabei sind — steht nur auf der Startseite. */
+/* For everyone new to this — home page only. */
 ?>
   <!-- ================= IMPRO ================= -->
   <section class="section" id="impro">

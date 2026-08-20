@@ -1,29 +1,30 @@
 /* ------------------------------------------------------------
-   Der Vertrag zwischen JS, CSS und Markup.
+   The contract between JS, CSS and markup.
 
-   Zustandsklassen stehen auch in public/css/, die Haken in sections/: wer
-   hier umbenennt, muss dort nachziehen. `make check` prüft beide Seiten.
+   State classes also appear in public/css/, the hooks in sections/: rename
+   one here and you have to follow up there. `make check` verifies both
+   sides.
    ------------------------------------------------------------ */
 
 export const CSS_CLASS = {
-  /* an <html>, sobald JS läuft — schaltet die Reveal-Animation frei */
+  /* on <html> as soon as JS runs — unlocks the reveal animation */
   js: "js",
-  /* [data-reveal] ist eingeblendet */
+  /* [data-reveal] has faded in */
   revealed: "is-visible",
-  /* Kopfleiste hat den Hero verlassen */
+  /* the header bar has left the hero */
   scrolled: "is-scrolled",
-  /* sichtbare Ebene der Foto-Überblendung */
+  /* visible layer of the photo crossfade */
   active: "is-active",
-  /* Slider steht am linken bzw. rechten Anschlag */
+  /* slider sits at its left or right end */
   sliderStart: "is-start",
   sliderEnd: "is-end",
-  /* Lightbox wartet noch auf die Originaldatei */
+  /* lightbox is still waiting for the original file */
   loading: "is-loading"
 };
 
-/* Attribute im Markup, an denen die Module hängen. Die Abschnitte in
-   sections/ schreiben sie ins HTML, die Module suchen danach, `make check`
-   vergleicht. */
+/* Attributes in the markup that the modules hook onto. The sections in
+   sections/ write them into the HTML, the modules look for them, `make
+   check` compares. */
 export const DATA_HOOK = {
   reveal: "data-reveal",
   slider: "data-slider",
@@ -36,7 +37,7 @@ export const DATA_HOOK = {
 /** [data-reveal] → "[data-reveal]" */
 export const hook = (name) => `[${DATA_HOOK[name]}]`;
 
-/* dataset-Schlüssel, also data-nav-open im Markup. */
+/* dataset keys, i.e. data-nav-open in the markup. */
 export const DATA_KEY = {
   navOpen: "navOpen"
 };

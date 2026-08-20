@@ -1,10 +1,10 @@
 /* ============================================================
-   14. BUCHEN — Formate, Voraussetzungen, Fragen, Anfrage
+   14. BOOKING — formats, requirements, questions, enquiry
 
-   Die Karten hier tragen bewusst kein Glas: /buchen/ ist die Seite, auf
-   der jemand eine Entscheidung trifft, und die drei Formate müssen sich
-   voneinander unterscheiden lassen, nicht von der Seite. Deshalb Kante und
-   Grundfläche, kein backdrop-filter.
+   The cards here deliberately carry no glass: /buchen/ is the page where
+   somebody makes a decision, and the three formats have to be
+   distinguishable from each other, not from the page. Hence an edge and a
+   fill, no backdrop-filter.
    ============================================================ */
 
 .format-grid {
@@ -44,17 +44,17 @@
   margin: 0;
 }
 
-/* Die Besetzungszeile ist die letzte im Kasten und soll unten stehen, auch
-   wenn der Text darüber kürzer ist als in der Karte daneben. */
+/* The cast line is the last one in the box and should sit at the bottom,
+   even when the text above it is shorter than in the card next to it. */
 .format__cast {
   margin: auto 0 0;
   padding-top: var(--space-md);
   border-top: 1px solid var(--border);
 }
 
-/* --- Was wir brauchen ------------------------------------------------
-   Eine <dl>: Begriff und Erläuterung sind hier wirklich Paare, keine
-   Liste mit Doppelpunkt drin. */
+/* --- What we need ---------------------------------------------------
+   A <dl>: term and explanation really are pairs here, not a list with a
+   colon inside it. */
 
 .need-grid {
   display: grid;
@@ -87,10 +87,10 @@
   margin-top: var(--space-xl);
 }
 
-/* --- Fragen ----------------------------------------------------------
-   <details>, nicht selbst gebaut: die Aufklapp-Mechanik ist im Browser
-   vorhanden, funktioniert ohne JS und ist für Screenreader schon richtig
-   benannt. */
+/* --- Questions -------------------------------------------------------
+   <details>, not hand-built: the disclosure mechanism exists in the
+   browser, works without JS and is already named correctly for screen
+   readers. */
 
 .faq {
   display: grid;
@@ -114,7 +114,7 @@
   list-style: none;
 }
 
-/* Das eigene Dreieck weg, in beiden Familien. */
+/* Away with the built-in triangle, in both engine families. */
 .faq__item summary::-webkit-details-marker {
   display: none;
 }
@@ -144,10 +144,9 @@
   color: var(--text-muted);
 }
 
-/* --- Anfrage ---------------------------------------------------------
-   Hier darf es die Glasfläche sein: dieser Kasten ist der Abschluss der
-   Seite und soll wie der nächste Termin gelesen werden — als das eine,
-   was zu tun ist. */
+/* --- Enquiry ---------------------------------------------------------
+   Here the glass surface is allowed: this box closes the page and should
+   read like the next date — as the one thing left to do. */
 
 .cta {
   display: grid;
@@ -171,10 +170,10 @@
   margin: 0;
 }
 
-/* --- Kontaktwege -----------------------------------------------------
-   Vier Blöcke, kein Formular. Ein Formular bräuchte einen fremden Dienst,
-   und dieser Seite ist ihre Unabhängigkeit mehr wert als die zwei Klicks,
-   die es spart. */
+/* --- Ways to get in touch -------------------------------------------
+   Four blocks, no form. A form would need a third-party service, and this
+   site values its independence more than the two clicks that would
+   save. */
 
 .contact-ways {
   display: grid;

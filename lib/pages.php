@@ -1,29 +1,32 @@
 <?php declare(strict_types=1);
 /* ------------------------------------------------------------
-   Die Seiten
+   The pages
 
-   Eine Seite: Ordnername als Schlüssel, was im Titel steht, und welche
-   Abschnitte in welcher Reihenfolge darin stehen. Alles andere —
-   Kopfleiste, Footer, <head>, JSON-LD — entsteht daraus.
+   A page: folder name as the key, what goes in the title, and which
+   sections it holds in which order. Everything else — header bar, footer,
+   <head>, JSON-LD — follows from that.
 
-   "sections" nennt Dateien aus sections/ (ohne .php). Ein Abschnitt, der
-   Angaben braucht, steht als Paar da: ['page-hero', [ ... ]] — die zweite
-   Hälfte landet als Variablen in der Datei.
+   "sections" names files from sections/ (without .php). A section that
+   needs values comes as a pair: ['page-hero', [ ... ]] — the second half
+   arrives as variables inside the file.
 
-   "schema" sagt, welche Events ins JSON-LD gehören: nur die, die auf der
-   Seite auch sichtbar sind.
+   "schema" says which events belong in the JSON-LD: only those actually
+   visible on the page.
 
-   Zu jedem Eintrag hier gehört eine Datei public/<slug>/index.php mit zwei
-   Zeilen (die Startseite: public/index.php). Fehlt sie, ist die Seite nicht
-   aufrufbar; fehlt umgekehrt der Eintrag, weiß die Datei nicht, was sie
-   ist — `make check` meldet beides.
+   Every entry here needs a two-line file public/<slug>/index.php (the home
+   page: public/index.php). Without it the page cannot be reached;
+   conversely, without the entry the file does not know what it is —
+   `make check` reports both.
+
+   Titles, descriptions and lead text are what visitors read, so they stay
+   German.
    ------------------------------------------------------------ */
 
 function pages(): array
 {
-    // Wie site(), shows(), booking() und legal(): einmal je Aufruf bauen.
-    // render_page(), slugs(), sitemap.php und tools/check.php fragen mehrfach,
-    // und jeder Neubau zählt Shows und Fotos noch einmal durch.
+    // Like site(), shows(), booking() and legal(): built once per request.
+    // render_page(), slugs(), sitemap.php and tools/check.php all ask more
+    // than once, and every rebuild counts the shows and photos again.
     static $pages;
     if ($pages !== null) return $pages;
 
@@ -136,9 +139,9 @@ function pages(): array
             ],
         ],
 
-        // Keine Seite der Navigation, sondern die Antwort auf eine falsche
-        // Adresse: .htaccess zeigt mit ErrorDocument hierher. Steht deshalb
-        // in keiner Liste und nicht in der sitemap.xml.
+        // Not a page of the navigation but the answer to a wrong address:
+        // .htaccess points here with ErrorDocument. Hence it appears in no
+        // list and not in sitemap.xml.
         '404' => [
             'navLabel' => 'Nicht gefunden',
             'title' => "Seite nicht gefunden – {$brand['alternateName']}",
@@ -172,12 +175,12 @@ function pages(): array
 }
 
 /**
- * Die Ordnernamen aller Seiten — für Navigation, Sitemap und `make check`.
+ * The folder names of all pages — for navigation, sitemap and `make check`.
  *
- * strval, und das ist nicht kosmetisch: PHP macht aus einem Array-Schlüssel,
- * der wie eine Zahl aussieht, eine Zahl. "404" kommt als int 404 zurück, und
- * jeder strenge Vergleich damit (in_array(..., true), string-Parameter) geht
- * schief. Hier einmal geradegezogen statt an jeder Fundstelle einzeln.
+ * strval, and that is not cosmetic: PHP turns an array key that looks like
+ * a number into a number. "404" comes back as int 404, and every strict
+ * comparison against it (in_array(..., true), string parameters) goes
+ * wrong. Straightened out once here instead of at every call site.
  */
 function slugs(): array
 {
