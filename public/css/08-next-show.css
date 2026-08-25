@@ -2,17 +2,79 @@
    8. NEXT SHOW
    ============================================================ */
 
+/* ------------------------------------------------------------
+   The card for the next date
+
+   A band, not a column. Stacked and centred, the card was the tallest
+   thing on the home page: picture, pill, date, title, one line of facts
+   and two buttons, each on its own line and each waiting for the eye to
+   travel down to it. Read as a poster it is one message, and a poster is
+   wider than it is high.
+
+   So the two halves stand side by side — the title image on one side,
+   everything that is read on the other — and the card takes the page
+   measure rather than the reading one. It stands out by being the widest
+   thing on the page rather than the longest, and it keeps what made it
+   stand out before: its own surface, the border, the shadow, the pulsing
+   pill and a date at subheading size.
+
+   flex-wrap and not a media query: what decides whether the two fit
+   beside each other is the width of the card, not the width of the
+   window — the card sits in the page measure on the home page and on
+   /termine/, but the same card in a narrower column has to make the same
+   decision. The body asks for 22rem before it will share a line, and
+   below that the two halves stack again, picture first, which is exactly
+   the old card.
+
+   Vertically centred: the picture is 16:9 and the text is taller, so
+   aligning them at the top would leave the picture hanging in the corner
+   of a much taller box.
+   ------------------------------------------------------------ */
+
 .next-show {
-  display: grid;
-  gap: var(--space-lg);
-  justify-items: center;
-  text-align: center;
-  padding: clamp(2rem, 6vw, 4rem);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(var(--space-lg), 3vw, var(--space-2xl));
+  padding: clamp(1.75rem, 4vw, 3rem);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   background: var(--surface);
   backdrop-filter: blur(16px);
   box-shadow: var(--shadow-lg);
+}
+
+/* The half that is read. 22rem is the width below which a title in Anton
+   at h2 size breaks after every second word — asking for it as the basis
+   is what makes the card stack on a phone and stand as a band from a
+   tablet up. */
+.next-show__body {
+  flex: 1 1 22rem;
+  min-width: 0;
+  display: grid;
+  justify-items: start;
+  gap: var(--space-md);
+}
+
+/* The gaps are the body's, not the elements' own: a paragraph's bottom
+   margin on top of the grid gap made the space under the line of facts
+   larger than the one over the title, for no reason a reader could see. */
+.next-show__body > * {
+  margin: 0;
+}
+
+/* The one exception — the buttons are the end of the card and may stand a
+   little further off than the lines that belong together above them. */
+.next-show__body > .btn-row {
+  margin-top: var(--space-xs);
+}
+
+/* On /termine/ more page follows the band: the list of further dates,
+   back in the reading column and therefore in a wrap of its own. That
+   costs the heading above it the gap `.wrap > * + .section-head` hands
+   out inside one wrap — so the band carries it instead. */
+.next-show-band {
+  margin-bottom: var(--space-3xl);
 }
 
 .pill {
@@ -44,4 +106,150 @@
 
 .next-show p {
   max-width: 34rem;
+}
+
+/* The date on the card, well above the same line in the archive. There it
+   labels an entry in a list; here it is the one fact somebody came for, so
+   it reads at the size of a subheading — the title under it stays the
+   larger of the two, and the eye still lands on the date first because it
+   comes first and is set in the accent colour.
+
+   The wide letter-spacing it inherits from .date-line costs width: at this
+   size a long date wants the whole column, hence the tighter tracking. */
+.next-show .date-line {
+  font-size: var(--text-h3);
+  letter-spacing: 0.06em;
+}
+
+
+/* ------------------------------------------------------------
+   The dates after the next one
+
+   The nearest show has the card above to itself — these read as one list,
+   hence a hairline between the rows instead of a box per date. Text left,
+   ticket button right; when the row runs out of width the button wraps
+   under the text, because beside it the title would break after every
+   second word.
+   ------------------------------------------------------------ */
+
+.date-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-lg);
+}
+
+.date-list__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md) var(--space-lg);
+  padding-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--border);
+}
+
+/* The last row closes the list — a rule under it would look like a
+   forgotten fourth date. */
+.date-list__item:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+/* 13rem: with the mark beside it, that is where two columns stop being
+   wider than a line of text — below it the button goes underneath. */
+.date-list__text {
+  flex: 1 1 13rem;
+}
+
+/* The title image in a row: the same picture as on the card, at the size a
+   list can carry. It keeps its shape and its radius, so a row reads as a
+   smaller relative of the card rather than a different thing. */
+.date-list__cover {
+  flex: 0 0 auto;
+  width: 6rem;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  background: var(--surface-hover);
+}
+
+.date-list__title {
+  margin-block: var(--space-2xs);
+}
+
+/* ------------------------------------------------------------
+   The name of a coming evening
+
+   Both places a coming date is named — the card at the top and a row in
+   the list under it — set the title in Anton: a condensed face, upright,
+   and everywhere else on the page in capitals. That is the right voice for
+   a poster and the wrong one for a long line: "IMPROSHOW MIT
+   FREI&IMPROVISIERT" is thirty narrow capitals of one height, with no
+   ascenders or descenders for the eye to hold on to, and at
+   line-height 0.98 a second line sits so close under the first that the
+   two read as one block of letters.
+
+   So, without touching the size or the face:
+
+   text-transform  the capitals go. Anton keeps its poster weight in mixed
+                   case, and the words get their shape back — a reader
+                   recognises "ImproShow" by its outline before spelling it
+                   out, which is exactly what all caps takes away.
+   line-height     enough that a title breaking over two lines stays two
+                   lines. 0.98 is a display value and belongs to the short
+                   headings it was set for — the section heads keep it.
+
+   The date above the title stays as it was: small, wide and in capitals is
+   what makes it read as a label rather than a second headline, and now it
+   is the only one of the two in caps, which tells them apart at a glance.
+
+   Only the coming dates: an archive entry is named by evenings that are
+   over, whose titles are short, and they read as they always have.
+   ------------------------------------------------------------ */
+
+.next-show h2,
+.date-list__title {
+  text-transform: none;
+  line-height: 1.1;
+}
+
+/* When the date is the headline of the row, nothing stands above it — so
+   its own top margin is one too many. */
+.date-list__title--first {
+  margin-top: 0;
+}
+
+
+/* ------------------------------------------------------------
+   The title image of a coming date
+
+   One half of the band, and rounded like everything else on the card: its
+   own corners, the pill, the buttons. Not edge to edge — inside the
+   padding it reads as one element among the card's, which is what it is.
+
+   A share of the card rather than a fixed width, so the picture grows with
+   the band instead of sitting in the corner of it: 30%, and never below
+   16rem (a poster smaller than that stops being readable — the guest
+   ensemble's name is in the picture) or above 22rem (beyond that it starts
+   crowding the title out of the other half).
+
+   The band is 16:9, the shape the files in images/titles/ have, so nothing
+   of them is cropped; object-fit holds that shape should somebody drop in
+   a different one. No border of its own: the picture brings its own edge,
+   and a ring around it would be the second one inside the card's.
+   ------------------------------------------------------------ */
+
+.next-show__cover {
+  flex: 0 1 clamp(16rem, 30%, 22rem);
+  min-width: 0;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  /* The card's own surface while the file loads, not a white rectangle the
+     eye reads as part of the picture. */
+  background: var(--surface-hover);
 }

@@ -21,6 +21,35 @@ function ext(string $url): string
 }
 
 /**
+ * "Kulturschloss Wandsbek · Hamburg · Eintritt frei" — the facts of one
+ * date on a single line, the empty ones dropped.
+ *
+ * The line binds itself: the spaces inside a fact are non-breaking, and so
+ * is the one before its separator. Where the line has to wrap it therefore
+ * wraps between two facts and takes the whole of the next one down with it
+ * — never "Eintritt" above and "frei" below, and never a lone "·" opening
+ * a line. A single fact wider than the column still breaks rather than
+ * pushing the page sideways; that is the overflow-wrap in
+ * public/css/03-typography.css.
+ *
+ * Returns escaped markup — no esc() at the call site.
+ */
+function dot_line(array $parts): string
+{
+    $kept = array_filter(
+        array_map(fn($part) => trim((string) $part), $parts),
+        fn(string $part) => $part !== ''
+    );
+
+    $bound = array_map(
+        fn(string $part) => preg_replace('/\s+/u', "\u{00A0}", esc($part)),
+        $kept
+    );
+
+    return implode("\u{00A0}\u{00B7} ", $bound);
+}
+
+/**
  * mailto with a prepared subject and body.
  *
  * http_build_query encodes the space as "+" — inside a mailto: that is a

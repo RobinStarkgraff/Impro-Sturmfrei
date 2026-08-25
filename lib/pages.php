@@ -11,7 +11,8 @@
    arrives as variables inside the file.
 
    "schema" says which events belong in the JSON-LD: only those actually
-   visible on the page.
+   visible on the page — "next" for the nearest date alone, "upcoming" for
+   every date still to come, "past" for the archive.
 
    Every entry here needs a two-line file public/<slug>/index.php (the home
    page: public/index.php). Without it the page cannot be reached;
@@ -31,8 +32,9 @@ function pages(): array
     if ($pages !== null) return $pages;
 
     $site = site();
-    $shows = shows();
     $brand = $site['brand'];
+    // Counted, not read: which evenings are past follows from their date.
+    $played = count(past_shows());
 
     return $pages = [
         'index' => [
@@ -40,7 +42,8 @@ function pages(): array
             'title' => $site['meta']['title'],
             'description' => $site['meta']['description'],
             'ogDescription' => $site['meta']['ogDescription'],
-            'schema' => ['upcoming'],
+            // "next", not "upcoming": the teaser shows the nearest date only.
+            'schema' => ['next'],
             'sections' => ['hero', 'next-show-teaser', 'impro', 'about', 'follow'],
         ],
 
@@ -93,7 +96,7 @@ function pages(): array
             'navLabel' => 'Archiv',
             'title' => "Archiv – vergangene Shows von {$brand['name']}",
             'description' =>
-                "Rückblick auf die Impro-Shows von {$brand['name']}: " . count($shows['past']) . ' Abende, ' .
+                "Rückblick auf die Impro-Shows von {$brand['name']}: $played Abende, " .
                 photo_count() . ' Fotos aus dem Kulturschloss Wandsbek und anderswo.',
             'schema' => ['past'],
             'lightbox' => true,
@@ -102,7 +105,7 @@ function pages(): array
                     'eyebrow' => 'Rückblick',
                     'title' => 'Archiv',
                     'lead' =>
-                        count($shows['past']) . ' Shows, ' . photo_count() . ' Fotos. Kein Abend davon lässt sich ' .
+                        "$played Shows, " . photo_count() . ' Fotos. Kein Abend davon lässt sich ' .
                         'wiederholen — deshalb steht er hier.',
                 ]],
                 'archive',

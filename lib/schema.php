@@ -5,8 +5,8 @@
    So that Google understands the group as an entity and the shows as
    events (the prerequisite for event rich results). The group appears on
    every page (it is the same entity everywhere), the events only where
-   they are actually visible: the next show on the home and dates pages,
-   the past ones in the archive.
+   they are actually visible: the next show on the home page, every coming
+   date on the dates page, the past ones in the archive.
    ------------------------------------------------------------ */
 
 /**
@@ -76,24 +76,27 @@ function berlin_stamp(string $date, ?string $time): string
 }
 
 /**
- * How long a show runs when nothing else is stated.
+ * How long a show runs.
  *
- * Google wants an endDate for every event. An evening show with an
- * interval runs about two hours — that is a guess, but it is the guess the
- * programme would print too. "durationMinutes" per show in
- * content/shows.json overrides it.
+ * Google wants an endDate for every event, and an evening with an interval
+ * runs two hours — every one of ours has. So it stands here once rather
+ * than in every block of content/shows.json: one number to change on the
+ * day that stops being true.
  */
 const SHOW_MINUTES = 120;
 
 function theater_event(array $show): array
 {
     $performer = ['@type' => 'TheaterGroup', 'name' => site()['brand']['name']];
-    $time = $show['time'] ?? null;
+    // The hour lives in the "upcoming" half. A played evening whose block
+    // still carries it keeps a startDate to the minute — that is a fact
+    // about the evening, and nothing is gained by forgetting it.
+    $time = show_upcoming($show)['time'] ?? null;
 
     $event = [
         '@type' => 'TheaterEvent',
-        'name' => $show['title'],
-        'description' => $show['title'] . ' — Improvisationstheater von '
+        'name' => show_title($show),
+        'description' => show_title($show) . ' — Improvisationstheater von '
             . site()['brand']['name'] . ' im ' . $show['venue'] . ', ' . site()['city'] . '.',
         'startDate' => berlin_stamp($show['date'], $time),
         // Past evenings are not "scheduled". EventScheduled means: takes
@@ -113,18 +116,29 @@ function theater_event(array $show): array
     ];
 
     if ($time) {
-        $minutes = (int) ($show['durationMinutes'] ?? SHOW_MINUTES);
         $end = date_create_immutable("{$show['date']}T{$time}", new DateTimeZone('Europe/Berlin'));
 
-        if ($end) $event['endDate'] = $end->modify("+$minutes minutes")->format('c');
+        if ($end) $event['endDate'] = $end->modify('+' . SHOW_MINUTES . ' minutes')->format('c');
     }
 
-    if (og_image()) $event['image'] = og_image();
+    // The title image while the date is ahead, the group's social card
+    // otherwise. Once the evening is played its own photos would be the
+    // better picture here — that is worth doing the day somebody wants to
+    // choose which one.
+    $cover = show_cover($show);
+    $image = $cover ? absolute(cover_path($cover)) : og_image();
 
-    if (!empty($show['ticketUrl'])) {
+    if ($image) $event['image'] = $image;
+
+    // Ticket link and price live in the "upcoming" half of the block: an
+    // offer is a thing you can still take up. A played evening therefore
+    // carries no offer, even if the link is still in the file.
+    $offer = show_upcoming($show);
+
+    if (!empty($offer['ticketUrl'])) {
         $event['offers'] = [
             '@type' => 'Offer',
-            'url' => $show['ticketUrl'],
+            'url' => $offer['ticketUrl'],
             'availability' => 'https://schema.org/InStock',
         ];
 
@@ -132,8 +146,8 @@ function theater_event(array $show): array
         // concerned. If content/shows.json carries a "price", it goes in
         // along with the currency; otherwise it stays a plain pointer at
         // the ticket shop — an invented number would be worse.
-        if (isset($show['price'])) {
-            $event['offers']['price'] = (string) $show['price'];
+        if (isset($offer['price'])) {
+            $event['offers']['price'] = (string) $offer['price'];
             $event['offers']['priceCurrency'] = 'EUR';
         }
     }
@@ -190,14 +204,24 @@ function structured_data(string $slug, array $page): array
     $graph = [theater_group()];
     $schema = $page['schema'] ?? [];
 
-    // upcoming_show() rather than shows()['upcoming']: a date that has
-    // passed no longer belongs in the JSON-LD as a scheduled event.
-    if (in_array('upcoming', $schema, true) && ($next = upcoming_show())) {
+    // "next" is the nearest date alone, "upcoming" every one still to come
+    // — the home page teases one show, the dates page lists them all, and
+    // the graph says what the page says.
+    //
+    // All three go through the functions in lib/data.php rather than the
+    // list in content/shows.json: a date that has passed no longer belongs
+    // in the JSON-LD as a scheduled event, and a played one belongs there
+    // as completed.
+    if (in_array('next', $schema, true) && ($next = upcoming_show())) {
         $graph[] = theater_event($next);
     }
 
+    if (in_array('upcoming', $schema, true)) {
+        foreach (upcoming_shows() as $show) $graph[] = theater_event($show);
+    }
+
     if (in_array('past', $schema, true)) {
-        foreach (shows()['past'] as $show) $graph[] = theater_event($show);
+        foreach (past_shows() as $show) $graph[] = theater_event($show);
     }
 
     if ($crumbs = breadcrumbs($slug, $page)) $graph[] = $crumbs;

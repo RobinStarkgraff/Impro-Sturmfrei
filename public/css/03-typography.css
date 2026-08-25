@@ -40,12 +40,18 @@ p:last-child {
 .lead {
   font-size: var(--text-lead);
   line-height: 1.55;
+  /* dot_line() in lib/html.php holds each fact of a date together with
+     non-breaking spaces, so "Kulturschloss Wandsbek" moves to the next line
+     whole. Should one fact be wider than the column even so, it breaks here
+     rather than pushing the page sideways. */
+  overflow-wrap: break-word;
 }
 
 .meta {
   font-size: var(--text-meta);
   color: var(--text-muted);
   line-height: 1.6;
+  overflow-wrap: break-word;
 }
 
 /* Date line above a show title — the same one in the archive and in the

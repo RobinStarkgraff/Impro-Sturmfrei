@@ -221,26 +221,64 @@ function check_css_urls(callable $fail, string $out): void
     }
 }
 
-/* Photos that are on disk but missing from content/shows.json — those show
-   up nowhere on the site. The opposite case (listed but not there) is
-   caught by check 2: the <img> then points nowhere. */
-function check_photo_folders(callable $fail, callable $warn, string $out): void
+/* Alt texts written for a file that is not in the folder.
+
+   The folder decides what the archive shows, so a picture on disk can no
+   longer go missing from the site — but a sentence can lose its picture:
+   the file is renamed or thrown out and the entry under "past.photos"
+   stays behind, describing nothing. It reads as done work and is none.
+
+   A warning, not an error: the page is intact either way. */
+function check_photo_alts(callable $warn): void
 {
-    foreach (shows()['past'] as $show) {
-        $dir = "images/shows/{$show['date']}";
+    foreach (past_shows() as $show) {
+        $dir = show_photo_dir($show);
+        $onDisk = array_column(show_photos($show), 'file');
 
-        if (!is_dir("$out/$dir")) {
-            $fail("Folder missing: public/$dir");
-            continue;
+        foreach (array_keys(photo_alts($show)) as $file) {
+            if (in_array($file, $onDisk, true)) continue;
+
+            $warn(
+                'content/shows.json: the show on ' . date_de((string) $show['date']) .
+                " has an alt text for \"$file\", but public/$dir/$file does not exist"
+            );
         }
+    }
+}
 
-        $listed = array_column($show['photos'], 'file');
+/* The title images: every coming date points at a file in
+   public/images/titles/, and that folder should hold nothing nobody points
+   at. Checked here rather than through the markup, because the card only
+   renders the nearest date — the references of the others would go
+   unlooked-at. */
+function check_title_images(callable $fail, callable $warn, string $out): void
+{
+    $dir = TITLES_DIR;
+    $referenced = [];
 
-        foreach (scandir("$out/$dir") ?: [] as $name) {
-            if (!preg_match('/\.jpe?g$/i', $name)) continue;
-            if (!in_array($name, $listed, true)) {
-                $warn("public/$dir/$name is on disk but not listed in shows.json");
-            }
+    foreach (upcoming_shows() as $show) {
+        if (!$cover = show_cover($show)) continue;
+
+        $referenced[] = $cover['file'];
+
+        if (!is_file("$out/" . cover_path($cover))) {
+            $fail(
+                'content/shows.json: the show on ' . date_de($show['date']) . ' points at ' .
+                'public/' . cover_path($cover) . ', which is not there'
+            );
+        }
+    }
+
+    if (!is_dir("$out/$dir")) {
+        if ($referenced) $fail("Folder missing: public/$dir");
+
+        return;
+    }
+
+    foreach (scandir("$out/$dir") ?: [] as $name) {
+        if (!preg_match('/\\.(jpe?g|png|webp)$/i', $name)) continue;
+        if (!in_array($name, $referenced, true)) {
+            $warn("public/$dir/$name is on disk but no date points at it");
         }
     }
 }
@@ -448,43 +486,142 @@ function check_sections(callable $warn): void
 /* ------------------------------------------------------------
    8. The dates themselves
 
-   Two things nobody else notices: a date that is not one, and a "next"
-   date that passed long ago.
+   Whether an evening is announced or archived follows from its date — and
+   so does what its block owes. The two lists below are that difference
+   written down: an evening still to come has to be bookable, one already
+   played has to be shown.
+
+   Errors, not notes: a date the site announces without an hour, or an
+   archive entry without its pictures, is a gap a visitor walks into.
+
+   What changes the morning after a show is what the evening itself
+   produced — the photos start being asked for — and what it used up:
+   hour, ticket link, price and note were all for planning an evening
+   somebody could still go to. Date, title and venue are wanted on both
+   sides and can therefore never go missing in the crossing.
    ------------------------------------------------------------ */
+
+const SHOW_REQUIRED = [
+    // A date still to come is asked for everything the format holds for it:
+    // the general part and every field of its own half. Nothing about an
+    // evening somebody could still go to is a detail.
+    //
+    // A played one is asked for the general part and its pictures — which
+    // are not in the file but in its folder. Hour, ticket link, price and
+    // note were for planning; whatever stands in the block may stay there,
+    // but none of it is asked for again.
+    'upcoming' => ['date', 'title', 'venue', 'time', 'cover', 'ticketUrl', 'price', 'note'],
+    'past' => ['date', 'title', 'venue', 'photos'],
+];
+
+/**
+ * Which half of the block each field sits in — the general part, or the one
+ * named after the side it serves.
+ *
+ * Named here and nowhere else: a field that moves house moves in this list,
+ * and both the messages and the lookup follow it.
+ */
+const SHOW_FIELD_SECTION = [
+    'time' => 'upcoming',
+    'cover' => 'upcoming',
+    'ticketUrl' => 'upcoming',
+    'price' => 'upcoming',
+    'note' => 'upcoming',
+];
+
+/** "note" → "upcoming.note", the path to write in a message. */
+function show_field_path(string $field): string
+{
+    return isset(SHOW_FIELD_SECTION[$field]) ? SHOW_FIELD_SECTION[$field] . ".$field" : $field;
+}
+
+/** Why each of them is needed — the second half of every message. */
+const SHOW_FIELD_WHY = [
+    'date' => 'in the form 2026-09-18; it decides whether the evening is announced or ' .
+        'archived, and the photo folder hangs off it',
+    'title' => 'what the evening is called, and what a visitor remembers it by; without ' .
+        'it the page falls back to the bare date as its headline',
+    'venue' => 'the Place in the JSON-LD, and the line under the heading on every page ' .
+        'the evening appears on',
+    'time' => 'the hour, as "20:00"; without it the announcement has a day but no time ' .
+        'of day, and the JSON-LD no startDate worth the name',
+    'ticketUrl' => 'without it the ticket button lands on the whole Eventbrite list instead ' .
+        'of on this evening',
+    'price' => 'a number in euros, 0 for "Eintritt frei"; Google counts an offer without ' .
+        'a price as incomplete and drops the event',
+    'note' => 'the line under the price on /termine/: "Einlass ab 19:00", "Nur ' .
+        'Barzahlung", whatever an evening needs said that has no field of its own',
+    'cover' => 'the title image standing in until the evening has photos of its own: a ' .
+        'file from public/images/titles/ with an "alt" of its own, heading the card on the ' .
+        'home page and on /termine/',
+    'photos' => 'the folder public/images/shows/<date>/ is empty or not there yet. Put the ' .
+        'evening\'s pictures in it (and shrink them with `make images-apply`) — the archive ' .
+        'builds its slider out of whatever lies in there, and until then the evening stands ' .
+        'in the archive without one',
+];
+
+/**
+ * Is this field missing from the block?
+ *
+ * Not empty() across the board: 0 is a price ("Eintritt frei") and would
+ * count as absent — and the photos are not in the file at all, so for them
+ * the question goes to the folder.
+ */
+function show_field_missing(array $show, string $field): bool
+{
+    $where = match (SHOW_FIELD_SECTION[$field] ?? null) {
+        'upcoming' => show_upcoming($show),
+        'past' => show_past($show),
+        default => $show,
+    };
+
+    return match ($field) {
+        'price' => !isset($where['price']) || !is_numeric($where['price']),
+        // Not a field in the file at all: the photos are the contents of
+        // public/images/shows/<date>/, and the folder is asked.
+        'photos' => !show_photos($show),
+        // A cover is the entry plus the file it names — half of it is not a
+        // cover but a broken image.
+        'cover' => empty($where['cover']['file']),
+        default => empty($where[$field]),
+    };
+}
 
 function check_shows(callable $fail, callable $warn): void
 {
-    $next = shows()['upcoming'] ?? null;
+    // The raw list, not upcoming_shows()/past_shows(): those two skip an
+    // entry whose date is unusable — and a filter is not a report.
+    foreach (shows()['shows'] ?? [] as $index => $show) {
+        $named = '"' . ($show['title'] ?: '') . '"';
 
-    if ($next) {
-        if (empty($next['date']) || !is_iso_date((string) $next['date'])) {
-            $fail('content/shows.json: "upcoming.date" is not a date in the form 2026-09-19');
-        } elseif ($next['date'] < today()) {
-            // Not an error: thanks to upcoming_show() the site already stops
-            // showing the date. But the entry belongs moved, or it will sit
-            // in the file as a corpse forever.
-            $warn(
-                'content/shows.json: the show on ' . date_de((string) $next['date']) . ' is over. ' .
-                'The site no longer shows it as the next date — the entry now belongs ' .
-                'under "past" (with photos in public/images/shows/' . $next['date'] . '/), and ' .
-                '"upcoming" back to null.'
-            );
-        }
-    }
-
-    foreach (shows()['past'] as $show) {
-        if (empty($show['date']) || !is_iso_date((string) $show['date'])) {
+        if (show_field_missing($show, 'date') || !is_iso_date((string) $show['date'])) {
             $fail(
-                'content/shows.json: "' . ($show['title'] ?? '?') . '" has no date in the form ' .
-                '2026-01-09 — the photo folder name and the JSON-LD both hang off it'
+                'content/shows.json: entry ' . ($index + 1) . ' ' . ($show['title'] ? "($named) " : '') .
+                'has no usable "date" — ' . SHOW_FIELD_WHY['date'] . '. It appears nowhere until it has one.'
             );
             continue;
         }
 
-        if ($show['date'] > today()) {
-            $warn(
-                'content/shows.json: "' . $show['title'] . '" is listed under "past", but its date ' .
-                date_de((string) $show['date']) . ' is still in the future'
+        $date = (string) $show['date'];
+        $coming = $date >= today();
+        $side = $coming ? 'upcoming' : 'past';
+        $state = $coming ? 'is still to come' : 'has been played';
+
+        foreach (SHOW_REQUIRED[$side] as $field) {
+            if ($field === 'date' || !show_field_missing($show, $field)) continue;
+
+            $why = str_replace('<date>', $date, SHOW_FIELD_WHY[$field]);
+
+            // The photos are the one thing not written in the file, so the
+            // message does not send anybody into it: it names the folder.
+            if ($field === 'photos') {
+                $fail('The show on ' . date_de($date) . " $state and has no photos — $why");
+                continue;
+            }
+
+            $fail(
+                'content/shows.json: the show on ' . date_de($date) . " $state and has no " .
+                '"' . show_field_path($field) . '" — ' . $why
             );
         }
     }
@@ -496,17 +633,31 @@ function check_shows(callable $fail, callable $warn): void
 
 function report_content_gaps(callable $fail, callable $warn, string $out): void
 {
+    // Every picture the site shows: the photos of a played evening (out of
+    // its folder) and the title image of one still to come (out of
+    // content/shows.json). One count — a visitor meets them all the same way.
     $open = 0;
+    $total = 0;
 
-    foreach (shows()['past'] as $show) {
-        foreach ($show['photos'] as $photo) if (!$photo['alt']) $open++;
+    foreach (past_shows() as $show) {
+        foreach (show_photos($show) as $photo) {
+            $total++;
+            if (!$photo['alt']) $open++;
+        }
+    }
+
+    foreach (upcoming_shows() as $show) {
+        if (!$cover = show_cover($show)) continue;
+
+        $total++;
+        if (!$cover['alt']) $open++;
     }
 
     if ($open) {
         $warn(
-            "$open of " . photo_count() . ' photos still have no alt text of their own ' .
-            '(content/shows.json). The stand-in is the running number — for screen readers ' .
-            'that is next to nothing.'
+            "$open of $total pictures still have no alt text of their own " .
+            '(one "past.photos" entry per file in content/shows.json). The stand-in is the ' .
+            'running number — for screen readers that is next to nothing.'
         );
     }
 
@@ -566,7 +717,8 @@ function report_content_gaps(callable $fail, callable $warn, string $out): void
 check_page_files($fail, $out);
 check_local_targets($rendered, $fail, $out);
 check_css_urls($fail, $out);
-check_photo_folders($fail, $warn, $out);
+check_photo_alts($warn);
+check_title_images($fail, $warn, $out);
 check_anchors($rendered, $fail);
 check_images_and_links($rendered, $fail);
 check_nav($fail, $warn);

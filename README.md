@@ -46,12 +46,13 @@ public/ — THE SITE. Gets served, lives in the repo.
   fonts/                    Anton & Inter as woff2, self-hosted
   images/logo/              logo (also used as the favicon)
   images/group/             group photos for the hero and the crossfade
-  images/shows/<date>/      photos per show, folders by date (YYYY-MM-DD)
+  images/shows/<date>/      photos per show, folders by date (YYYY-MM-DD);
+                            the folder is the list — see "After the show"
 
 THE PARTS — sit above public/ and are therefore not addressable
 
 content/site.json           links, navigation, email, meta values, photos
-content/shows.json          every show: date, title, venue, cast, photos
+content/shows.json          every show, coming and played, in one list
 content/booking.json        formats, requirements and questions for /buchen/
 content/legal.json          the details for Impressum and privacy policy
 
@@ -78,10 +79,13 @@ tools/fetch-fonts.sh        fetches the fonts
 Makefile                    the tasks (make help)
 ```
 
-**Every value stands exactly once.** A show — date, title, venue, cast,
-photos — lives in `content/shows.json`; from it come the article in the
-archive, the slider tiles including their `alt` texts, the slider's
-`aria-label` and the `TheaterEvent` entry in the JSON-LD. The same goes for
+**Every value stands exactly once.** A show — date, title, venue —
+lives in `content/shows.json`; from it come the announcement on
+the home and dates pages while its date is still ahead, and afterwards the
+article in the archive, the slider's `aria-label` and the `TheaterEvent`
+entry in the JSON-LD. Its photos stand exactly once too, and not in a file
+somebody has to keep in step with them: they are the contents of
+`public/images/shows/<date>/`, and the slider is as long as the folder. The same goes for
 links, the email address and the navigation: once in `content/`, not once
 per place they appear in. `<head>`, header bar and footer stand once in
 `sections/` and apply to every page.
@@ -205,8 +209,8 @@ and checks against it:
 * the mandatory details from `content/legal.json` (as an **error**, not a
   note);
 * the contract from `js/classes.js` against CSS and markup;
-* the dates in `content/shows.json` — and whether `upcoming` still holds a
-  date that passed long ago.
+* every block in `content/shows.json` — a date that is not one, and each
+  field the block owes on its side of today (see "The shows" below).
 
 Before that, `php -l` runs over every PHP file. That is no formality:
 without a build, a typo in a PHP file is not half a page but an empty one.
@@ -242,39 +246,195 @@ The exception to step 4 is `404`: that page is not navigated to but
 inserted by Apache, and therefore belongs in no navigation. `make check`
 knows it as an exception (`$unlisted` in `check_nav`).
 
-## Adding a new show
+## The shows — one list, the date decides
+
+Every evening is a block in `shows` in `content/shows.json`: the ones
+played and the ones still to come in the same list. Which of the two it is,
+its date decides on every request — until the end of the show day it is a
+coming date, from the morning after an archive entry. There is nothing to
+move by hand and no second place that has to agree.
+
+The order in the file does not matter: `upcoming_shows()` and
+`past_shows()` in `lib/data.php` sort by date — ascending for what is
+coming, newest first for the archive. Chronological is simply the
+pleasantest order to type into.
+
+**A block has three parts**, and which of the two named ones is read
+depends on that same date:
+
+| part         | fields                                   | coming | played |
+| ------------ | ---------------------------------------- | :----: | :----: |
+| general      | `date` `title` `venue`                   |   ●    |   ●    |
+| `"upcoming"` | `time` `cover` `ticketUrl` `price` `note`|   ●    |   –    |
+| `"past"`     | `photos` — alt texts only, optional      |   –    |   ○    |
+
+● required — `make check` reports a gap as an **error**  ·  ○ optional  ·
+– never asked for on that side
+
+A date still to come is asked for everything that can apply to it: the
+general part and all five fields of its own half. A played one is asked for
+the general part and nothing else — its half of the block holds only the
+alt texts of its pictures, and may be missing entirely.
+
+**The photos are not in the file.** What the archive shows is whatever lies
+in `public/images/shows/<date>/`, in file-name order — nine files, nine
+tiles, and nothing to keep in step. `make check` asks a played evening for a
+folder that is not empty, and reports an empty one as an error.
+
+**An archive entry is a date, a title and the photos.** The head used to
+carry a second column beside the title: who played ("Spieler: Enya,
+Nicklas, Raymond, Robin"), the house and the city, and how many photos
+followed. Each line was either a fact kept up by hand about an evening that
+is over, or the page describing itself — a photo count above the photos, a
+place above pictures of it. The slider says how many there are by being as
+long as it is; the group is named on the home page, and the venues of
+coming dates are on `/termine/`.
+
+```json
+{
+  "date": "2026-09-18",
+  "title": "Sturmfrei zum Saisonstart",
+  "venue": "Kulturschloss Wandsbek",
+  "upcoming": {
+    "time": "19:30",
+    "cover": { "file": "sturmfrei.png", "alt": "Der Leuchtturm über dem Schriftzug" },
+    "ticketUrl": "…", "price": 0, "note": "Einlass ab 19:00"
+  },
+  "past":     { "photos": [{ "file": "3.jpg", "alt": "Enya erklärt die Regeln" }] }
+}
+```
+
+The hour and the title image sit under `upcoming` because that is who needs
+them: somebody deciding whether to come. An archive entry names the day and leaves it at
+that. A played block that still carries its `time` keeps a startDate to the
+minute in the JSON-LD — nothing is gained by forgetting a fact about the
+evening — but nothing asks for it there any more.
+
+In practice only one of the two halves stands in a block at a time, if
+either does: a date still ahead has no pictures to describe, and for a
+played one the ticket link has nothing left to sell. Both may stand there;
+the half that is not its side's is simply not read.
+
+So the morning after a show exactly one thing is wanted that was not wanted
+the evening before, and it is not in this file: the pictures, in the
+evening's folder. Hour, ticket link, price and note stop being asked for and may stay as they
+are. Date, title, venue and cover are general and therefore
+cross over untouched — the cover is the evening's face before it and after
+it.
+
+**How long an evening runs is not a field.** Two hours, once, as
+`SHOW_MINUTES` in `lib/schema.php` — that is what the `endDate` in the
+JSON-LD is built from. One number to change on the day it stops being true.
+
+**A title left empty does not break the page**: the date becomes the
+headline ("18.09.2026 · 19:30 Uhr") and the JSON-LD names the evening
+"Sturmfrei im *venue*", because an event needs a name. It is an error all
+the same — that fallback is a safety net, not a way of publishing.
+
+### Announcing a date
+
+The nearest date carries the "Nächste Show" section on the home page and at
+the top of `/termine/`; every further one appears below it under "Weitere
+Termine", and each becomes a `TheaterEvent` in the JSON-LD — the home page
+emits the nearest alone, which is the difference between `'schema' =>
+['next']` and `['upcoming']` in `lib/pages.php`. A `git push` is enough,
+there is nothing to build.
+
+`"upcoming.price"` is a number in euros, and `0` is an answer rather than a
+gap: it shows as "Eintritt frei" and goes into the JSON-LD as a free offer.
+Google counts an offer without a price as incomplete and drops the event's
+rich result — which is why the field is required rather than merely noted,
+and why `0` counts as filled in while an absent field does not.
+
+**The title image** is `"upcoming.cover"`: a file from
+`public/images/titles/`, named in the block with an alt text of its own. It
+stands in for photos that do not exist yet, which is why it belongs to a
+date still ahead and to nothing else — the moment the evening has pictures
+of its own, the archive shows those.
+
+Several dates share one file, so there is one folder rather than a copy per
+date. `make check` reads it in both directions: a date pointing at a file
+that is not there is an error, a file nobody points at is a note. Only the
+nearest date renders an `<img>`, so without that pass the others would go
+unchecked.
+
+On the page it holds one half of the "Nächste Show" card — the picture on
+one side, the date, the title, the facts and the buttons on the other —
+rounded like the card's own corners and without a border of its own, since
+a ring around it would be the second one inside the card's. It takes 30 %
+of the card's width, never less than 16 rem and never more than 22 rem, and
+below the width at which both halves fit the card stacks again: picture
+first, everything else under it. Every row under "Weitere Termine" carries
+the same picture at 6 rem — a list in which the first date has one and the
+rest do not reads like two lists. The band is 16:9 everywhere, the shape
+the files in `images/titles/` have, so nothing of them is cropped. It is
+also that event's `image` in the JSON-LD, in place of the group's social
+card.
+
+**The card is a band, not a column.** It takes the page measure rather than
+the reading one — on `/termine/` in a `.wrap` of its own, with the list of
+further dates below it back in the reading column. Standing out is what the
+card is for, and a poster does that by being the widest thing on the page
+rather than the longest: surface, border, shadow, the pulsing pill and a
+date at subheading size all stay, they simply stand beside the picture
+instead of under it. Where the two halves stop fitting is decided by the
+card's width and not the window's (`flex-wrap`, and the text half asks for
+22 rem before it shares a line), so the same card also does the right thing
+in a narrower column.
+
+`"upcoming.note"` is one line under the price on `/termine/`, for what has
+no field of its own — "Einlass ab 19:00", "Nur Barzahlung", "Eingang im
+Hinterhof". It is deliberately absent from the home page teaser and from
+the JSON-LD, and it is required while the date is ahead: an evening with
+nothing to add is rare enough that being asked is the cheaper mistake.
+
+### After the show
+
+The date moves itself. What is left is what the evening produced:
 
 1. Create the folder `public/images/shows/YYYY-MM-DD/` and put the photos
    in as `1.jpg`, `2.jpg`, … Shrink them first: `make images-apply`.
-2. Add a block under `past` in `content/shows.json`, following the pattern
-   of the existing ones — date, title, venue, cast, one entry per photo.
-3. `make check`
+2. `make check` — which has been asking for them since the morning after.
+
+There is no step in `content/shows.json`: the folder is the list. Eleven
+files give eleven tiles, one more dropped in next week gives twelve, and a
+picture pulled out is gone from the page — nothing anywhere says how many
+there are, so nothing can say it wrongly.
+They are shown in file-name order, counted naturally (`10.jpg` after
+`9.jpg`, not after `1.jpg`), and `.jpg`, `.png` and `.webp` all count.
+
+The folder is new at this point: while the date was ahead the evening had no
+pictures of its own, only the shared title image — and that one stays where
+it is, for the next date to use.
 
 Article, slider, `aria-label`, alt texts and the JSON-LD entry all follow
 from that automatically; slider arrows and lightbox come from `public/js/`.
 
-**alt texts.** If `"alt": ""` stays empty, the stopgap
-"Impro-Szene 3 – Show vom 21.04.2026" ends up on the image. For screen
-readers a running number is next to nothing — half a sentence about the
-picture is considerably better. `make check` says how many are still open.
+Until that is done the evening stands in the archive as a date and a title
+with nothing under them — it did take place, and
+the page saying so is better than the page passing over it. The site
+therefore stays publishable while `make check` is red on it; that error is
+a task list, not a broken page.
 
-## Announcing the next show
+**alt texts** are the one thing about a photo the folder cannot say, and
+the only reason `"past.photos"` still exists: an optional list of
+`{ "file", "alt" }` under the `"past"` half, one entry for each picture that
+has a sentence, in any order — and nothing at all for the rest. The file
+name is what ties an entry to its picture, so renaming a photo loses its
+sentence; `make check` says so instead of letting it describe nothing.
 
-Set `upcoming` in `content/shows.json` from `null` to a block (the example
-stands next to it as a comment). The "Nächste Show" section then shows
-date, title and a ticket button instead of the placeholder, and the JSON-LD
-gains another `TheaterEvent`. A `git push` is enough — there is nothing to
-build.
+```json
+"past": {
+  "photos": [{ "file": "3.jpg", "alt": "Enya erklärt dem Publikum die Regeln" }]
+}
+```
 
-**After the show** the date disappears by itself: `upcoming_show()` in
-`lib/data.php` only hands it out while its date has not passed (counted to
-the end of the show day). The home page then falls back to the placeholder
-instead of going on advertising an evening already played — and `make
-check` is the reminder to move the entry to `past`.
-
-Optional per show: `"durationMinutes"` (otherwise 120, for the `endDate` in
-the JSON-LD) and `"price"` as a number in euros, if there is a `ticketUrl`
-alongside.
+If a picture has no entry, the stopgap
+"Impro-Szene 3 – Show vom 21.04.2026" ends up on the image — on the cover,
+"Titelbild der Show vom 21.04.2026". For screen readers a running number is
+next to nothing; half a sentence about the picture is considerably better.
+`make check` counts the open ones, and counts the covers separately: on the
+largest image of the evening an empty alt weighs more.
 
 ## The domain
 

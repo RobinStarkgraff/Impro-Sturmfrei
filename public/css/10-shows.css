@@ -30,12 +30,12 @@
   border-top: 1px solid var(--border);
 }
 
+/* Date over title, and that is the whole head. It used to be two columns —
+   the name of the evening on the left, house, city, cast and photo count on
+   the right — so it was a flex row that pushed them apart. With the second
+   column gone there is nothing to push, and a flex row of two blocks would
+   only put the date beside the title. */
 .show__head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-xs) var(--space-lg);
   margin-bottom: var(--space-lg);
 }
 

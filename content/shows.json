@@ -1,87 +1,120 @@
 {
   "$comment": [
-    "Every show in one place. On each request these values produce: the",
-    "archive section, the sliders with their alt texts, the aria-label per",
-    "slider and the TheaterEvent entries in the JSON-LD. A change here takes",
-    "effect immediately — there is no build.",
+    "Every show in one place — the ones played and the ones still to come in",
+    "the same list. Which of the two a block is, its date decides and nothing",
+    "else: on the morning after the show it stops being the next date and",
+    "becomes an archive entry. There is nothing to move by hand.",
     "",
-    "alt: leaving it empty means \"Impro-Szene N – Show vom TT.MM.JJJJ\" as a",
-    "stopgap. A real sentence about the image is far better — a screen reader",
-    "can do nothing with a running number. `make check` counts how many are",
-    "still open. Titles, venues and alt texts are website content and stay",
-    "German."
+    "Out of these values, on every request, come: the coming dates on the",
+    "home page and on /termine/, the archive with its sliders and alt texts,",
+    "the aria-label per slider and the TheaterEvent entries in the JSON-LD. A",
+    "change here takes effect immediately — there is no build.",
+    "",
+    "The order in the file does not matter (lib/data.php sorts) —",
+    "chronological is simply the pleasantest to type into.",
+    "",
+    "Every block has three parts:",
+    "",
+    "  general      \"date\", \"title\" and \"venue\" — true of the evening",
+    "               whichever side of today it is on, and all three needed.",
+    "  \"upcoming\"   \"time\", \"cover\", \"ticketUrl\", \"price\" (a number in",
+    "               euros, 0 means Eintritt frei) and \"note\". What somebody",
+    "               needs who can still go — all five needed while the date",
+    "               is ahead, and afterwards not read at all: the hour still",
+    "               reaches the JSON-LD, a closed ticket link nothing.",
+    "  \"past\"       nothing that has to be written down. What the archive",
+    "               shows of a played evening is whatever lies in",
+    "               public/images/shows/<date>/, in file-name order (shrink",
+    "               them first with `make images-apply`) — nine files, nine",
+    "               tiles. The half stays in the format for the alt texts",
+    "               under \"photos\", and those are optional; see below.",
+    "",
+    "The cover is the title image: a file from public/images/titles/, named",
+    "in \"upcoming.cover\" with an alt text of its own — it heads the card",
+    "on the home page and on /termine/, and every further date on that page",
+    "carries it as a smaller mark. Several dates share",
+    "one file — it stands in for photos that do not exist yet, and the",
+    "moment they do it is not needed any more. Hence one folder rather than",
+    "a copy per date, and hence nothing of the kind in a played block: the",
+    "archive shows the evening itself.",
+    "",
+    "`make check` asks a date still to come for everything above that can",
+    "apply to it: the general part and all five of its own. A played one it",
+    "asks for the general part and a photo folder that is not empty.",
+    "Nothing here is optional — what is missing is an error, not a note.",
+    "",
+    "How long an evening runs is not asked here: two hours, standing once as",
+    "SHOW_MINUTES in lib/schema.php, is what the endDate in the JSON-LD is",
+    "built from.",
+    "",
+    "A title left empty does not break the page — the date becomes the",
+    "headline and the JSON-LD names the evening \"Sturmfrei im <venue>\" — but",
+    "it is an error all the same, because an evening with a name is the",
+    "better poster.",
+    "",
+    "So the morning after a show one thing is wanted that was not wanted the",
+    "evening before, and it is not in this file: the pictures, in the",
+    "evening's folder. Until they are there the archive shows the evening",
+    "without a slider; it does not disappear.",
+    "",
+    "The alt texts are the one thing about a photo the folder cannot say, and",
+    "the only reason \"past.photos\" still exists: an optional list of",
+    "{ \"file\", \"alt\" } — one entry for each picture that has a sentence,",
+    "in any order, and nothing at all for the rest. A file without one falls",
+    "back to \"Impro-Szene N – Show vom TT.MM.JJJJ\", which a screen reader",
+    "can do nothing with; `make check` counts how many are still open, and",
+    "says so when a sentence names a file that is no longer there. Titles,",
+    "venues and alt texts are website content and stay German."
   ],
 
-  "upcoming": null,
-  "$comment_upcoming": [
-    "Once the next date is fixed, enter it here — then the \"Nächste Show\"",
-    "section shows the real show instead of the placeholder, and the JSON-LD",
-    "gains another TheaterEvent:",
-    "",
-    "  \"upcoming\": {",
-    "    \"date\": \"2026-09-19\",",
-    "    \"title\": \"Sturmfrei im Herbst\",",
-    "    \"venue\": \"Kulturschloss Wandsbek\",",
-    "    \"time\": \"20:00\",",
-    "    \"ticketUrl\": \"https://www.eventbrite.de/e/...\",",
-    "    \"note\": \"Einlass ab 19:30\"",
-    "  }",
-    "",
-    "time, ticketUrl and note are optional."
-  ],
-
-  "past": [
+  "shows": [
     {
       "date": "2026-01-09",
       "title": "Die Sturmfrei-Premiere",
-      "venue": "Kulturschloss Wandsbek",
-      "cast": ["Enya", "Nicklas", "Raymond", "Robin"],
-      "photos": [
-        { "file": "1.jpg", "alt": "" },
-        { "file": "2.jpg", "alt": "" },
-        { "file": "3.jpg", "alt": "" },
-        { "file": "4.jpg", "alt": "" },
-        { "file": "5.jpg", "alt": "" },
-        { "file": "6.jpg", "alt": "" },
-        { "file": "7.jpg", "alt": "" },
-        { "file": "8.jpg", "alt": "" },
-        { "file": "9.jpg", "alt": "" }
-      ]
+      "venue": "Kulturschloss Wandsbek"
     },
     {
       "date": "2026-03-22",
       "title": "Sturmfrei im Kulturschloss",
-      "venue": "Kulturschloss Wandsbek",
-      "cast": ["Enya", "Nicklas", "Raymond", "Robin"],
-      "photos": [
-        { "file": "1.jpg", "alt": "" },
-        { "file": "2.jpg", "alt": "" },
-        { "file": "3.jpg", "alt": "" },
-        { "file": "4.jpg", "alt": "" },
-        { "file": "5.jpg", "alt": "" },
-        { "file": "6.jpg", "alt": "" },
-        { "file": "7.jpg", "alt": "" },
-        { "file": "8.jpg", "alt": "" }
-      ]
+      "venue": "Kulturschloss Wandsbek"
     },
     {
       "date": "2026-04-21",
       "title": "Sturmfrei im Hörsaal",
-      "venue": "Hörsaal Hamburg",
-      "cast": ["Enya", "Nicklas", "Moritz", "Raymond", "Robin"],
-      "photos": [
-        { "file": "1.jpg", "alt": "" },
-        { "file": "2.jpg", "alt": "" },
-        { "file": "3.jpg", "alt": "" },
-        { "file": "4.jpg", "alt": "" },
-        { "file": "5.jpg", "alt": "" },
-        { "file": "6.jpg", "alt": "" },
-        { "file": "7.jpg", "alt": "" },
-        { "file": "8.jpg", "alt": "" },
-        { "file": "9.jpg", "alt": "" },
-        { "file": "10.jpg", "alt": "" },
-        { "file": "11.jpg", "alt": "" }
-      ]
+      "venue": "Hörsaal Hamburg"
+    },
+    {
+      "date": "2026-09-18",
+      "title": "ImproShow mit frei&improvisiert",
+      "venue": "Kulturschloss Wandsbek",
+      "upcoming": {
+        "cover": { "file": "Sturmfrei_freiundimprovisiert.png", "alt": "Sturmfrei-Logo: ein rot-weißer Leuchtturm wirft seinen Lichtkegel über den Schriftzug „Sturmfrei – Hamburger Impro Shows“, rechts daneben ein türkises Feld mit der Zeile „zu Gast:“ und dem geschwungenen Logo von frei&improvisiert" },
+        "time": "19:30",
+        "ticketUrl": "https://www.eventbrite.de/e/1998427383099",
+        "price": 0
+      }
+    },
+    {
+      "date": "2026-10-11",
+      "title": "ImproShow mit Hansestadt Humbug",
+      "venue": "Kulturschloss Wandsbek",
+      "upcoming": {
+        "cover": { "file": "Sturmfrei_Hansestadt_Humbug.png", "alt": "Sturmfrei-Logo: ein rot-weißer Leuchtturm wirft seinen Lichtkegel über den Schriftzug „Sturmfrei – Hamburger Impro Shows“, rechts daneben ein dunkelrotes Feld mit der Zeile „zu Gast: Hansestadt Humbug“ über einem Gruppenfoto des Ensembles" },
+        "time": "18:00",
+        "ticketUrl": "https://www.eventbrite.de/e/1998546760159",
+        "price": 0
+      }
+    },
+    {
+      "date": "2026-11-27",
+      "title": "Sturmfrei im Kulturschloss",
+      "venue": "Kulturschloss Wandsbek",
+      "upcoming": {
+        "cover": { "file": "Sturmfrei.png", "alt": "Sturmfrei-Logo: ein rot-weißer Leuchtturm wirft seinen Lichtkegel über den Schriftzug „Sturmfrei – Hamburger Impro Shows“" },
+        "time": "19:30",
+        "ticketUrl": "https://www.eventbrite.de/e/1998546957750",
+        "price": 0
+      }
     }
   ]
 }
