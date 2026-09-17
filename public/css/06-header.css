@@ -9,16 +9,18 @@
    px of scrolling. That tied every page without a hero to a dark band
    below it — otherwise white bar text stood on cream. That coupling is
    gone: the bar brings its own ground, and the bands below it are gone
-   with it.
+   with it — the hero on the home page last, which stands on the page's own
+   ground now like every subpage heading. So the bar is the one dark thing
+   on the site, and --hero-top and --hero-mid below are its colours rather
+   than a family it belongs to.
    ============================================================ */
 
 .site-header {
   position: fixed;
   inset: 0 0 auto 0;
   z-index: 50;
-  /* The same base colours as the hero and the header band: the bar belongs
-     to the family of dark bands at the top of the page — as a member of it
-     in its own right. */
+  /* The colours the dark bands at the top of the page were built from,
+     when there were several. */
   background:
     radial-gradient(70% 200% at 6% 0%, rgb(var(--brick-rgb) / 0.30), transparent 68%),
     linear-gradient(165deg, var(--hero-top) 0%, var(--hero-mid) 100%);

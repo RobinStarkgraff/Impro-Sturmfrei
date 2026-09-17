@@ -338,14 +338,14 @@ depends on that same date:
 | part         | fields                                   | coming | played |
 | ------------ | ---------------------------------------- | :----: | :----: |
 | general      | `date` `title` `venue`                   |   ●    |   ●    |
-| `"upcoming"` | `time` `cover` `ticketUrl` `price` `note`|   ●    |   –    |
+| `"upcoming"` | `time` `cover` `ticketUrl` `price`       |   ●    |   –    |
 | `"past"`     | `photos` — alt texts only, optional      |   –    |   ○    |
 
 ● required — `make check` reports a gap as an **error**  ·  ○ optional  ·
 – never asked for on that side
 
 A date still to come is asked for everything that can apply to it: the
-general part and all five fields of its own half. A played one is asked for
+general part and all four fields of its own half. A played one is asked for
 the general part and nothing else — its half of the block holds only the
 alt texts of its pictures, and may be missing entirely.
 
@@ -371,7 +371,7 @@ coming dates are on `/termine/`.
   "upcoming": {
     "time": "19:30",
     "cover": { "file": "sturmfrei.png", "alt": "Der Leuchtturm über dem Schriftzug" },
-    "ticketUrl": "…", "price": 0, "note": "Einlass ab 19:00"
+    "ticketUrl": "…", "price": 0
   },
   "past":     { "photos": [{ "file": "3.jpg", "alt": "Enya erklärt die Regeln" }] }
 }
@@ -390,8 +390,8 @@ the half that is not its side's is simply not read.
 
 So the morning after a show exactly one thing is wanted that was not wanted
 the evening before, and it is not in this file: the pictures, in the
-evening's folder. Hour, ticket link, price and note stop being asked for and may stay as they
-are. Date, title, venue and cover are general and therefore
+evening's folder. Hour, ticket link and price stop being asked for and may
+stay as they are. Date, title, venue and cover are general and therefore
 cross over untouched — the cover is the evening's face before it and after
 it.
 
@@ -454,12 +454,6 @@ instead of under it. Where the two halves stop fitting is decided by the
 card's width and not the window's (`flex-wrap`, and the text half asks for
 22 rem before it shares a line), so the same card also does the right thing
 in a narrower column.
-
-`"upcoming.note"` is one line under the price on `/termine/`, for what has
-no field of its own — "Einlass ab 19:00", "Nur Barzahlung", "Eingang im
-Hinterhof". It is deliberately absent from the home page teaser and from
-the JSON-LD, and it is required while the date is ahead: an evening with
-nothing to add is rare enough that being asked is the cheaper mistake.
 
 ### After the show
 

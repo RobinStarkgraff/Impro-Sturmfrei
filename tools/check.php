@@ -586,8 +586,8 @@ function check_sections(callable $warn): void
 
    What changes the morning after a show is what the evening itself
    produced — the photos start being asked for — and what it used up:
-   hour, ticket link, price and note were all for planning an evening
-   somebody could still go to. Date, title and venue are wanted on both
+   hour, ticket link and price were all for planning an evening somebody
+   could still go to. Date, title and venue are wanted on both
    sides and can therefore never go missing in the crossing.
    ------------------------------------------------------------ */
 
@@ -597,10 +597,10 @@ const SHOW_REQUIRED = [
     // evening somebody could still go to is a detail.
     //
     // A played one is asked for the general part and its pictures — which
-    // are not in the file but in its folder. Hour, ticket link, price and
-    // note were for planning; whatever stands in the block may stay there,
-    // but none of it is asked for again.
-    'upcoming' => ['date', 'title', 'venue', 'time', 'cover', 'ticketUrl', 'price', 'note'],
+    // are not in the file but in its folder. Hour, ticket link and price
+    // were for planning; whatever stands in the block may stay there, but
+    // none of it is asked for again.
+    'upcoming' => ['date', 'title', 'venue', 'time', 'cover', 'ticketUrl', 'price'],
     'past' => ['date', 'title', 'venue', 'photos'],
 ];
 
@@ -616,10 +616,9 @@ const SHOW_FIELD_SECTION = [
     'cover' => 'upcoming',
     'ticketUrl' => 'upcoming',
     'price' => 'upcoming',
-    'note' => 'upcoming',
 ];
 
-/** "note" → "upcoming.note", the path to write in a message. */
+/** "time" → "upcoming.time", the path to write in a message. */
 function show_field_path(string $field): string
 {
     return isset(SHOW_FIELD_SECTION[$field]) ? SHOW_FIELD_SECTION[$field] . ".$field" : $field;
@@ -639,8 +638,6 @@ const SHOW_FIELD_WHY = [
         'shop holds the "tickets" role in content/site.json, instead of on this evening',
     'price' => 'a number in euros, 0 for "Eintritt frei"; Google counts an offer without ' .
         'a price as incomplete and drops the event',
-    'note' => 'the line under the price on /termine/: "Einlass ab 19:00", "Nur ' .
-        'Barzahlung", whatever an evening needs said that has no field of its own',
     'cover' => 'the title image standing in until the evening has photos of its own: a ' .
         'file from public/images/titles/ with an "alt" of its own, heading the card on the ' .
         'home page and on /termine/',

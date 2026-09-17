@@ -46,7 +46,7 @@ function pages(): array
             'ogDescription' => $site['meta']['ogDescription'],
             // "next", not "upcoming": the teaser shows the nearest date only.
             'schema' => ['next'],
-            'sections' => ['hero', 'next-show-teaser', 'impro', 'about', 'follow'],
+            'sections' => ['hero', 'next-show-teaser', 'about', 'follow'],
         ],
 
         'termine' => [

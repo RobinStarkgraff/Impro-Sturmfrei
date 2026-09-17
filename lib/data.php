@@ -222,8 +222,8 @@ function upcoming_show(): ?array
 
 /**
  * The half of a block that only counts while the date is still ahead: the
- * hour, the ticket link, the price, the note about admission, and the title
- * image standing in for photos that do not exist yet.
+ * hour, the ticket link, the price, and the title image standing in for
+ * photos that do not exist yet.
  *
  * Once the evening has been played nothing reads these any more. They may
  * stay in the file — a closed ticket link is a piece of history, not a
@@ -425,4 +425,96 @@ function when_line(array $show): string
     return $time
         ? date_de($show['date']) . ' · ' . $time . ' Uhr'
         : date_de($show['date']);
+}
+
+/**
+ * The date in the pieces a ticket stub carries:
+ *
+ *   ['weekday' => 'Freitag', 'day' => '18',
+ *    'month' => 'September 2026', 'time' => '19:30 Uhr']
+ *
+ * Four lines instead of one, because that is how a date reads when it is
+ * the thing being sold rather than a label on a list: the weekday answers
+ * "does that work for me", the numeral is what the eye finds from across
+ * the page, and the month stands under it small. "time" is null on a date
+ * with no hour yet.
+ *
+ * The year rides on the month line. On the card at the top it is nearly
+ * always redundant — that date is days away — but the rows below it run a
+ * year out, and a stub reading "FR 8 JANUAR" in December names two
+ * different evenings. One rule for all of them beats a stub that drops a
+ * line depending on where it stands.
+ *
+ * Two lists rather than a formatter: date() answers in English, strftime()
+ * is gone as of PHP 8.1, and IntlDateFormatter would be a whole extension
+ * for nineteen words. null on anything that is not a date — the stub then
+ * stays away entirely, which is the honest answer, and tools/check.php
+ * reports the entry.
+ */
+const WEEKDAYS_DE = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+
+const MONTHS_DE = [
+    1 => 'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
+    'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember',
+];
+
+function date_stamp(array $show): ?array
+{
+    if (!is_iso_date((string) $show['date'])) return null;
+
+    $stamp = strtotime($show['date']);
+    $time = show_upcoming($show)['time'] ?? null;
+
+    return [
+        'weekday' => WEEKDAYS_DE[(int) date('w', $stamp)],
+        'day' => (string) (int) date('j', $stamp),
+        'month' => MONTHS_DE[(int) date('n', $stamp)] . ' ' . date('Y', $stamp),
+        // Non-breaking: the stub is a narrow column, and "19:30" above
+        // "Uhr" would be two lines of one fact.
+        'time' => $time ? $time . "\u{00A0}Uhr" : null,
+    ];
+}
+
+/**
+ * Days from today to the date: 0 is today, 1 tomorrow, negative is past.
+ *
+ * DateTimeImmutable and not (a - b) / 86400: two days in a year are 23 and
+ * 25 hours long, and the division silently loses or gains one around the
+ * end of March and October.
+ */
+function days_until(array $show): ?int
+{
+    if (!is_iso_date((string) $show['date'])) return null;
+
+    $today = new DateTimeImmutable(today());
+    $date = new DateTimeImmutable($show['date']);
+
+    return (int) $today->diff($date)->format('%r%a');
+}
+
+/**
+ * What the pill over the next date says: "Heute Abend", "Morgen",
+ * "In 5 Tagen" — otherwise "Nächste Show".
+ *
+ * The line above the card used to say "Nächste Show" whatever the date,
+ * which the heading of the page ("Termine") and the list below it already
+ * say between them. Once the evening is close enough to plan for, the same
+ * space can carry the one thing the card does not otherwise state: how far
+ * off it is.
+ *
+ * A fortnight is where that stops being a fact and becomes arithmetic —
+ * "In 43 Tagen" is a number nobody converts back into a date — so beyond
+ * it the label goes back to naming what the card is.
+ */
+function soon_label(array $show): string
+{
+    $days = days_until($show);
+
+    return match (true) {
+        $days === null => 'Nächste Show',
+        $days <= 0     => 'Heute Abend',
+        $days === 1    => 'Morgen',
+        $days <= 13    => "In $days Tagen",
+        default        => 'Nächste Show',
+    };
 }
