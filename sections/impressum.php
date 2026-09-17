@@ -72,7 +72,7 @@
       <h2>Haftung für Links</h2>
 
       <p>
-        Diese Seite verlinkt auf Instagram, Eventbrite und MeetUp. Für die Inhalte dieser
+        Diese Seite verlinkt auf <?= esc(link_names()) ?>. Für die Inhalte dieser
         Seiten sind allein deren Anbieter verantwortlich. Zum Zeitpunkt der Verlinkung waren
         dort keine rechtswidrigen Inhalte erkennbar; eine laufende Kontrolle fremder Seiten
         ist ohne konkreten Anlass nicht zumutbar. Wird uns eine Rechtsverletzung bekannt,

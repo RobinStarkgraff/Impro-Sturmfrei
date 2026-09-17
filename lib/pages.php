@@ -19,8 +19,7 @@
    conversely, without the entry the file does not know what it is —
    `make check` reports both.
 
-   Titles, descriptions and lead text are what visitors read, so they stay
-   German.
+   Titles and descriptions are what visitors read, so they stay German.
    ------------------------------------------------------------ */
 
 function pages(): array
@@ -35,6 +34,9 @@ function pages(): array
     $brand = $site['brand'];
     // Counted, not read: which evenings are past follows from their date.
     $played = count(past_shows());
+    // The channel holding the "announcements" role in content/site.json —
+    // a description naming a platform should name the one in use.
+    $channel = link_for('announcements')['name'] ?? null;
 
     return $pages = [
         'index' => [
@@ -51,18 +53,16 @@ function pages(): array
             'navLabel' => 'Termine',
             'title' => "Termine – {$brand['alternateName']}",
             'description' =>
-                'Die nächsten Impro-Shows von Sturmfrei in Hamburg: Termine, Tickets und die Kanäle, ' .
-                'auf denen neue Abende zuerst auftauchen.',
+                'Die nächsten Impro-Shows von Sturmfrei in Hamburg: wann wir spielen, wo es ' .
+                'die Tickets gibt und auf welchen Kanälen neue Abende zuerst auftauchen.',
             'schema' => ['upcoming'],
+            // "follow" sits under the dates and not on /kontakt/: somebody
+            // reading a list of dates is the one looking for where the next
+            // one will be announced.
             'sections' => [
-                ['page-hero', [
-                    'eyebrow' => 'Wann wir spielen',
-                    'title' => 'Termine',
-                    'lead' =>
-                        'Wir spielen unregelmäßig, und meistens in Hamburg. Was ansteht, steht hier — ' .
-                        'und wenn nichts ansteht, steht das auch hier.',
-                ]],
+                ['page-hero', ['eyebrow' => 'Wann wir spielen', 'title' => 'Termine', 'wide' => true]],
                 'dates',
+                'follow',
             ],
         ],
 
@@ -79,9 +79,6 @@ function pages(): array
                 ['page-hero', [
                     'eyebrow' => 'Wir kommen zu euch',
                     'title' => 'Sturmfrei buchen',
-                    'lead' =>
-                        'Firmenfeier, Geburtstag, Vereinsfest, Jubiläum: Wir bringen eine Show mit, die es ' .
-                        'vorher nicht gab und danach nie wieder gibt — aus dem, was euer Abend hergibt.',
                     'actions' => 'booking-actions',
                 ]],
                 'booking-formats',
@@ -101,13 +98,7 @@ function pages(): array
             'schema' => ['past'],
             'lightbox' => true,
             'sections' => [
-                ['page-hero', [
-                    'eyebrow' => 'Rückblick',
-                    'title' => 'Archiv',
-                    'lead' =>
-                        "$played Shows, " . photo_count() . ' Fotos. Kein Abend davon lässt sich ' .
-                        'wiederholen — deshalb steht er hier.',
-                ]],
+                ['page-hero', ['eyebrow' => 'Rückblick', 'title' => 'Archiv', 'wide' => true]],
                 'archive',
             ],
         ],
@@ -116,18 +107,11 @@ function pages(): array
             'navLabel' => 'Kontakt',
             'title' => "Kontakt – {$brand['alternateName']}",
             'description' =>
-                "Sturmfrei aus {$site['city']} erreichen: E-Mail, Instagram und der Weg zur Anfrage " .
-                'für einen eigenen Anlass.',
+                "Sturmfrei aus {$site['city']} erreichen: E-Mail" . ($channel ? ", $channel" : '') .
+                ' und der Weg zur Anfrage für einen eigenen Anlass.',
             'sections' => [
-                ['page-hero', [
-                    'eyebrow' => 'Sagt Hallo',
-                    'title' => 'Kontakt',
-                    'lead' =>
-                        'Fragen, Buchungen oder einfach Hallo sagen. Wir lesen alles und antworten meist ' .
-                        'innerhalb von zwei Tagen.',
-                ]],
+                ['page-hero', ['eyebrow' => 'Sagt Hallo', 'title' => 'Kontakt']],
                 'contact',
-                'follow',
             ],
         ],
 
@@ -151,13 +135,7 @@ function pages(): array
             'description' => 'Diese Adresse gibt es auf dieser Seite nicht.',
             'noindex' => true,
             'sections' => [
-                ['page-hero', [
-                    'eyebrow' => 'Fehler 404',
-                    'title' => 'Hier ist nichts',
-                    'lead' =>
-                        'Diese Adresse gibt es nicht — vertippt, veraltet oder von uns verschoben. ' .
-                        'Unten steht, wo es weitergeht.',
-                ]],
+                ['page-hero', ['eyebrow' => 'Fehler 404', 'title' => 'Hier ist nichts']],
                 'not-found',
             ],
         ],

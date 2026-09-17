@@ -73,22 +73,53 @@
     { "label": "Datenschutz", "page": "datenschutz" }
   ],
 
+  "$comment_links": [
+    "Every channel off the site — once here, not once per place it turns up.",
+    "The order counts: the follow cards, the footer list and \"sameAs\" in the",
+    "JSON-LD all follow it. A channel added here shows up in all three without",
+    "a line of PHP.",
+    "",
+    "\"icon\" names a file in public/images/icons/, without the .svg. The glyph",
+    "is written into the page instead of linked, so it takes the colour around",
+    "it; \"brand\" is the platform's own colour, and the glyph on the follow",
+    "card is what carries it. Both are optional — without an icon the card",
+    "stays text, without a brand colour the glyph takes the accent. A new",
+    "channel needs a new glyph: a 24x24 SVG next to the others, stroked in",
+    "currentColor. A name pointing at no file is reported by `make check`.",
+    "",
+    "\"roles\" is what the pages ask for, and the reason not one of them names",
+    "a platform: \"tickets\" is the shop a date without a ticket link of its",
+    "own falls back to, \"announcements\" the channel the pages send people to",
+    "and whose handle stands on /kontakt/. Move a role to another channel and",
+    "every page follows. Each of the two belongs to exactly one channel —",
+    "`make check` reports it missing as well as held twice."
+  ],
+
   "links": {
     "instagram": {
       "name": "Instagram",
       "url": "https://www.instagram.com/impro_sturmfrei/",
       "handle": "@impro_sturmfrei",
-      "hint": "Fotos, Clips und Ankündigungen"
+      "hint": "Fotos, Clips und Ankündigungen",
+      "icon": "instagram",
+      "brand": "#e4405f",
+      "roles": ["announcements"]
     },
     "eventbrite": {
       "name": "Eventbrite",
       "url": "https://www.eventbrite.de/o/121025991893",
-      "hint": "Tickets für die nächste Show"
+      "hint": "Tickets für die nächsten Shows",
+      "icon": "eventbrite",
+      "brand": "#f05537",
+      "roles": ["tickets"]
     },
     "meetup": {
       "name": "MeetUp",
       "url": "https://www.meetup.com/sturmfrei/",
-      "hint": "Termine und Community"
+      "hint": "Termine und Community",
+      "icon": "meetup",
+      "brand": "#ed1c40",
+      "roles": []
     }
   },
 

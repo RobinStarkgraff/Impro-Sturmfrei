@@ -23,8 +23,7 @@
 
         <p class="meta cta__note">
           Lieber ohne Mailprogramm? Alle Kontaktwege stehen auf
-          <a href="<?= esc(page_link('kontakt')) ?>">Kontakt</a> — auch die Direktnachricht
-          auf Instagram.
+          <a href="<?= esc(page_link('kontakt')) ?>">Kontakt</a><?= ($dm = link_for('announcements')) ? ' — auch die Direktnachricht auf ' . esc($dm['name']) : '' ?>.
         </p>
 
       </div>

@@ -16,7 +16,7 @@
 # ============================================================
 
 .DEFAULT_GOAL := help
-.PHONY: help check serve images images-apply icons fonts
+.PHONY: help check serve images images-apply icons mark fonts
 
 help:
 	@echo ""
@@ -25,7 +25,8 @@ help:
 	@echo ""
 	@echo "  make images         show what the photos weigh"
 	@echo "  make images-apply   shrink them to a 1600 px long edge (overwrites!)"
-	@echo "  make icons          favicon, home-screen icon and mark from the logo"
+	@echo "  make icons          favicon, home-screen icon and header mark from the lighthouse"
+	@echo "  make mark           cut the lighthouse out of the logo (only needed when the logo changes)"
 	@echo "  make fonts          fetch Anton and Inter into public/fonts/ again"
 	@echo ""
 	@echo "  make dev-help       devcontainer targets (from Makefile.local)"
@@ -55,11 +56,20 @@ images:
 images-apply:
 	@bash tools/optimize-images.sh --apply
 
-# Cut the three small versions out of the logo. Without them every page
-# serves the 258 KB logo as the favicon, as the home-screen icon and as the
-# 52 px mark; `make check` points it out while they are missing.
+# favicon, home-screen icon and the 52 px mark in the header bar, all scaled
+# down from images/logo/lighthouse.png (see mark, below). Without them every
+# page serves the 258 KB logo in all three places; `make check` points it out
+# while they are missing.
 icons:
 	@bash tools/make-icons.sh
+
+# The lighthouse on its own, keyed off the sky ground — the part of the logo
+# that still reads at 32 px and does not repeat the wordmark standing next to
+# it in the header bar. Writes images/logo/lighthouse.png, the master the
+# three icons below are scaled from. Needs Pillow, `icons` does not, and the
+# master is committed — so this only has to run when the logo itself changes.
+mark:
+	@python3 tools/make-mark.py
 
 fonts:
 	@bash tools/fetch-fonts.sh

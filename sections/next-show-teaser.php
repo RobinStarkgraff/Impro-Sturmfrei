@@ -64,8 +64,10 @@ $cover = $next ? show_cover($next) : null;
           <p class="lead"><?= dot_line([$next['venue'], $site['city'], price_line($next)]) ?></p>
 
           <div class="btn-row">
-            <a class="btn btn--primary" <?= ext(show_upcoming($next)['ticketUrl'] ?? $site['links']['eventbrite']['url']) ?>>Tickets sichern</a>
-            <a class="btn btn--ghost" href="<?= esc(page_link('termine')) ?>">Alle Termine</a>
+<?php if ($tickets = ticket_url($next)): ?>
+            <a class="btn btn--primary" <?= ext($tickets) ?>>Tickets sichern</a>
+<?php endif; ?>
+            <a class="btn btn--<?= $tickets ? 'ghost' : 'primary' ?>" href="<?= esc(page_link('termine')) ?>">Alle Termine</a>
           </div>
 <?php else: ?>
           <h2>Bald kommt wieder was!</h2>
@@ -77,7 +79,9 @@ $cover = $next ? show_cover($next) : null;
 
           <div class="btn-row">
             <a class="btn btn--primary" href="<?= esc(page_link('termine')) ?>">Zu den Terminen</a>
-            <a class="btn btn--ghost" <?= ext($site['links']['instagram']['url']) ?>>Auf Instagram folgen</a>
+<?php if ($channel = link_for('announcements')): ?>
+            <a class="btn btn--ghost" <?= ext($channel['url']) ?>>Auf <?= esc($channel['name']) ?> folgen</a>
+<?php endif; ?>
           </div>
 <?php endif; ?>
 

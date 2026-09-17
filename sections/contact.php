@@ -7,6 +7,12 @@
    ------------------------------------------------------------ */
 
 $phone = $legal['impressum']['phone'];
+
+/* Not "Instagram" but whichever channel holds the announcements: the card
+   is here because there is a direct message at the other end, and which
+   platform that is stands in content/site.json. Without a handle it has
+   nothing to show and stays away. */
+$channel = link_for('announcements');
 ?>
   <!-- ================= CONTACT ================= -->
   <section class="section" id="kontakt">
@@ -35,13 +41,16 @@ $phone = $legal['impressum']['phone'];
         </div>
 
 <?php endif; ?>
+<?php if ($channel && $channel['handle']): ?>
         <div class="contact-way">
-          <p class="contact-way__label">Instagram</p>
+          <p class="contact-way__label"><?= esc($channel['name']) ?></p>
           <p class="lead">
-            <a <?= ext($site['links']['instagram']['url']) ?>><?= esc($site['links']['instagram']['handle']) ?></a>
+            <a <?= ext($channel['url']) ?>><?= esc($channel['handle']) ?></a>
           </p>
           <p class="meta">Direktnachricht geht auch — für kurze Fragen oft der schnellere Weg.</p>
         </div>
+
+<?php endif; ?>
 
         <div class="contact-way">
           <p class="contact-way__label">Anfrage für einen Anlass</p>

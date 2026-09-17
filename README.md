@@ -45,13 +45,14 @@ public/ — THE SITE. Gets served, lives in the repo.
                             with CSS and markup), motion, images
   fonts/                    Anton & Inter as woff2, self-hosted
   images/logo/              logo (also used as the favicon)
+  images/icons/             one glyph per channel, 24x24, in currentColor
   images/group/             group photos for the hero and the crossfade
   images/shows/<date>/      photos per show, folders by date (YYYY-MM-DD);
                             the folder is the list — see "After the show"
 
 THE PARTS — sit above public/ and are therefore not addressable
 
-content/site.json           links, navigation, email, meta values, photos
+content/site.json           channels, navigation, email, meta values, photos
 content/shows.json          every show, coming and played, in one list
 content/booking.json        formats, requirements and questions for /buchen/
 content/legal.json          the details for Impressum and privacy policy
@@ -63,7 +64,7 @@ sections/page-hero.php      the dark band at the top of every subpage
 
 lib/boot.php                where every page begins: loads everything below
 lib/data.php                reading content/*.json, dates, photo counts
-lib/html.php                esc(), links, mailto, missing legal details
+lib/html.php                esc(), links, icons, mailto, missing legal details
 lib/paths.php               relative paths, mtime stamps, stylesheet list
 lib/schema.php              JSON-LD (group, events, breadcrumbs)
 lib/pages.php               THE PAGES: title, description, sections
@@ -190,7 +191,8 @@ make serve          # http://localhost:8000
 
 make images         # show what the photos weigh
 make images-apply   # shrink them (overwrites public/images/!)
-make icons          # favicon, home-screen icon and mark from the logo
+make icons          # favicon, home-screen icon and header mark from the lighthouse
+make mark           # cut the lighthouse out of the logo (needs Pillow)
 make fonts          # fetch Anton & Inter into public/fonts/ again
 ```
 
@@ -221,6 +223,28 @@ PHP, and Chrome additionally blocks the fonts and the ES modules there. So
 `tools/router.php` takes over the two addresses that `.htaccess` rewrites
 on the server.
 
+### In a devcontainer: `make dev-serve`
+
+Anyone developing inside a devcontainer — the PHP lives in there, the
+browser outside — has one command for it:
+
+```bash
+make dev-serve      # http://localhost:8000, from either side
+```
+
+From the host it reaches into the container and starts the server there;
+inside the container it starts it directly. `make serve` is the wrong
+target for that case: it binds `localhost:8000`, which inside the container
+is *the container's* loopback and unreachable from the host's browser.
+`dev-serve` binds `0.0.0.0` instead and relies on the container publishing
+the port (`appPort`).
+
+This one target is **not in the repo.** It sits in `Makefile.local`, which
+the `Makefile` pulls in at the end via `-include` and `.gitignore` keeps
+out — like everything else about the local environment. A fresh clone
+therefore has `make serve` and no `dev-serve`, and that is right: without a
+container there is nothing to reach into.
+
 ## Changing a navigation item
 
 `nav` in `content/site.json`: order and labels stand there once. The footer
@@ -231,6 +255,55 @@ that appears in no navigation: nobody will find that one.
 
 `legalNav` is the Impressum and the privacy policy. Those live at the
 bottom of the footer and deliberately not in the header bar.
+
+## The channels — Instagram, Eventbrite, MeetUp
+
+`links` in `content/site.json` holds every channel off the site, and the
+order there is the order everywhere: the follow cards, the footer column
+and `sameAs` in the JSON-LD. Per channel:
+
+```json
+"instagram": {
+  "name": "Instagram",
+  "url": "https://www.instagram.com/impro_sturmfrei/",
+  "handle": "@impro_sturmfrei",
+  "hint": "Fotos, Clips und Ankündigungen",
+  "icon": "instagram",
+  "brand": "#e4405f",
+  "roles": ["announcements"]
+}
+```
+
+`icon` names a file in `public/images/icons/` without the `.svg`, `brand`
+is the platform's own colour. Both are optional: without an icon the card
+stays text, without a brand colour the glyph takes the accent.
+
+**`roles` is what the pages ask for**, and the reason not one of them names
+a platform. `"tickets"` is the shop a date without a ticket link of its own
+falls back to; `"announcements"` is the channel whose handle stands on
+`/kontakt/`, that the buttons point at, and that the sentences in
+`sections/follow.php` and `sections/booking-enquiry.php` name. Move a role
+to another channel and every one of those follows. Each of the two belongs
+to exactly one channel — `make check` reports it missing as well as held
+twice.
+
+The channel names in the Impressum and the privacy policy come out of the
+same list (`link_names()` in `lib/data.php`): those two paragraphs have to
+say which outside sites this one links to, and a list kept by hand is how
+such a paragraph ends up naming a channel dropped a year ago.
+
+### Adding a channel
+
+1. A 24x24 SVG in `public/images/icons/<name>.svg`, stroked in
+   `currentColor` — one shape per line, no `width`/`height`/`class`:
+   `icon()` in `lib/html.php` writes it into the page and sets those.
+2. An entry under `links` in `content/site.json`, `icon` pointing at the
+   file. `roles` stays empty unless the channel is taking one over.
+3. `make check` — it reports a glyph that is missing, a colour that is not
+   one, a URL without `https://`, and an SVG no channel names.
+
+Nothing else: card, footer line, `sameAs` and the two legal paragraphs all
+follow from the list.
 
 ## Adding a page
 

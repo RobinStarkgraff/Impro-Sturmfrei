@@ -52,6 +52,14 @@
   margin-bottom: 0;
 }
 
+/* Less air below the head when what follows is a short list rather than a
+   landscape of cards or photos — the channels under "Folgt uns" are three
+   rows, and --space-2xl above those is a gap looking for something to
+   separate. */
+.section-head--tight {
+  margin-bottom: var(--space-lg);
+}
+
 /* A second head in the middle of a section (dates, booking) needs air
    above it — otherwise it sticks to whatever ended before it. */
 .wrap > * + .section-head {
@@ -62,12 +70,12 @@
 .section-head--center > .lead {
   max-width: 34rem;
   margin-inline: auto;
-  margin-top: var(--space-lg);
+  margin-top: var(--space-md);
 }
 
 /* Paragraph below a left-aligned heading. */
 .section-head > .lead {
-  margin-top: var(--space-lg);
+  margin-top: var(--space-md);
 }
 
 /* Accent rule below centred headings — it picks the brick up once more, so
@@ -80,4 +88,90 @@
   margin: var(--space-lg) auto 0;
   border-radius: var(--radius-pill);
   background: var(--accent);
+}
+
+/* ------------------------------------------------------------
+   PAGE HEADING OF THE SUBPAGES
+
+   Eyebrow and H1: the opening of every page without a hero.
+
+   It used to be a dark band in the hero's colours, and for a while it had
+   to be — the header bar was transparent over the hero and needed dark
+   pixels beneath it, or its white text stood on cream. The bar brings its
+   own ground now (see css/06-header.css), and once the band was no longer
+   load-bearing all it did was push the first real thing on the page — the
+   next date, the formats, the contact address — a screenful down, behind a
+   second dark block that said little more than the browser tab already
+   did.
+
+   So it is the page's own light ground now, and it sits here beside
+   .section-head instead of in css/07-hero.css: it shares the hero's
+   position, not its colours.
+   ------------------------------------------------------------ */
+.page-hero {
+  /* Nothing at the bottom: what follows is a .section and brings
+     --section-y of its own. */
+  padding-block: var(--space-xl) 0;
+}
+
+/* The page's name, not a stage call. --text-h1 was measured against the
+   dark band; on cream, above reading text, it would be the loudest thing
+   on the page. One step down — the size of the section headings below it —
+   keeps it the largest heading without making it a second hero. Pages that
+   open with a band instead of a paragraph take the size back; see
+   .page-hero--wide below. */
+.page-hero h1 {
+  font-size: var(--text-h2);
+  max-width: 30ch;
+}
+
+/* ------------------------------------------------------------
+   … and the heading of a page that does not open with reading text.
+
+   /termine/ opens with the band for the next date and /archiv/ with a
+   slider that runs to the window edge — both at the page measure, while
+   the heading above them sat in the reading one. Two measures share no
+   left edge (they are each centred in the window), so on a wide screen
+   the page's own name started a good 250 px inside the card it names,
+   and read as inset rather than as the thing the page is called.
+
+   So: the same column as the content below, and with the room that column
+   has, the size --text-h1 was meant for. On /termine/ that also settles a
+   contest the title was losing — the <h2> in the band is --text-h2, and
+   the band brings a surface, a shadow and a pulsing pill of its own.
+
+   The rule is what the old dark band did for free: it ends the heading.
+   Without it the halved gap below (see .page-hero + .section) is the only
+   thing between a single word and the next block, and space alone reads
+   as a hole. It sits on the wrap, not on the section — the wrap is the
+   element that has the measure; on the section it would run the full
+   window width and stripe the page. Same reasoning, and the same rule, as
+   between two archive articles in css/10-shows.css.
+
+   On /archiv/ it does a second job: .show + .show carries the dividing
+   rule, so the first evening has no top edge. The heading supplies it,
+   and the archive reads as one list from its first item.
+   ------------------------------------------------------------ */
+.page-hero--wide > .wrap {
+  padding-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--border);
+}
+
+.page-hero--wide h1 {
+  font-size: var(--text-h1);
+}
+
+.page-hero .btn-row {
+  margin-top: var(--space-xl);
+}
+
+/* The page's name and the thing it names belong together. The section that
+   follows brings the full --section-y, which after a heading that carries
+   no text of its own reads as a hole rather than a break — the title stands
+   alone above four to eight rem of nothing. Half the gap, the same halving
+   .section--tight uses; the sections further down the page keep their full
+   distance. On the wide heading the rule is what ends it, and this is the
+   air after it. */
+.page-hero + .section {
+  padding-top: calc(var(--section-y) * 0.5);
 }

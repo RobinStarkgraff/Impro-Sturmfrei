@@ -110,12 +110,15 @@ $where = $serverLocation ? '; die Server stehen in ' . esc($serverLocation) : ''
         ist daran nicht beteiligt.
       </p>
 
-      <h2>Links zu Instagram, Eventbrite und MeetUp</h2>
+<?php /* Named, not counted: link_names() in lib/data.php reads the channels
+         out of content/site.json. One dropped there must not leave this
+         paragraph — of all paragraphs — naming it anyway. */ ?>
+      <h2>Links zu <?= esc(link_names()) ?></h2>
 
       <p>
         Auf dieser Seite stehen ausschließlich normale Links dorthin — keine eingebetteten
         Inhalte, keine Buttons, die im Hintergrund Daten senden. Solange ihr nicht klickt,
-        erfährt keiner der drei Anbieter etwas von euch. Klickt ihr, gelten deren
+        erfährt keiner dieser Anbieter etwas von euch. Klickt ihr, gelten deren
         Datenschutzbestimmungen; auf diese Verarbeitung haben wir keinen Einfluss.
       </p>
 

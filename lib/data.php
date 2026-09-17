@@ -40,6 +40,88 @@ function booking(): array { static $d; return $d ??= read_json('booking'); }
 function legal(): array   { static $d; return $d ??= read_json('legal'); }
 
 /* ------------------------------------------------------------
+   The channels off the site
+   ------------------------------------------------------------ */
+
+/**
+ * The channels from content/site.json, in the order they stand there.
+ *
+ * Every entry carries the same keys, whether the file spells them out or
+ * not — "hint", "icon", "brand" and "handle" are optional, and a section
+ * asking for one of them should not have to ask whether it exists first.
+ * "key" comes along because `make check` names the channel it means.
+ */
+function links(): array
+{
+    static $links;
+    if ($links !== null) return $links;
+
+    $links = [];
+
+    foreach (site()['links'] as $key => $entry) {
+        $links[$key] = $entry + [
+            'key' => $key,
+            'handle' => null,
+            'hint' => null,
+            'icon' => null,
+            'brand' => null,
+            'roles' => [],
+        ];
+    }
+
+    return $links;
+}
+
+/**
+ * The channel that holds a role — "tickets", "announcements".
+ *
+ * What the pages ask for, so that none of them has to know that the shop
+ * happens to be Eventbrite: the role sits in content/site.json and can
+ * move to another channel there. Null if nobody holds it; `make check`
+ * reports that, and the sections leave out what they cannot link.
+ */
+function link_for(string $role): ?array
+{
+    foreach (links() as $entry) {
+        if (in_array($role, $entry['roles'], true)) return $entry;
+    }
+
+    return null;
+}
+
+/**
+ * "Instagram, Eventbrite und MeetUp" — every channel, as a sentence reads it.
+ *
+ * The Impressum and the privacy policy have to say which outside sites
+ * this one links to, and the follow section names where new dates turn up.
+ * Counting them by hand in four places is how such a list ends up naming a
+ * channel that was dropped a year ago — in the legal text of all places.
+ * Order and names come from content/site.json like everything else.
+ */
+function link_names(): string
+{
+    $names = array_column(links(), 'name');
+
+    if (count($names) < 2) return implode('', $names);
+
+    $last = array_pop($names);
+
+    return implode(', ', $names) . ' und ' . $last;
+}
+
+/**
+ * Where a date sends people for tickets.
+ *
+ * Its own link if it has one — an evening is sold where it is sold. Only
+ * otherwise the shop, which is the same for all of them and therefore
+ * stands in content/site.json and not once per show.
+ */
+function ticket_url(array $show): ?string
+{
+    return show_upcoming($show)['ticketUrl'] ?? link_for('tickets')['url'] ?? null;
+}
+
+/* ------------------------------------------------------------
    Dates
    ------------------------------------------------------------ */
 

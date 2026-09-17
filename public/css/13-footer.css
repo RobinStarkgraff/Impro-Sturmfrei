@@ -59,6 +59,23 @@
   font-size: var(--text-meta);
 }
 
+/* The channel list. The glyph sits beside the link and not inside it:
+   .site-footer a carries an underline, and it has no business running
+   under an icon. Deliberately the footer's own colour and not the
+   platform's — three brand colours in a row of small text would be the
+   loudest thing down here, and the follow cards are where the channels
+   get to look like themselves. */
+.footer-channel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.footer-channel__glyph {
+  font-size: 1.125rem;
+  opacity: 0.7;
+}
+
 .footer-brand {
   font-family: var(--font-display);
   font-size: 1.75rem;

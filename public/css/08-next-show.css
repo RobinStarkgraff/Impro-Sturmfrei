@@ -32,6 +32,11 @@
    ------------------------------------------------------------ */
 
 .next-show {
+  /* Queried by the rule at the foot of this block, which moves the ticket
+     button when the two halves stop fitting beside each other. The card's
+     own width is what decides that — see above — and this is how a
+     descendant gets to ask for it. */
+  container-type: inline-size;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -64,7 +69,10 @@
 }
 
 /* The one exception — the buttons are the end of the card and may stand a
-   little further off than the lines that belong together above them. */
+   little further off than the lines that belong together above them. The
+   teaser on the home page has two of them side by side; on /termine/ the
+   row appears only on a date with no title image, where there is no poster
+   for the ticket button to stand under. */
 .next-show__body > .btn-row {
   margin-top: var(--space-xs);
 }
@@ -125,11 +133,24 @@
 /* ------------------------------------------------------------
    The dates after the next one
 
-   The nearest show has the card above to itself — these read as one list,
-   hence a hairline between the rows instead of a box per date. Text left,
-   ticket button right; when the row runs out of width the button wraps
-   under the text, because beside it the title would break after every
-   second word.
+   The nearest show has the card above to itself; these are the list under
+   it. Text left, ticket button right; when the row runs out of width the
+   button wraps under the text, because beside it the title would break
+   after every second word.
+
+   A surface per date, not a hairline between them. The rows used to sit on
+   the page itself, separated by a single rule — and the page under them is
+   the cream-to-sky gradient, so a date stood on the same colour as
+   everything around it and the list read as loose text rather than as
+   three things one can act on. Each row now carries what the card above
+   and the follow cards below already carry: its own translucent surface,
+   the border, a small shadow. The gradient still shows through, so the
+   rows stay part of the page — they are only lifted off it far enough to
+   be counted.
+
+   The smaller shadow and the smaller radius are what keep the list
+   subordinate to the band above it: same material, less presence, so the
+   next show stays the one poster on the page.
    ------------------------------------------------------------ */
 
 .date-list {
@@ -137,7 +158,7 @@
   margin: 0;
   padding: 0;
   display: grid;
-  gap: var(--space-lg);
+  gap: var(--space-md);
 }
 
 .date-list__item {
@@ -146,15 +167,12 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-md) var(--space-lg);
-  padding-bottom: var(--space-lg);
-  border-bottom: 1px solid var(--border);
-}
-
-/* The last row closes the list — a rule under it would look like a
-   forgotten fourth date. */
-.date-list__item:last-child {
-  padding-bottom: 0;
-  border-bottom: 0;
+  padding: var(--space-lg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-sm);
 }
 
 /* 13rem: with the mark beside it, that is where two columns stop being
@@ -241,6 +259,57 @@
    a different one. No border of its own: the picture brings its own edge,
    and a ring around it would be the second one inside the card's.
    ------------------------------------------------------------ */
+
+/* The poster half: the picture, and under it the one thing to do about the
+   evening. The half used to be the picture alone, so the flex basis was
+   the picture's; it is this box's now, and the picture fills it. (The
+   teaser on the home page has no poster box — there the picture is still
+   the flex item itself, and keeps the basis below.)
+
+   The button is as wide as the picture above it, because .btn centres its
+   own label: under a poster a button only as wide as its words reads as
+   something left over beside it, and the two belong together — this
+   evening, and how to get in. */
+.next-show__poster {
+  flex: 0 1 clamp(16rem, 30%, 22rem);
+  min-width: 0;
+  display: grid;
+  gap: var(--space-md);
+}
+
+/* Stacked, the poster half and the text half are one column, and a ticket
+   button directly under the picture would then ask for money above the
+   date, the house and the price — "Eintritt frei" would stand below the
+   button that sells the ticket. So below the width at which the two halves
+   share a line, the button goes to the end of the card.
+
+   display: contents dissolves the poster box, which makes the picture and
+   the button two items of the card itself, and order then puts the three
+   in the sequence a phone should read them in. Written against the poster
+   box so that the teaser, which has none, keeps the stacking it had.
+
+   42rem is a hair above the point where the halves stop fitting (16rem of
+   picture, the gap, 22rem of text): the card therefore stacks a shade
+   earlier than it did, and never stands in between the two arrangements. */
+@container (max-width: 42rem) {
+  .next-show__poster {
+    display: contents;
+  }
+
+  .next-show__poster > .next-show__cover {
+    order: 1;
+    flex: 1 1 100%;
+  }
+
+  .next-show__poster ~ .next-show__body {
+    order: 2;
+  }
+
+  .next-show__ticket {
+    order: 3;
+    flex: 1 1 100%;
+  }
+}
 
 .next-show__cover {
   flex: 0 1 clamp(16rem, 30%, 22rem);

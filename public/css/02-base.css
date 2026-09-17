@@ -112,3 +112,19 @@ button {
   white-space: nowrap;
   border: 0;
 }
+
+/* ------------------------------------------------------------
+   Icons
+
+   The channel glyphs out of public/images/icons/, written into the page by
+   icon() in lib/html.php. They are stroked in currentColor and sized in
+   em, so one file fits every place it appears: the size comes from the
+   font-size of what holds it, the colour from the text around it. Whoever
+   wants a different one sets both on the wrapper, not here.
+   ------------------------------------------------------------ */
+.icon {
+  width: 1em;
+  height: 1em;
+  display: block;
+  flex: none;
+}

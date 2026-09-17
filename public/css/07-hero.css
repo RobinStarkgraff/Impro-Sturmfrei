@@ -103,7 +103,7 @@
 
 .hero h1 {
   color: var(--white);
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-md);
 }
 
 .hero h1 .accent {
@@ -155,67 +155,4 @@
 @keyframes bob {
   0%, 100% { transform: translateY(0); }
   50%      { transform: translateY(5px); }
-}
-
-
-/* ============================================================
-   7b. PAGE HERO OF THE SUBPAGES
-
-   The band every page without a hero begins with: title and lead on the
-   same dark ground that hero and header bar carry. It lives in the same
-   file as the hero because it shares its colours and must not be
-   recoloured separately from it.
-
-   It used to be a requirement as well: the header bar was transparent over
-   the hero and needed dark pixels beneath it, or its white text stood on
-   cream. The bar now brings its own ground (see css/06-header.css) — so
-   this band is design now, and a page without it would merely be ugly, not
-   unreadable.
-   ============================================================ */
-
-.page-hero {
-  position: relative;
-  isolation: isolate;
-  padding-block: var(--space-3xl);
-  color: var(--white);
-  background:
-    radial-gradient(80% 120% at 12% 0%, rgb(var(--brick-rgb) / 0.32), transparent 62%),
-    linear-gradient(160deg, var(--hero-top) 0%, var(--hero-mid) 70%, var(--hero-bottom) 100%);
-}
-
-.page-hero .eyebrow {
-  color: var(--white);
-  opacity: 0.85;
-}
-
-.page-hero h1 {
-  color: var(--white);
-  max-width: 30ch;
-}
-
-.page-hero__lead {
-  margin-top: var(--space-lg);
-  max-width: var(--measure-prose);
-  color: rgb(var(--white-rgb) / 0.90);
-  line-height: 1.55;
-}
-
-.page-hero .btn-row {
-  margin-top: var(--space-xl);
-}
-
-/* The transition into the light page. Without the edge the band looks like
-   a cropped photo; with it, like a stage you step down from. */
-.page-hero::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 3px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgb(var(--brick-rgb) / 0.9) 30%,
-    rgb(var(--brick-rgb) / 0.9) 70%,
-    transparent
-  );
 }

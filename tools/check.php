@@ -390,7 +390,97 @@ function check_nav(callable $fail, callable $warn): void
 }
 
 /* ------------------------------------------------------------
-   6. The contract from js/classes.js
+   6. The channels off the site
+
+   content/site.json holds them: name, URL, the glyph and which role a
+   channel fills. The pages ask for roles, not for names — so a role
+   nobody holds is a button that quietly disappears, and a role two
+   channels hold is a coin toss over which one wins. Both are errors,
+   because neither is visible on the page: it looks like a page that was
+   simply built that way.
+   ------------------------------------------------------------ */
+
+function check_links(callable $fail, callable $warn, string $out): void
+{
+    // Which roles the sections actually ask for. A role added here without
+    // a channel to hold it is reported the same as one that fell out of
+    // content/site.json.
+    $roles = [
+        'tickets' => 'the shop a date without a ticket link of its own falls back to — ' .
+            'without it the ticket buttons on / and /termine/ stay away',
+        'announcements' => 'the channel /kontakt/ shows the handle of and the pages send ' .
+            'people to — without it those go quiet',
+    ];
+
+    $holders = array_fill_keys(array_keys($roles), []);
+    $used_icons = [];
+
+    foreach (links() as $key => $entry) {
+        $where = "content/site.json: the channel \"$key\"";
+
+        foreach (['name', 'url'] as $field) {
+            if (empty($entry[$field])) $fail("$where has no \"$field\"");
+        }
+
+        // These links leave the site, and ext() in lib/html.php writes them
+        // into the page as they stand. A relative path would land on a page
+        // of this site that does not exist.
+        if (!empty($entry['url']) && !preg_match('#^https?://#', $entry['url'])) {
+            $fail("$where points at \"{$entry['url']}\" — a channel needs a full URL with https://");
+        }
+
+        if ($entry['icon']) {
+            $used_icons[] = $entry['icon'];
+
+            if (!is_file("$out/images/icons/{$entry['icon']}.svg")) {
+                $fail("$where names the glyph \"{$entry['icon']}\", public/images/icons/{$entry['icon']}.svg does not exist");
+            }
+        } else {
+            $warn("$where has no \"icon\" — its follow card and its footer line stay text while the others carry a glyph");
+        }
+
+        // Written into the markup as style="--brand: …", so anything that is
+        // not a colour lands in the page as it stands.
+        if ($entry['brand'] && !preg_match('/^#[0-9a-fA-F]{6}$/', $entry['brand'])) {
+            $fail("$where has \"brand\": \"{$entry['brand']}\" — that has to be a six-digit hex colour like \"#e4405f\"");
+        }
+
+        foreach ($entry['roles'] as $role) {
+            if (!array_key_exists($role, $holders)) {
+                $warn("$where holds the role \"$role\", which no page asks for");
+                continue;
+            }
+
+            $holders[$role][] = $key;
+        }
+    }
+
+    foreach ($roles as $role => $what) {
+        $held = $holders[$role];
+
+        if (!$held) {
+            $fail("content/site.json: no channel holds the role \"$role\" — $what");
+        } elseif (count($held) > 1) {
+            $fail(
+                'content/site.json: ' . implode(' and ', array_map(fn(string $k) => "\"$k\"", $held)) .
+                " both hold the role \"$role\" — it belongs to one of them"
+            );
+        }
+    }
+
+    // The other way round: a glyph nobody names is never served. Same as a
+    // section in no page — worth a note, not an error.
+    foreach (glob("$out/images/icons/*.svg") ?: [] as $file) {
+        $name = basename($file, '.svg');
+
+        if (!in_array($name, $used_icons, true)) {
+            $warn("no channel names public/images/icons/$name.svg — left over?");
+        }
+    }
+}
+
+/* ------------------------------------------------------------
+   7. The contract from js/classes.js
 
    State classes and hooks live there once; CSS and markup have to know
    them. The source is read with a pattern — an import as before is not
@@ -445,7 +535,7 @@ function check_contract(array $rendered, callable $fail, callable $warn, string 
 }
 
 /* ------------------------------------------------------------
-   7. Sections nobody calls
+   8. Sections nobody calls
 
    Not an error, but worth a note: a file in sections/ that does not appear
    in lib/pages.php is never served. A missing section already shows up
@@ -467,7 +557,7 @@ function check_sections(callable $warn): void
 
     // lib/render.php calls the first four for every page, so they appear in
     // no list. The rest are called by another section: nav-items from header
-    // and footer, follow-cards from follow and dates, legal-gap from
+    // and footer, follow-cards from follow, legal-gap from
     // impressum and privacy.
     $always = [
         'head', 'header', 'footer', 'lightbox',
@@ -484,7 +574,7 @@ function check_sections(callable $warn): void
 }
 
 /* ------------------------------------------------------------
-   8. The dates themselves
+   9. The dates themselves
 
    Whether an evening is announced or archived follows from its date — and
    so does what its block owes. The two lists below are that difference
@@ -545,8 +635,8 @@ const SHOW_FIELD_WHY = [
         'the evening appears on',
     'time' => 'the hour, as "20:00"; without it the announcement has a day but no time ' .
         'of day, and the JSON-LD no startDate worth the name',
-    'ticketUrl' => 'without it the ticket button lands on the whole Eventbrite list instead ' .
-        'of on this evening',
+    'ticketUrl' => 'without it the ticket button lands on the whole programme of whichever ' .
+        'shop holds the "tickets" role in content/site.json, instead of on this evening',
     'price' => 'a number in euros, 0 for "Eintritt frei"; Google counts an offer without ' .
         'a price as incomplete and drops the event',
     'note' => 'the line under the price on /termine/: "Einlass ab 19:00", "Nur ' .
@@ -628,7 +718,7 @@ function check_shows(callable $fail, callable $warn): void
 }
 
 /* ------------------------------------------------------------
-   8. Open points in the content
+   10. Open points in the content
    ------------------------------------------------------------ */
 
 function report_content_gaps(callable $fail, callable $warn, string $out): void
@@ -690,8 +780,9 @@ function report_content_gaps(callable $fail, callable $warn, string $out): void
 
     // While the small icons are missing, every page serves the full-size logo
     // as the favicon, as the home-screen icon and as the 52 px mark in the
-    // header bar (asset_or in lib/paths.php catches it).
-    $icons = ['images/logo/favicon.png', 'images/logo/apple-touch-icon.png', 'images/logo/logo-mark.jpg'];
+    // header bar (asset_or in lib/paths.php catches it). All three are scales
+    // of images/logo/lighthouse.png: make mark, then make icons.
+    $icons = ['images/logo/favicon.png', 'images/logo/apple-touch-icon.png', 'images/logo/logo-mark.png'];
     $missing_icons = array_values(array_filter($icons, fn(string $i) => !is_file("$out/$i")));
 
     if ($missing_icons) {
@@ -722,6 +813,7 @@ check_title_images($fail, $warn, $out);
 check_anchors($rendered, $fail);
 check_images_and_links($rendered, $fail);
 check_nav($fail, $warn);
+check_links($fail, $warn, $out);
 check_contract($rendered, $fail, $warn, $out);
 check_sections($warn);
 check_shows($fail, $warn);

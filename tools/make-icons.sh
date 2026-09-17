@@ -1,25 +1,33 @@
 #!/usr/bin/env bash
 # ============================================================
-# Puts the small icons next to the logo.
+# Scales the lighthouse mark down into the three small icons.
 #
-# Why at all: images/logo/logo.jpg is 2240 x 1260 px and weighs 258 KB. That
-# one file was the favicon, the home-screen icon AND the round 52 px mark in
-# the header bar — on every page, the same reference three times. A quarter
-# of a megabyte to draw a 52 px circle. For the home screen it was also the
-# wrong shape: landscape instead of square.
+# The source is images/logo/lighthouse.png, the 512 px master that `make
+# mark` cuts out of the logo. It used to be images/logo/logo.jpg itself —
+# the whole lockup, cropped square from the centre — and that was wrong
+# three times over: 2240 x 1260 px and 258 KB loaded to draw a 52 px circle,
+# landscape where a home-screen icon has to be square, and at favicon size
+# an illegible smudge, because the centre of the lockup is the middle of the
+# STURMFREI wordmark and its letters end up about four pixels tall. The
+# lighthouse is the one element that still reads at 32 px, and it does not
+# repeat the wordmark that stands right next to it in the header bar.
 #
-# Three files are produced, all cropped square from the centre:
+# Three files are produced, all plain scales of the square master:
 #
 #   images/logo/favicon.png           32 px   browser tab
 #   images/logo/apple-touch-icon.png 180 px   home screen on iOS
-#   images/logo/logo-mark.jpg        128 px   the mark in the header bar
+#   images/logo/logo-mark.png        128 px   the mark in the header bar
 #
 #   bash tools/make-icons.sh
 #
-# While they are missing it stays with the logo: asset_or() in lib/paths.php
-# only takes the small version if it exists, and `make check` points it out.
-# So nothing breaks if this script never runs — it just means a quarter of a
-# megabyte too much loaded every time.
+# This step alone is enough for the icons: the master is committed, and
+# scaling it works with sips, ImageMagick or Pillow, whichever is there.
+# Only `make mark`, which cuts the master out of the logo, needs Pillow.
+#
+# While the three are missing it stays with the logo: asset_or() in
+# lib/paths.php only takes the small version if it exists, and `make check`
+# points it out. So nothing breaks if this script never runs — it just means
+# a quarter of a megabyte too much on every page, and the smudge in the tab.
 #
 # After the run: commit the three files, they belong in the repo like
 # everything under public/.
@@ -29,10 +37,14 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-SOURCE="public/images/logo/logo.jpg"
+SOURCE="public/images/logo/lighthouse.png"
 DIR="public/images/logo"
 
-[[ -f "$SOURCE" ]] || { echo "There is no $SOURCE."; exit 1; }
+[[ -f "$SOURCE" ]] || {
+  echo "There is no $SOURCE — the mark the icons are scaled from."
+  echo "Cut it out of the logo first:  make mark   (needs Pillow)"
+  exit 1
+}
 
 # --- Find a tool ---------------------------------------------------------
 #
@@ -40,7 +52,9 @@ DIR="public/images/logo"
 # driven from a Mac — no brew install for three files.
 #
 # sips cannot crop from the centre and scale in one step, hence two: crop
-# square first, then bring it to size.
+# square first, then bring it to size. On the square master the crop is a
+# no-op — it stays because it costs nothing and keeps the script honest if
+# SOURCE is ever a file that is not square again.
 
 if command -v magick >/dev/null 2>&1 || command -v convert >/dev/null 2>&1; then
   IM=$(command -v magick || command -v convert)
@@ -103,10 +117,10 @@ echo
 
 square "$DIR/favicon.png" 32
 square "$DIR/apple-touch-icon.png" 180
-square "$DIR/logo-mark.jpg" 128
+square "$DIR/logo-mark.png" 128
 
 echo "Done:"
-ls -1sh "$DIR/favicon.png" "$DIR/apple-touch-icon.png" "$DIR/logo-mark.jpg"
+ls -1sh "$DIR/favicon.png" "$DIR/apple-touch-icon.png" "$DIR/logo-mark.png"
 echo
 echo "sections/head.php and sections/header.php pick them up by themselves now."
 echo "Take a look, then commit — and after that: make check"

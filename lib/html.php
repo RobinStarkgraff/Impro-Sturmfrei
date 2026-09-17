@@ -21,6 +21,54 @@ function ext(string $url): string
 }
 
 /**
+ * One glyph from public/images/icons/, written into the page.
+ *
+ * Written and not linked as an <img>: inside the markup the glyph takes
+ * the colour around it — which is what currentColor in the files is for,
+ * and what lets one file serve the follow card in the platform's colour
+ * and the footer in the footer's white. An <img> would have to be a
+ * second file per colour, and would be a second request per channel on
+ * top.
+ *
+ * Decorative throughout: every icon on this site stands next to the name
+ * it belongs to, so a screen reader would read it twice. Hence
+ * aria-hidden, and focusable="false" for the old IE-era SVG behaviour
+ * that still lingers in some browsers.
+ *
+ * A name pointing at no file yields nothing — the card keeps its text and
+ * `make check` reports the name. The files are read once per request, so
+ * two places using the same glyph is one file read.
+ *
+ * The files are written with one shape per line, the glyph comes out as
+ * one: the page source has the icon as a single attribute-heavy line it
+ * can be read past, instead of five lines of geometry in the middle of a
+ * card.
+ */
+function icon(?string $name, string $class = ''): string
+{
+    static $cache = [];
+
+    if (!$name) return '';
+
+    if (!array_key_exists($name, $cache)) {
+        $file = SITE_ROOT . '/public/images/icons/' . $name . '.svg';
+        $svg = is_file($file) ? trim((string) file_get_contents($file)) : '';
+        $cache[$name] = (string) preg_replace('/>\s+</', '><', $svg);
+    }
+
+    if (!$cache[$name]) return '';
+
+    $classes = trim('icon ' . $class);
+
+    return preg_replace(
+        '/^<svg\b/',
+        '<svg class="' . esc($classes) . '" aria-hidden="true" focusable="false"',
+        $cache[$name],
+        1
+    );
+}
+
+/**
  * "Kulturschloss Wandsbek · Hamburg · Eintritt frei" — the facts of one
  * date on a single line, the empty ones dropped.
  *
