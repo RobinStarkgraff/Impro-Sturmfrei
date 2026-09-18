@@ -1,13 +1,32 @@
 {
   "$comment": [
-    "Everything the /buchen/ page shows as a list: formats, what is needed",
-    "on site, and the frequently asked questions. Prose lives in",
+    "The one list the /buchen/ page shows: the formats. What was needed on",
+    "site and the frequently asked questions used to stand here too, and",
+    "stood on the page under the cards; both are gone. Prose lives in",
     "sections/*.php as it does everywhere — only what repeats or grows",
     "lives here. The values themselves are website content and stay German.",
     "",
-    "!!! NOTE: formats, needs and faq are DRAFTS. Durations, head counts and",
-    "answers are guesses and have to be reviewed by you. While",
-    "\"reviewed\": false stands here, `make check` points it out.",
+    "!!! NOTE: the formats are DRAFTS. The durations, what the cards say and",
+    "the occasions they name are guesses and have to be reviewed by you.",
+    "While \"reviewed\": false stands here, `make check` points it out.",
+    "",
+    "\"occasions\": the kind of evening this format is usually booked for —",
+    "a list, because it grows and shrinks as we learn what people ask for,",
+    "and because it is the one part of a card somebody scans rather than",
+    "reads. It stands at the foot of the card, under the rule and over the",
+    "button, as one line with dots between the words: they are their own",
+    "label, and the rule already says the description has ended. Leave the",
+    "list out or empty and the foot holds nothing but its button.",
+    "",
+    "Two formats, and that is the whole menu: what somebody booking an",
+    "evening decides is whether they want to watch or to play. How long a",
+    "show runs is a line in the card, not a format of its own — the short",
+    "appearance and the full evening used to stand here as two entries,",
+    "which made the difference between them look like the choice.",
+    "",
+    "How many there are is not written down anywhere else: the heading over",
+    "the cards counts them (sections/booking-formats.php). A third entry",
+    "here therefore says \"Drei Formate\" by itself.",
     "",
     "Prices deliberately appear nowhere: \"on request\" is more honest than a",
     "number that then turns out to be wrong. As soon as you want to name a",
@@ -18,57 +37,18 @@
 
   "formats": [
     {
-      "name": "Kurze Bühnenshow",
-      "duration": "30–45 Minuten",
-      "summary": "Der kompakte Auftritt für einen Abend, der noch weitergeht.",
-      "detail": "Schnelle Spielformen, viel Publikumseinsatz, kein Umbau. Passt zwischen Rede und Buffet, auf Firmenfeiern und Vereinsfeste.",
-      "cast": "2–4 Spieler"
-    },
-    {
-      "name": "Abendshow",
-      "duration": "60–90 Minuten",
-      "summary": "Das ganze Programm, mit Pause und größeren Szenen.",
-      "detail": "Wie unsere öffentlichen Shows: kurze Spielformen im ersten Teil, längere Geschichten im zweiten. Braucht eine Bühne und Publikum, das sitzt.",
-      "cast": "3–4 Spieler"
+      "name": "Bühnenshow",
+      "duration": "30–90 Minuten",
+      "summary": "Wir spielen, euer Publikum gibt die Ideen.",
+      "detail": "Schnelle Spielformen aus Zurufen aus dem Saal, vereinzelt können auch Zuschauer auf die Bühne, wenn sie wollen. Im Ganzen ein runder und entspannter Abend für alle.",
+      "occasions": ["Firmenfeier", "Jubiläum", "Vereinsfest"]
     },
     {
       "name": "Impro zum Mitmachen",
-      "duration": "2–3 Stunden",
+      "duration": "1–3 Stunden",
       "summary": "Kein Zuschauen — alle spielen mit.",
-      "detail": "Warm-ups, einfache Spielformen, am Ende eine kleine Szene. Für Teams, Geburtstage und alle, die Impro von innen sehen wollen. Vorerfahrung braucht niemand.",
-      "cast": "bis 16 Teilnehmende"
-    }
-  ],
-
-  "needs": [
-    { "item": "Spielfläche",  "detail": "etwa 3 × 4 Meter, freier Boden, Publikum davor" },
-    { "item": "Licht",        "detail": "die Fläche muss hell sein — Deckenlicht genügt" },
-    { "item": "Strom",        "detail": "eine Steckdose in Reichweite der Fläche" },
-    { "item": "Ton",          "detail": "ab etwa 60 Zuschauern Mikros; bei kleineren Räumen nicht nötig" },
-    { "item": "Ruhe",         "detail": "kein laufendes Buffet oder Musikprogramm im selben Raum" },
-    { "item": "Platz hinten", "detail": "eine Ecke zum Umziehen und Ablegen genügt" }
-  ],
-
-  "faq": [
-    {
-      "q": "Wie früh sollten wir anfragen?",
-      "a": "So früh es geht — vier bis sechs Wochen sind angenehm. Kurzfristiger lohnt die Frage trotzdem, manchmal passt es."
-    },
-    {
-      "q": "Was kostet das?",
-      "a": "Das hängt an Format, Dauer, Anfahrt und Anlass. Schreibt uns kurz, was ihr vorhabt — dann bekommt ihr eine Zahl und keine Preisliste zum Raten."
-    },
-    {
-      "q": "Kommt ihr auch außerhalb von Hamburg?",
-      "a": "Ja. Im Hamburger Umland ohne Aufschlag, weiter weg rechnen wir Anfahrt dazu."
-    },
-    {
-      "q": "Muss unser Publikum mitspielen?",
-      "a": "Niemand muss. Wir holen Ideen aus dem Publikum, aber niemand wird auf die Bühne gezogen — wer mitspielen will, meldet sich freiwillig."
-    },
-    {
-      "q": "Könnt ihr auf ein Thema eingehen?",
-      "a": "Gern. Firmenjubiläum, Abschied, Vereinsgeschichte: erzählt uns vorher davon, dann kommt es im Spiel vor. Wir bauen daraus keine Nummer, die auf Kosten von Einzelnen geht."
+      "detail": "Warm-ups, einfache Spielformen, bei denen jeder mitmachen kann. Ideal geeignet für Teams, Geburtstage und sonstige Anlässe, um gemeinsam eine einzigartige Erfahrung zu erleben. Vorerfahrung braucht niemand.",
+      "occasions": ["Teamevent", "Betriebsausflug", "Geburtstag", "Junggesellenabschied", "Projekttag"]
     }
   ]
 }

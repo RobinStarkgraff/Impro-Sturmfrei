@@ -408,12 +408,11 @@ function check_links(callable $fail, callable $warn, string $out): void
     $roles = [
         'tickets' => 'the shop a date without a ticket link of its own falls back to — ' .
             'without it the ticket buttons on / and /termine/ stay away',
-        'announcements' => 'the channel /kontakt/ shows the handle of and the pages send ' .
-            'people to — without it those go quiet',
+        'announcements' => 'the channel the follow cards offer and the pages send people ' .
+            'to — without it those go quiet',
     ];
 
     $holders = array_fill_keys(array_keys($roles), []);
-    $used_icons = [];
 
     foreach (links() as $key => $entry) {
         $where = "content/site.json: the channel \"$key\"";
@@ -430,8 +429,6 @@ function check_links(callable $fail, callable $warn, string $out): void
         }
 
         if ($entry['icon']) {
-            $used_icons[] = $entry['icon'];
-
             if (!is_file("$out/images/icons/{$entry['icon']}.svg")) {
                 $fail("$where names the glyph \"{$entry['icon']}\", public/images/icons/{$entry['icon']}.svg does not exist");
             }
@@ -467,14 +464,58 @@ function check_links(callable $fail, callable $warn, string $out): void
             );
         }
     }
+}
 
-    // The other way round: a glyph nobody names is never served. Same as a
-    // section in no page — worth a note, not an error.
+/* ------------------------------------------------------------
+   6b. The glyphs
+
+   Two kinds of place name one, and this used to know only the first. A
+   channel names its glyph in content/site.json — the one on its follow
+   card and in its footer line. A section names one itself: the mail and
+   the phone in the contact block (sections/contact.php), where the glyph
+   belongs to the way and not to a channel.
+
+   Both are read, and both directions are checked: a name with no file
+   behind it is an error, because icon() answers it with an empty string —
+   the glyph is simply not there and the page looks as if it had been built
+   that way. A file nobody names is the opposite and only worth a note.
+
+   In a section the name has to stand as a literal to be found, in one of
+   the two shapes this site writes it: icon('mail') where a glyph is asked
+   for on the spot, and 'icon' => 'mail' where a section assembles its
+   parts as a list first and renders them in one loop. A third shape would
+   go unseen — and would then show up as a leftover file, which is the
+   note that points back here.
+   ------------------------------------------------------------ */
+
+function check_icons(callable $fail, callable $warn, string $out): void
+{
+    // The channels: their names are checked against the folder by
+    // check_links() above, which is where a channel's other fields are
+    // checked too. Here they only count as named.
+    $named = array_values(array_filter(array_column(links(), 'icon')));
+
+    foreach (glob(SITE_ROOT . '/sections/*.php') ?: [] as $file) {
+        $pattern = "/(?:\\bicon\\(\\s*|'icon'\\s*=>\\s*)'([^']+)'/";
+        preg_match_all($pattern, (string) file_get_contents($file), $found);
+
+        foreach ($found[1] as $name) {
+            $named[] = $name;
+
+            if (!is_file("$out/images/icons/$name.svg")) {
+                $fail(
+                    'sections/' . basename($file) . " names the glyph \"$name\", " .
+                    "public/images/icons/$name.svg does not exist"
+                );
+            }
+        }
+    }
+
     foreach (glob("$out/images/icons/*.svg") ?: [] as $file) {
         $name = basename($file, '.svg');
 
-        if (!in_array($name, $used_icons, true)) {
-            $warn("no channel names public/images/icons/$name.svg — left over?");
+        if (!in_array($name, $named, true)) {
+            $warn("nobody names public/images/icons/$name.svg — left over?");
         }
     }
 }
@@ -792,8 +833,8 @@ function report_content_gaps(callable $fail, callable $warn, string $out): void
 
     if (!booking()['reviewed']) {
         $warn(
-            'content/booking.json: "reviewed" is false — formats, durations, head counts and ' .
-            'the answers under faq are drafts and have not been reviewed by anyone yet.'
+            'content/booking.json: "reviewed" is false — the formats, their durations and ' .
+            'the occasions they name are drafts and have not been reviewed by anyone yet.'
         );
     }
 }
@@ -811,6 +852,7 @@ check_anchors($rendered, $fail);
 check_images_and_links($rendered, $fail);
 check_nav($fail, $warn);
 check_links($fail, $warn, $out);
+check_icons($fail, $warn, $out);
 check_contract($rendered, $fail, $warn, $out);
 check_sections($warn);
 check_shows($fail, $warn);

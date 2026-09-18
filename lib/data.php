@@ -90,26 +90,6 @@ function link_for(string $role): ?array
 }
 
 /**
- * "Instagram, Eventbrite und MeetUp" — every channel, as a sentence reads it.
- *
- * The Impressum and the privacy policy have to say which outside sites
- * this one links to, and the follow section names where new dates turn up.
- * Counting them by hand in four places is how such a list ends up naming a
- * channel that was dropped a year ago — in the legal text of all places.
- * Order and names come from content/site.json like everything else.
- */
-function link_names(): string
-{
-    $names = array_column(links(), 'name');
-
-    if (count($names) < 2) return implode('', $names);
-
-    $last = array_pop($names);
-
-    return implode(', ', $names) . ' und ' . $last;
-}
-
-/**
  * Where a date sends people for tickets.
  *
  * Its own link if it has one — an evening is sold where it is sold. Only
@@ -341,6 +321,74 @@ function show_photos(array $show): array
         fn(string $file) => ['file' => $file, 'alt' => (string) ($alts[$file] ?? '')],
         $files
     );
+}
+
+/* ------------------------------------------------------------
+   The group photos
+
+   Same principle as a show's folder above: the folder is the list. These
+   two functions stand under it deliberately, because they borrow its
+   PHOTO_PATTERN and its natural sort.
+   ------------------------------------------------------------ */
+
+/** Where the group photos live — the hero takes one, the crossfade the rest. */
+const GROUP_DIR = 'images/group';
+
+/**
+ * Every group photo, in the order a person would number them.
+ *
+ * The list stood in content/site.json before, five paths written out by
+ * hand, and the folder held six: one photo the site never showed, and
+ * nothing said so — the same way a show's pictures used to be kept twice.
+ * Drop a picture into images/group/ and it is in the rotation.
+ *
+ * strnatcasecmp, so 10.jpg comes after 9.jpg and not after 1.jpg.
+ *
+ * Read once: the section asks, and tools/check.php renders the page it
+ * stands on. A folder does not change in the middle of a request.
+ */
+function group_photos(): array
+{
+    static $found = null;
+
+    if ($found !== null) return $found;
+
+    $dir = SITE_ROOT . '/public/' . GROUP_DIR;
+    $files = is_dir($dir)
+        ? array_values(array_filter(scandir($dir) ?: [], fn(string $name) => (bool) preg_match(PHOTO_PATTERN, $name)))
+        : [];
+
+    usort($files, 'strnatcasecmp');
+
+    return $found = array_map(fn(string $file) => GROUP_DIR . '/' . $file, $files);
+}
+
+/**
+ * The same photos, in the order the crossfade plays them: the title image
+ * last, everything after it first.
+ *
+ * The title image is the one the hero shows at the top of the home page
+ * (content/site.json, "hero.photo"), and the section further down opens
+ * with the first entry of this list — so starting at the title image would
+ * be the same picture twice on one screen. It is not dropped for that:
+ * once the sequence has moved on, nobody is comparing it with the hero any
+ * more, so it comes round last and the rotation holds every photo in the
+ * folder.
+ *
+ * Rotated around the hero's own photo rather than around position 0: those
+ * are the same file today (images/group/1.jpg sorts first), and a photo
+ * added as 0.jpg one day should not quietly put the hero's picture back at
+ * the front. A hero photo from outside this folder rotates nothing — there
+ * is then no picture to stand clear of.
+ */
+function crossfade_photos(): array
+{
+    $photos = group_photos();
+    $title = array_search(site()['hero']['photo'], $photos, true);
+
+    if ($title === false) return $photos;
+
+    return [...array_slice($photos, $title + 1), ...array_slice($photos, 0, $title + 1)];
 }
 
 /**

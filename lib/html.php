@@ -122,11 +122,19 @@ function mailto(string $subject = '', string $body = ''): string
    back. Whoever types over these lines has supplied exactly the details
    needed to quote a number.
 
-   Used twice on /buchen/ and once on /kontakt/ — hence here. The wording
+   Used three times on /buchen/ — in the page heading and once on each
+   format card — hence here rather than in any one section. The wording
    itself stays German: it is what a visitor sends.
    ------------------------------------------------------------ */
 
 const BOOKING_SUBJECT = 'Anfrage: Sturmfrei buchen';
+
+/* The one line of the mail a card on /buchen/ can answer for the visitor.
+   It stands as a constant because two places have to mean the same string
+   by it: the body below, which writes it out, and booking_mailto(), which
+   finds it again to fill it in. Typed twice, the format would silently
+   stop appearing in the mail the day somebody rewrote the question. */
+const BOOKING_FORMAT_LINE = 'Gewünschtes Format:';
 
 const BOOKING_BODY = "Hallo Sturmfrei,\n"
     . "\n"
@@ -137,16 +145,34 @@ const BOOKING_BODY = "Hallo Sturmfrei,\n"
     . "Uhrzeit:\n"
     . "Ort / Adresse:\n"
     . "Erwartete Zuschauerzahl:\n"
-    . "Gewünschtes Format:\n"
+    . BOOKING_FORMAT_LINE . "\n"
     . "Spielfläche vorhanden:\n"
     . "\n"
     . "Sonstiges:\n"
     . "\n"
     . "Viele Grüße";
 
-function booking_mailto(): string
+/**
+ * The enquiry mail — with the chosen format already standing in it.
+ *
+ * The button on a format card passes its own name, so that somebody who
+ * has just pressed "Bühnenshow anfragen" does not find an empty
+ * "Gewünschtes Format:" waiting in the mail: the card is the one place on
+ * the page where that decision has been made, and a line the site can
+ * fill in is a line nobody has to type.
+ *
+ * Without an argument the body stands as it is — the button in the page
+ * heading and the box at the end of the page are for whoever has not
+ * chosen yet, and inventing a format for them would be the opposite of
+ * the point.
+ */
+function booking_mailto(?string $format = null): string
 {
-    return mailto(BOOKING_SUBJECT, BOOKING_BODY);
+    $body = $format
+        ? str_replace(BOOKING_FORMAT_LINE, BOOKING_FORMAT_LINE . ' ' . $format, BOOKING_BODY)
+        : BOOKING_BODY;
+
+    return mailto(BOOKING_SUBJECT, $body);
 }
 
 /* ------------------------------------------------------------

@@ -34,9 +34,6 @@ function pages(): array
     $brand = $site['brand'];
     // Counted, not read: which evenings are past follows from their date.
     $played = count(past_shows());
-    // The channel holding the "announcements" role in content/site.json —
-    // a description naming a platform should name the one in use.
-    $channel = link_for('announcements')['name'] ?? null;
 
     return $pages = [
         'index' => [
@@ -56,9 +53,10 @@ function pages(): array
                 'Die nächsten Impro-Shows von Sturmfrei in Hamburg: wann wir spielen, wo es ' .
                 'die Tickets gibt und auf welchen Kanälen neue Abende zuerst auftauchen.',
             'schema' => ['upcoming'],
-            // "follow" sits under the dates and not on /kontakt/: somebody
-            // reading a list of dates is the one looking for where the next
-            // one will be announced.
+            // "follow" sits under the dates: somebody reading a list of
+            // dates is the one looking for where the next one will be
+            // announced. It was weighed against a /kontakt/ page that no
+            // longer exists, and the answer would be the same today.
             'sections' => [
                 ['page-hero', ['eyebrow' => 'Wann wir spielen', 'title' => 'Termine', 'wide' => true]],
                 'dates',
@@ -75,17 +73,41 @@ function pages(): array
             'ogDescription' =>
                 'Wir kommen zu euch: Impro für Firmenfeier, Geburtstag oder Vereinsfest. Formate, ' .
                 'was wir vor Ort brauchen, und eine Anfrage in einem Klick.',
+            // "wide", like /termine/ and /archiv/: what follows the heading
+            // is two format cards at the page measure, not reading text, and
+            // the page's name belongs in the same column as the thing it
+            // names — see .page-hero--wide in css/04-layout.css.
+            //
+            // The cards are the page. What used to stand under them — the
+            // checklist of what we need on site, the questions, the
+            // paragraph about the price, the box with the mail in it — is
+            // gone: the decision this page puts is which of the two formats
+            // you want, and each card says so and carries the enquiry that
+            // says it for you.
+            //
+            // Under them the contact block (sections/contact.php), which
+            // this is now the only page to carry — there was a /kontakt/
+            // page holding it and nothing else, and the address and the
+            // number live in the Impressum, which is where the word in the
+            // header bar leads. A card's button opens a mail with the
+            // questions already in it, which is no use to somebody without
+            // a mail client set up, or who would rather call, so the two
+            // facts stand at the foot of this page as text, to read and
+            // keep.
             'sections' => [
                 ['page-hero', [
                     'eyebrow' => 'Wir kommen zu euch',
                     'title' => 'Sturmfrei buchen',
                     'actions' => 'booking-actions',
+                    'wide' => true,
                 ]],
                 'booking-formats',
-                'booking-needs',
-                'booking-price',
-                'booking-faq',
-                'booking-enquiry',
+                ['contact', [
+                    'eyebrow' => 'Direkt an uns',
+                    'heading' => 'So erreicht ihr uns',
+                    'text' => 'Schreibt uns, was ihr vorhabt — Anlass, Datum, Ort und die '
+                        . 'erwartete Teilnehmerzahl.',
+                ]],
             ],
         ],
 
@@ -100,18 +122,6 @@ function pages(): array
             'sections' => [
                 ['page-hero', ['eyebrow' => 'Rückblick', 'title' => 'Archiv', 'wide' => true]],
                 'archive',
-            ],
-        ],
-
-        'kontakt' => [
-            'navLabel' => 'Kontakt',
-            'title' => "Kontakt – {$brand['alternateName']}",
-            'description' =>
-                "Sturmfrei aus {$site['city']} erreichen: E-Mail" . ($channel ? ", $channel" : '') .
-                ' und der Weg zur Anfrage für einen eigenen Anlass.',
-            'sections' => [
-                ['page-hero', ['eyebrow' => 'Sagt Hallo', 'title' => 'Kontakt']],
-                'contact',
             ],
         ],
 

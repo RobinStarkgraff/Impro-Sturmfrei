@@ -13,6 +13,14 @@
   .about-layout {
     grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
   }
+
+  /* With an empty images/group/ there is no media block (sections/about.php
+     leaves it out rather than pointing an <img> at nothing), and the text
+     would otherwise sit in the first of two columns with the second one
+     empty beside it. */
+  .about-layout--textonly {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Two stacked layers: that way the crossfade never shows an empty box. */

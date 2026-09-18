@@ -39,8 +39,9 @@
       "publishPhoneInSchema: the same for the phone number, and for the same",
       "reason. It used to sit in the JSON-LD without anyone being asked while",
       "the address was protected — that was a contradiction, not a decision.",
-      "The default is now false: the number is in the Impressum and on",
-      "/kontakt/, where people look for it, but not as a machine-readable",
+      "The default is now false: the number is in the Impressum, which is",
+      "where \"Kontakt\" in the header bar leads, and at the foot of /buchen/",
+      "— both places people look for it — but not as a machine-readable",
       "value in the knowledge panel. Set it to true if it should be there."
     ],
     "entity": null,

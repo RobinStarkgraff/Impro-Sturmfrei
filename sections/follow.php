@@ -1,8 +1,9 @@
 <?php
 /* Where things carry on beyond the site — used on home and under the dates
-   on /termine/. Not on /kontakt/: there the channel with a direct message
-   at the other end is one of the contact ways, and the other two are ways
-   to hear about a date, which is a different question.
+   on /termine/, and nowhere a visitor is looking for a person: reaching us
+   and hearing about the next evening are two different questions, and a
+   channel only answers the second. The one somebody reading a list of
+   dates is asking.
 
    The cards themselves are sections/follow-cards.php — two pages show
    them, hence a file of their own.
