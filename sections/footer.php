@@ -34,8 +34,8 @@
       <nav class="footer-col" aria-labelledby="footer-social-heading">
         <p class="footer-col__title" id="footer-social-heading">Folgt uns</p>
         <ul>
-<?php foreach ($site['links'] as $entry): ?>
-          <li><a <?= ext($entry['url']) ?>><?= esc($entry['name']) ?></a></li>
+<?php foreach (links() as $entry): ?>
+          <li class="footer-channel"><?= icon($entry['icon'], 'footer-channel__glyph') ?><a <?= ext($entry['url']) ?>><?= esc($entry['name']) ?></a></li>
 <?php endforeach; ?>
         </ul>
       </nav>

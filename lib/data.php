@@ -40,6 +40,68 @@ function booking(): array { static $d; return $d ??= read_json('booking'); }
 function legal(): array   { static $d; return $d ??= read_json('legal'); }
 
 /* ------------------------------------------------------------
+   The channels off the site
+   ------------------------------------------------------------ */
+
+/**
+ * The channels from content/site.json, in the order they stand there.
+ *
+ * Every entry carries the same keys, whether the file spells them out or
+ * not — "hint", "icon", "brand" and "handle" are optional, and a section
+ * asking for one of them should not have to ask whether it exists first.
+ * "key" comes along because `make check` names the channel it means.
+ */
+function links(): array
+{
+    static $links;
+    if ($links !== null) return $links;
+
+    $links = [];
+
+    foreach (site()['links'] as $key => $entry) {
+        $links[$key] = $entry + [
+            'key' => $key,
+            'handle' => null,
+            'hint' => null,
+            'icon' => null,
+            'brand' => null,
+            'roles' => [],
+        ];
+    }
+
+    return $links;
+}
+
+/**
+ * The channel that holds a role — "tickets", "announcements".
+ *
+ * What the pages ask for, so that none of them has to know that the shop
+ * happens to be Eventbrite: the role sits in content/site.json and can
+ * move to another channel there. Null if nobody holds it; `make check`
+ * reports that, and the sections leave out what they cannot link.
+ */
+function link_for(string $role): ?array
+{
+    foreach (links() as $entry) {
+        if (in_array($role, $entry['roles'], true)) return $entry;
+    }
+
+    return null;
+}
+
+/**
+ * Where a date sends people for tickets.
+ *
+ * Its own link if it has one — an evening is sold where it is sold. Only
+ * otherwise the shop, which is the same for all of them and therefore
+ * stands in content/site.json and not once per show.
+ */
+function ticket_url(array $show): ?string
+{
+    return show_upcoming($show)['ticketUrl'] ?? link_for('tickets')['url'] ?? null;
+}
+
+/* ------------------------------------------------------------
    Dates
    ------------------------------------------------------------ */
 
@@ -140,8 +202,8 @@ function upcoming_show(): ?array
 
 /**
  * The half of a block that only counts while the date is still ahead: the
- * hour, the ticket link, the price, the note about admission, and the title
- * image standing in for photos that do not exist yet.
+ * hour, the ticket link, the price, and the title image standing in for
+ * photos that do not exist yet.
  *
  * Once the evening has been played nothing reads these any more. They may
  * stay in the file — a closed ticket link is a piece of history, not a
@@ -261,6 +323,74 @@ function show_photos(array $show): array
     );
 }
 
+/* ------------------------------------------------------------
+   The group photos
+
+   Same principle as a show's folder above: the folder is the list. These
+   two functions stand under it deliberately, because they borrow its
+   PHOTO_PATTERN and its natural sort.
+   ------------------------------------------------------------ */
+
+/** Where the group photos live — the hero takes one, the crossfade the rest. */
+const GROUP_DIR = 'images/group';
+
+/**
+ * Every group photo, in the order a person would number them.
+ *
+ * The list stood in content/site.json before, five paths written out by
+ * hand, and the folder held six: one photo the site never showed, and
+ * nothing said so — the same way a show's pictures used to be kept twice.
+ * Drop a picture into images/group/ and it is in the rotation.
+ *
+ * strnatcasecmp, so 10.jpg comes after 9.jpg and not after 1.jpg.
+ *
+ * Read once: the section asks, and tools/check.php renders the page it
+ * stands on. A folder does not change in the middle of a request.
+ */
+function group_photos(): array
+{
+    static $found = null;
+
+    if ($found !== null) return $found;
+
+    $dir = SITE_ROOT . '/public/' . GROUP_DIR;
+    $files = is_dir($dir)
+        ? array_values(array_filter(scandir($dir) ?: [], fn(string $name) => (bool) preg_match(PHOTO_PATTERN, $name)))
+        : [];
+
+    usort($files, 'strnatcasecmp');
+
+    return $found = array_map(fn(string $file) => GROUP_DIR . '/' . $file, $files);
+}
+
+/**
+ * The same photos, in the order the crossfade plays them: the title image
+ * last, everything after it first.
+ *
+ * The title image is the one the hero shows at the top of the home page
+ * (content/site.json, "hero.photo"), and the section further down opens
+ * with the first entry of this list — so starting at the title image would
+ * be the same picture twice on one screen. It is not dropped for that:
+ * once the sequence has moved on, nobody is comparing it with the hero any
+ * more, so it comes round last and the rotation holds every photo in the
+ * folder.
+ *
+ * Rotated around the hero's own photo rather than around position 0: those
+ * are the same file today (images/group/1.jpg sorts first), and a photo
+ * added as 0.jpg one day should not quietly put the hero's picture back at
+ * the front. A hero photo from outside this folder rotates nothing — there
+ * is then no picture to stand clear of.
+ */
+function crossfade_photos(): array
+{
+    $photos = group_photos();
+    $title = array_search(site()['hero']['photo'], $photos, true);
+
+    if ($title === false) return $photos;
+
+    return [...array_slice($photos, $title + 1), ...array_slice($photos, 0, $title + 1)];
+}
+
 /**
  * The alt texts written for this evening, as file => sentence.
  *
@@ -343,4 +473,96 @@ function when_line(array $show): string
     return $time
         ? date_de($show['date']) . ' · ' . $time . ' Uhr'
         : date_de($show['date']);
+}
+
+/**
+ * The date in the pieces a ticket stub carries:
+ *
+ *   ['weekday' => 'Freitag', 'day' => '18',
+ *    'month' => 'September 2026', 'time' => '19:30 Uhr']
+ *
+ * Four lines instead of one, because that is how a date reads when it is
+ * the thing being sold rather than a label on a list: the weekday answers
+ * "does that work for me", the numeral is what the eye finds from across
+ * the page, and the month stands under it small. "time" is null on a date
+ * with no hour yet.
+ *
+ * The year rides on the month line. On the card at the top it is nearly
+ * always redundant — that date is days away — but the rows below it run a
+ * year out, and a stub reading "FR 8 JANUAR" in December names two
+ * different evenings. One rule for all of them beats a stub that drops a
+ * line depending on where it stands.
+ *
+ * Two lists rather than a formatter: date() answers in English, strftime()
+ * is gone as of PHP 8.1, and IntlDateFormatter would be a whole extension
+ * for nineteen words. null on anything that is not a date — the stub then
+ * stays away entirely, which is the honest answer, and tools/check.php
+ * reports the entry.
+ */
+const WEEKDAYS_DE = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+
+const MONTHS_DE = [
+    1 => 'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
+    'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember',
+];
+
+function date_stamp(array $show): ?array
+{
+    if (!is_iso_date((string) $show['date'])) return null;
+
+    $stamp = strtotime($show['date']);
+    $time = show_upcoming($show)['time'] ?? null;
+
+    return [
+        'weekday' => WEEKDAYS_DE[(int) date('w', $stamp)],
+        'day' => (string) (int) date('j', $stamp),
+        'month' => MONTHS_DE[(int) date('n', $stamp)] . ' ' . date('Y', $stamp),
+        // Non-breaking: the stub is a narrow column, and "19:30" above
+        // "Uhr" would be two lines of one fact.
+        'time' => $time ? $time . "\u{00A0}Uhr" : null,
+    ];
+}
+
+/**
+ * Days from today to the date: 0 is today, 1 tomorrow, negative is past.
+ *
+ * DateTimeImmutable and not (a - b) / 86400: two days in a year are 23 and
+ * 25 hours long, and the division silently loses or gains one around the
+ * end of March and October.
+ */
+function days_until(array $show): ?int
+{
+    if (!is_iso_date((string) $show['date'])) return null;
+
+    $today = new DateTimeImmutable(today());
+    $date = new DateTimeImmutable($show['date']);
+
+    return (int) $today->diff($date)->format('%r%a');
+}
+
+/**
+ * What the pill over the next date says: "Heute Abend", "Morgen",
+ * "In 5 Tagen" — otherwise "Nächste Show".
+ *
+ * The line above the card used to say "Nächste Show" whatever the date,
+ * which the heading of the page ("Termine") and the list below it already
+ * say between them. Once the evening is close enough to plan for, the same
+ * space can carry the one thing the card does not otherwise state: how far
+ * off it is.
+ *
+ * A fortnight is where that stops being a fact and becomes arithmetic —
+ * "In 43 Tagen" is a number nobody converts back into a date — so beyond
+ * it the label goes back to naming what the card is.
+ */
+function soon_label(array $show): string
+{
+    $days = days_until($show);
+
+    return match (true) {
+        $days === null => 'Nächste Show',
+        $days <= 0     => 'Heute Abend',
+        $days === 1    => 'Morgen',
+        $days <= 13    => "In $days Tagen",
+        default        => 'Nächste Show',
+    };
 }

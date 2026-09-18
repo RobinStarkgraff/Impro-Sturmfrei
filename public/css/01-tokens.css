@@ -64,11 +64,17 @@
   --glass-hover:  rgb(var(--white-rgb) / 0.26);
   --glass-border: rgb(var(--white-rgb) / 0.30);
 
-  /* --- Hero: its own stage, its own base colours --- */
+  /* --- The dark band at the top: the header bar, and nothing else now ---
+     These were the hero's when the hero was a dark stage. The hero stands
+     on the page's own ground since, so the bar is the last thing wearing
+     them — plus the mobile menu, which is the bar unfolded. The names stay
+     as they are until something is gained by changing them; what they are
+     for is here. */
   --hero-top:    #06263d;
   --hero-mid:    #001b2e;
   --hero-bottom: #000f1a;
-  --hero-accent: #ffb8a2; /* lightened brick for the H1 line */
+  --hero-accent: #ffb8a2; /* lightened brick — the nav's active page, the
+                             wordmark on hover */
 
   /* --- type --- */
   --font-display: "Anton", "Arial Narrow", "Haettenschweiler", Impact, sans-serif;

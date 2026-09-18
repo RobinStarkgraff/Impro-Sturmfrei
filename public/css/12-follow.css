@@ -2,19 +2,37 @@
    12. FOLLOW
    ============================================================ */
 
+/* One channel per row, one above the other, in a column of its own width
+   in the middle of the page measure. Three cards side by side each had to
+   be a card — a block with its name at the top and its line underneath;
+   stacked they can be rows, read across instead of down: glyph, name, what
+   it is for, arrow. Three short rows instead of three tall boxes, and the
+   list ends where the text ends rather than at the edge of the screen. */
 .follow-grid {
   display: grid;
-  gap: var(--space-md);
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
-  margin-top: var(--space-xl);
+  gap: var(--space-sm);
+  max-width: 32rem;
+  /* No margin of its own at the top: the gap to the head above belongs to
+     that head (.section-head--tight), and two margins meeting here would
+     only mean looking in two files to change one distance. */
+  margin-inline: auto;
 }
 
+/* Glyph | name over its line | arrow. The two outer columns are as wide as
+   what stands in them and keep their place across all three rows, so the
+   names start on one line and the arrows end on one. */
 .follow-card {
   display: grid;
-  gap: var(--space-2xs);
-  padding: var(--space-lg);
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  column-gap: var(--space-md);
+  row-gap: var(--space-2xs);
+  padding: var(--space-md);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  /* -md, not the -lg every other card on the site takes: the radius has to
+     stay in proportion to the box, and on a card this size 24 px of corner
+     starts eating into the padding. */
+  border-radius: var(--radius-md);
   background: var(--surface);
   backdrop-filter: blur(12px);
   box-shadow: var(--shadow-sm);
@@ -30,20 +48,44 @@
   box-shadow: var(--shadow-lg);
 }
 
+/* The platform's colour rides in on the card as --brand (out of
+   content/site.json — it is the one colour here that is not ours, so it
+   stands with the channel and not in this file). Without one the glyph
+   takes the accent, like everything else that wants to be noticed. */
+.follow-card__icon {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  font-size: 1.5rem;
+  color: var(--brand, var(--accent-text));
+}
+
+/* The glyph itself keeps its weight at every size: a stroke scaled up with
+   the icon turns into a fat outline at 24 px. */
+.follow-card__glyph {
+  stroke-width: 1.7;
+}
+
 .follow-card__name {
+  grid-column: 2;
   font-family: var(--font-display);
-  font-size: 1.375rem;
+  font-size: 1.125rem;
   text-transform: uppercase;
   letter-spacing: 0.02em;
   color: var(--heading);
 }
 
 .follow-card__hint {
+  grid-column: 2;
   font-size: var(--text-meta);
   color: var(--text-muted);
 }
 
+/* Last column, both rows: the arrow belongs to the whole row, not to the
+   name or to the line under it. */
 .follow-card__arrow {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+  font-size: 1.375rem;
   color: var(--accent-text);
   font-weight: 700;
   transition: transform var(--fast) var(--ease);
@@ -51,24 +93,4 @@
 
 .follow-card:hover .follow-card__arrow {
   transform: translateX(4px);
-}
-
-/* At reading width (dates), three cards side by side come to a little over
-   200 px each — which leaves nothing of the hint text. So stacked there,
-   and read horizontally. */
-.follow-grid--stack {
-  grid-template-columns: 1fr;
-}
-
-.follow-grid--stack .follow-card {
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  column-gap: var(--space-lg);
-}
-
-.follow-grid--stack .follow-card__arrow {
-  grid-row: 1 / span 2;
-  grid-column: 2;
-  align-self: center;
-  font-size: 1.5rem;
 }

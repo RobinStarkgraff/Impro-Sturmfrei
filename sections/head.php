@@ -45,11 +45,12 @@ $og = og_image();
   <!-- Without an image it stays the small card: a large empty one is worse. -->
   <meta name="twitter:card" content="<?= $og ? 'summary_large_image' : 'summary' ?>"/>
 
-  <!-- The icons, small. The logo itself is 2240 px wide and weighs 258 KB —
-       as a favicon and as a home-screen icon that is many times what gets
-       displayed, and it is not square. `make icons` puts the small versions
-       next to it; while they are missing it stays with the logo (asset_or in
-       lib/paths.php). -->
+  <!-- The icons: the lighthouse out of the logo, scaled small. The logo
+       itself is the whole lockup — 2240 px wide, 258 KB, landscape, and at
+       32 px an illegible smudge, because what a centre crop keeps is the
+       middle of the wordmark. `make mark` cuts the tower out, `make icons`
+       scales it to 32 and 180 px; while those are missing it falls back to
+       the logo (asset_or in lib/paths.php). -->
   <link rel="icon" href="<?= esc(asset_versioned(asset_or('images/logo/favicon.png', $brand['logo']))) ?>"/>
   <link rel="apple-touch-icon" href="<?= esc(asset_versioned(asset_or('images/logo/apple-touch-icon.png', $brand['logo']))) ?>"/>
 

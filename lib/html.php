@@ -21,6 +21,54 @@ function ext(string $url): string
 }
 
 /**
+ * One glyph from public/images/icons/, written into the page.
+ *
+ * Written and not linked as an <img>: inside the markup the glyph takes
+ * the colour around it — which is what currentColor in the files is for,
+ * and what lets one file serve the follow card in the platform's colour
+ * and the footer in the footer's white. An <img> would have to be a
+ * second file per colour, and would be a second request per channel on
+ * top.
+ *
+ * Decorative throughout: every icon on this site stands next to the name
+ * it belongs to, so a screen reader would read it twice. Hence
+ * aria-hidden, and focusable="false" for the old IE-era SVG behaviour
+ * that still lingers in some browsers.
+ *
+ * A name pointing at no file yields nothing — the card keeps its text and
+ * `make check` reports the name. The files are read once per request, so
+ * two places using the same glyph is one file read.
+ *
+ * The files are written with one shape per line, the glyph comes out as
+ * one: the page source has the icon as a single attribute-heavy line it
+ * can be read past, instead of five lines of geometry in the middle of a
+ * card.
+ */
+function icon(?string $name, string $class = ''): string
+{
+    static $cache = [];
+
+    if (!$name) return '';
+
+    if (!array_key_exists($name, $cache)) {
+        $file = SITE_ROOT . '/public/images/icons/' . $name . '.svg';
+        $svg = is_file($file) ? trim((string) file_get_contents($file)) : '';
+        $cache[$name] = (string) preg_replace('/>\s+</', '><', $svg);
+    }
+
+    if (!$cache[$name]) return '';
+
+    $classes = trim('icon ' . $class);
+
+    return preg_replace(
+        '/^<svg\b/',
+        '<svg class="' . esc($classes) . '" aria-hidden="true" focusable="false"',
+        $cache[$name],
+        1
+    );
+}
+
+/**
  * "Kulturschloss Wandsbek · Hamburg · Eintritt frei" — the facts of one
  * date on a single line, the empty ones dropped.
  *
@@ -74,11 +122,19 @@ function mailto(string $subject = '', string $body = ''): string
    back. Whoever types over these lines has supplied exactly the details
    needed to quote a number.
 
-   Used twice on /buchen/ and once on /kontakt/ — hence here. The wording
+   Used three times on /buchen/ — in the page heading and once on each
+   format card — hence here rather than in any one section. The wording
    itself stays German: it is what a visitor sends.
    ------------------------------------------------------------ */
 
 const BOOKING_SUBJECT = 'Anfrage: Sturmfrei buchen';
+
+/* The one line of the mail a card on /buchen/ can answer for the visitor.
+   It stands as a constant because two places have to mean the same string
+   by it: the body below, which writes it out, and booking_mailto(), which
+   finds it again to fill it in. Typed twice, the format would silently
+   stop appearing in the mail the day somebody rewrote the question. */
+const BOOKING_FORMAT_LINE = 'Gewünschtes Format:';
 
 const BOOKING_BODY = "Hallo Sturmfrei,\n"
     . "\n"
@@ -89,16 +145,34 @@ const BOOKING_BODY = "Hallo Sturmfrei,\n"
     . "Uhrzeit:\n"
     . "Ort / Adresse:\n"
     . "Erwartete Zuschauerzahl:\n"
-    . "Gewünschtes Format:\n"
+    . BOOKING_FORMAT_LINE . "\n"
     . "Spielfläche vorhanden:\n"
     . "\n"
     . "Sonstiges:\n"
     . "\n"
     . "Viele Grüße";
 
-function booking_mailto(): string
+/**
+ * The enquiry mail — with the chosen format already standing in it.
+ *
+ * The button on a format card passes its own name, so that somebody who
+ * has just pressed "Bühnenshow anfragen" does not find an empty
+ * "Gewünschtes Format:" waiting in the mail: the card is the one place on
+ * the page where that decision has been made, and a line the site can
+ * fill in is a line nobody has to type.
+ *
+ * Without an argument the body stands as it is — the button in the page
+ * heading and the box at the end of the page are for whoever has not
+ * chosen yet, and inventing a format for them would be the opposite of
+ * the point.
+ */
+function booking_mailto(?string $format = null): string
 {
-    return mailto(BOOKING_SUBJECT, BOOKING_BODY);
+    $body = $format
+        ? str_replace(BOOKING_FORMAT_LINE, BOOKING_FORMAT_LINE . ' ' . $format, BOOKING_BODY)
+        : BOOKING_BODY;
+
+    return mailto(BOOKING_SUBJECT, $body);
 }
 
 /* ------------------------------------------------------------

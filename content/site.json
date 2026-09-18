@@ -53,14 +53,22 @@
     "(lib/pages.php) — otherwise `make check` reports it.",
     "",
     "Home deliberately does not appear in the header bar: the wordmark on",
-    "the left is the way back, an extra item would be the same link twice."
+    "the left is the way back, an extra item would be the same link twice.",
+    "",
+    "\"inFooter\": false keeps an item out of the footer, and \"Kontakt\" is",
+    "the one that uses it. There is no /kontakt/ page any more — the address",
+    "and the number stand in the Impressum, so that is where the item",
+    "points. In the header that is the word people look for; in the footer",
+    "the same page already stands under its own name among the mandatory",
+    "pages a few lines below, and \"Kontakt\" beside it would be one page",
+    "under two names in one list."
   ],
   "nav": [
     { "label": "Start",   "page": "index" },
     { "label": "Termine", "page": "termine", "inHeader": true },
     { "label": "Buchen",  "page": "buchen",  "inHeader": true },
     { "label": "Archiv",  "page": "archiv",  "inHeader": true },
-    { "label": "Kontakt", "page": "kontakt", "inHeader": true }
+    { "label": "Kontakt", "page": "impressum", "inHeader": true, "inFooter": false }
   ],
 
   "$comment_legalNav": [
@@ -73,22 +81,54 @@
     { "label": "Datenschutz", "page": "datenschutz" }
   ],
 
+  "$comment_links": [
+    "Every channel off the site — once here, not once per place it turns up.",
+    "The order counts: the follow cards, the footer list and \"sameAs\" in the",
+    "JSON-LD all follow it. A channel added here shows up in all three without",
+    "a line of PHP.",
+    "",
+    "\"icon\" names a file in public/images/icons/, without the .svg. The glyph",
+    "is written into the page instead of linked, so it takes the colour around",
+    "it; \"brand\" is the platform's own colour, and the glyph on the follow",
+    "card is what carries it. Both are optional — without an icon the card",
+    "stays text, without a brand colour the glyph takes the accent. A new",
+    "channel needs a new glyph: a 24x24 SVG next to the others, stroked in",
+    "currentColor. A name pointing at no file is reported by `make check`.",
+    "",
+    "\"roles\" is what the pages ask for, and the reason not one of them names",
+    "a platform: \"tickets\" is the shop a date without a ticket link of its",
+    "own falls back to, \"announcements\" the channel the follow cards offer,",
+    "that the button in the teaser for the next date points at and that the",
+    "sentence in sections/follow.php names. Move a role to another channel and",
+    "every page follows. Each of the two belongs to exactly one channel —",
+    "`make check` reports it missing as well as held twice."
+  ],
+
   "links": {
     "instagram": {
       "name": "Instagram",
       "url": "https://www.instagram.com/impro_sturmfrei/",
       "handle": "@impro_sturmfrei",
-      "hint": "Fotos, Clips und Ankündigungen"
+      "hint": "Fotos, Clips und Ankündigungen",
+      "icon": "instagram",
+      "brand": "#e4405f",
+      "roles": ["announcements"]
     },
     "eventbrite": {
       "name": "Eventbrite",
       "url": "https://www.eventbrite.de/o/121025991893",
-      "hint": "Tickets für die nächste Show"
+      "hint": "Tickets für die nächsten Shows",
+      "icon": "eventbrite",
+      "brand": "#f05537",
+      "roles": ["tickets"]
     },
     "meetup": {
       "name": "MeetUp",
       "url": "https://www.meetup.com/sturmfrei/",
-      "hint": "Termine und Community"
+      "hint": "Termine und Community",
+      "icon": "meetup",
+      "brand": "#ed1c40",
+      "roles": []
     }
   },
 
@@ -98,18 +138,18 @@
   },
 
   "about": {
-    "photoAlt": "Die Sturmfrei-Impro-Gruppe",
     "$comment_crossfade": [
-      "Order of the crossfade. The first image is at the same time the one",
-      "that stands in the markup — hence deliberately not 1.jpg here: that",
-      "is the hero photo and would appear twice at first glance."
+      "The order of the crossfade is not written down here any more. It is",
+      "the contents of public/images/group/, sorted the way a person numbers",
+      "files, with \"hero.photo\" moved to the end so the section does not",
+      "open with the picture at the top of the page — crossfade_photos() in",
+      "lib/data.php. The list stood here as five paths while the folder held",
+      "six: one photo the site never showed. Drop a picture into the folder",
+      "and it is in the rotation.",
+      "",
+      "photoAlt: what is in the pictures, which a folder cannot say. One",
+      "sentence for all of them — they show the same people."
     ],
-    "crossfade": [
-      "images/group/3.jpg",
-      "images/group/4.jpg",
-      "images/group/5.jpg",
-      "images/group/2.jpg",
-      "images/group/1.jpg"
-    ]
+    "photoAlt": "Die Sturmfrei-Impro-Gruppe"
   }
 }

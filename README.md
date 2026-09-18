@@ -36,7 +36,7 @@ public/ — THE SITE. Gets served, lives in the repo.
 
   index.php                 home: two lines that call lib/ and sections/
   termine/index.php         the same for /termine/ — and so for every page
-  buchen/  archiv/  kontakt/  impressum/  datenschutz/
+  buchen/  archiv/  impressum/  datenschutz/
   404/index.php             the answer to a wrong address
   sitemap.php robots.php    reachable as /sitemap.xml and /robots.txt
   css/00-fonts.css …        the styles, linked individually, in name order
@@ -45,15 +45,19 @@ public/ — THE SITE. Gets served, lives in the repo.
                             with CSS and markup), motion, images
   fonts/                    Anton & Inter as woff2, self-hosted
   images/logo/              logo (also used as the favicon)
-  images/group/             group photos for the hero and the crossfade
+  images/icons/             the glyphs, 24x24, in currentColor: one per
+                            channel, plus the mail and the phone of the
+                            contact block
+  images/group/             group photos: the first is the hero's, the
+                            folder is the crossfade's list
   images/shows/<date>/      photos per show, folders by date (YYYY-MM-DD);
                             the folder is the list — see "After the show"
 
 THE PARTS — sit above public/ and are therefore not addressable
 
-content/site.json           links, navigation, email, meta values, photos
+content/site.json           channels, navigation, email, meta values, photos
 content/shows.json          every show, coming and played, in one list
-content/booking.json        formats, requirements and questions for /buchen/
+content/booking.json        the two formats for /buchen/
 content/legal.json          the details for Impressum and privacy policy
 
 sections/hero.php …         one section of the page each, HTML with holes
@@ -63,7 +67,7 @@ sections/page-hero.php      the dark band at the top of every subpage
 
 lib/boot.php                where every page begins: loads everything below
 lib/data.php                reading content/*.json, dates, photo counts
-lib/html.php                esc(), links, mailto, missing legal details
+lib/html.php                esc(), links, icons, mailto, missing legal details
 lib/paths.php               relative paths, mtime stamps, stylesheet list
 lib/schema.php              JSON-LD (group, events, breadcrumbs)
 lib/pages.php               THE PAGES: title, description, sections
@@ -177,9 +181,9 @@ was edited. `js/main.js` deliberately gets none — it pulls in the remaining
 modules itself, and their paths live in its source; a stamp on the parent
 would therefore only appear to pass an update to `slider.js` through.
 
-Serving one concatenated file instead of 17 would be one request fewer —
+Serving one concatenated file instead of 18 would be one request fewer —
 but that would need something doing the concatenating again, with cache
-headers of its own. Over HTTP/2 the 17 travel over the same connection;
+headers of its own. Over HTTP/2 the 18 travel over the same connection;
 that is the better trade.
 
 ## Commands
@@ -190,7 +194,8 @@ make serve          # http://localhost:8000
 
 make images         # show what the photos weigh
 make images-apply   # shrink them (overwrites public/images/!)
-make icons          # favicon, home-screen icon and mark from the logo
+make icons          # favicon, home-screen icon and header mark from the lighthouse
+make mark           # cut the lighthouse out of the logo (needs Pillow)
 make fonts          # fetch Anton & Inter into public/fonts/ again
 ```
 
@@ -221,6 +226,28 @@ PHP, and Chrome additionally blocks the fonts and the ES modules there. So
 `tools/router.php` takes over the two addresses that `.htaccess` rewrites
 on the server.
 
+### In a devcontainer: `make dev-serve`
+
+Anyone developing inside a devcontainer — the PHP lives in there, the
+browser outside — has one command for it:
+
+```bash
+make dev-serve      # http://localhost:8000, from either side
+```
+
+From the host it reaches into the container and starts the server there;
+inside the container it starts it directly. `make serve` is the wrong
+target for that case: it binds `localhost:8000`, which inside the container
+is *the container's* loopback and unreachable from the host's browser.
+`dev-serve` binds `0.0.0.0` instead and relies on the container publishing
+the port (`appPort`).
+
+This one target is **not in the repo.** It sits in `Makefile.local`, which
+the `Makefile` pulls in at the end via `-include` and `.gitignore` keeps
+out — like everything else about the local environment. A fresh clone
+therefore has `make serve` and no `dev-serve`, and that is right: without a
+container there is nothing to reach into.
+
 ## Changing a navigation item
 
 `nav` in `content/site.json`: order and labels stand there once. The footer
@@ -231,6 +258,89 @@ that appears in no navigation: nobody will find that one.
 
 `legalNav` is the Impressum and the privacy policy. Those live at the
 bottom of the footer and deliberately not in the header bar.
+
+## The channels — Instagram, Eventbrite, MeetUp
+
+`links` in `content/site.json` holds every channel off the site, and the
+order there is the order everywhere: the follow cards, the footer column
+and `sameAs` in the JSON-LD. Per channel:
+
+```json
+"instagram": {
+  "name": "Instagram",
+  "url": "https://www.instagram.com/impro_sturmfrei/",
+  "handle": "@impro_sturmfrei",
+  "hint": "Fotos, Clips und Ankündigungen",
+  "icon": "instagram",
+  "brand": "#e4405f",
+  "roles": ["announcements"]
+}
+```
+
+`icon` names a file in `public/images/icons/` without the `.svg`, `brand`
+is the platform's own colour. Both are optional: without an icon the card
+stays text, without a brand colour the glyph takes the accent.
+
+**`roles` is what the pages ask for**, and the reason not one of them names
+a platform. `"tickets"` is the shop a date without a ticket link of its own
+falls back to; `"announcements"` is the channel the follow cards offer,
+that the button in the teaser for the next date points at, and that the
+sentence in `sections/follow.php` names. Move a role to another channel and
+every one of those follows. Each of the two belongs
+to exactly one channel — `make check` reports it missing as well as held
+twice.
+
+The channel names in the privacy policy come out of the same list
+(`link_names()` in `lib/data.php`): that paragraph has to say which outside
+sites this one links to, and a list kept by hand is how such a paragraph
+ends up naming a channel dropped a year ago.
+
+### Adding a channel
+
+1. A 24x24 SVG in `public/images/icons/<name>.svg`, stroked in
+   `currentColor` — one shape per line, no `width`/`height`/`class`:
+   `icon()` in `lib/html.php` writes it into the page and sets those.
+2. An entry under `links` in `content/site.json`, `icon` pointing at the
+   file. `roles` stays empty unless the channel is taking one over.
+3. `make check` — it reports a glyph that is missing, a colour that is not
+   one, a URL without `https://`, and an SVG nobody names. "Nobody" is
+   both places a glyph gets named: a channel here, and a section calling
+   `icon()` — `sections/contact.php` brings two of its own, the mail and
+   the phone.
+
+Nothing else: card, footer line, `sameAs` and the two legal paragraphs all
+follow from the list.
+
+## "Kontakt" in the header bar
+
+It leads to the Impressum. There was a `/kontakt/` page holding the address
+and the number and nothing else, and both of those the law puts in the
+Impressum anyway — two pages saying the same thing, one of them obliged to.
+So the nav item in `content/site.json` points at `impressum` and carries
+`"inFooter": false`: down there the same page already stands under its own
+name among the mandatory links, and "Kontakt" beside it would be one page
+under two names in one list. The Impressum opens with the contact details
+for the same reason — whoever followed that word came for them.
+
+The contact details themselves are still their own block
+(`sections/contact.php`), at the foot of `/buchen/`.
+
+## The group photos
+
+`public/images/group/` is the list, the way a show's folder is. The photo
+at the top of the home page is named in `content/site.json`
+(`hero.photo` — `images/group/1.jpg`), and the crossfade in "Wer sind wir?"
+plays **everything** in the folder: sorted the way a person numbers files
+(`10.jpg` after `9.jpg`), with the hero's own photo moved to the end so the
+section does not open with the picture already on screen above it. That is
+`crossfade_photos()` in `lib/data.php`, and `sections/about.php` hands the
+result to `js/crossfade.js` through `data-crossfade`.
+
+So a new group photo needs nothing but the file. The order used to stand in
+`content/site.json` as five paths while the folder held six — one photo the
+site never showed, and nothing said so. `make check` resolves every path in
+`data-crossfade` like any other reference, so a file removed is reported
+rather than fading to nothing.
 
 ## Adding a page
 
@@ -265,14 +375,14 @@ depends on that same date:
 | part         | fields                                   | coming | played |
 | ------------ | ---------------------------------------- | :----: | :----: |
 | general      | `date` `title` `venue`                   |   ●    |   ●    |
-| `"upcoming"` | `time` `cover` `ticketUrl` `price` `note`|   ●    |   –    |
+| `"upcoming"` | `time` `cover` `ticketUrl` `price`       |   ●    |   –    |
 | `"past"`     | `photos` — alt texts only, optional      |   –    |   ○    |
 
 ● required — `make check` reports a gap as an **error**  ·  ○ optional  ·
 – never asked for on that side
 
 A date still to come is asked for everything that can apply to it: the
-general part and all five fields of its own half. A played one is asked for
+general part and all four fields of its own half. A played one is asked for
 the general part and nothing else — its half of the block holds only the
 alt texts of its pictures, and may be missing entirely.
 
@@ -298,7 +408,7 @@ coming dates are on `/termine/`.
   "upcoming": {
     "time": "19:30",
     "cover": { "file": "sturmfrei.png", "alt": "Der Leuchtturm über dem Schriftzug" },
-    "ticketUrl": "…", "price": 0, "note": "Einlass ab 19:00"
+    "ticketUrl": "…", "price": 0
   },
   "past":     { "photos": [{ "file": "3.jpg", "alt": "Enya erklärt die Regeln" }] }
 }
@@ -317,8 +427,8 @@ the half that is not its side's is simply not read.
 
 So the morning after a show exactly one thing is wanted that was not wanted
 the evening before, and it is not in this file: the pictures, in the
-evening's folder. Hour, ticket link, price and note stop being asked for and may stay as they
-are. Date, title, venue and cover are general and therefore
+evening's folder. Hour, ticket link and price stop being asked for and may
+stay as they are. Date, title, venue and cover are general and therefore
 cross over untouched — the cover is the evening's face before it and after
 it.
 
@@ -382,18 +492,12 @@ card's width and not the window's (`flex-wrap`, and the text half asks for
 22 rem before it shares a line), so the same card also does the right thing
 in a narrower column.
 
-`"upcoming.note"` is one line under the price on `/termine/`, for what has
-no field of its own — "Einlass ab 19:00", "Nur Barzahlung", "Eingang im
-Hinterhof". It is deliberately absent from the home page teaser and from
-the JSON-LD, and it is required while the date is ahead: an evening with
-nothing to add is rare enough that being asked is the cheaper mistake.
-
 ### After the show
 
 The date moves itself. What is left is what the evening produced:
 
 1. Create the folder `public/images/shows/YYYY-MM-DD/` and put the photos
-   in as `1.jpg`, `2.jpg`, … Shrink them first: `make images-apply`.
+   in as `6.jpg`, `2.jpg`, … Shrink them first: `make images-apply`.
 2. `make check` — which has been asking for them since the morning after.
 
 There is no step in `content/shows.json`: the folder is the list. Eleven
@@ -401,7 +505,7 @@ files give eleven tiles, one more dropped in next week gives twelve, and a
 picture pulled out is gone from the page — nothing anywhere says how many
 there are, so nothing can say it wrongly.
 They are shown in file-name order, counted naturally (`10.jpg` after
-`9.jpg`, not after `1.jpg`), and `.jpg`, `.png` and `.webp` all count.
+`9.jpg`, not after `6.jpg`), and `.jpg`, `.png` and `.webp` all count.
 
 The folder is new at this point: while the date was ahead the evening had no
 pictures of its own, only the shared title image — and that one stays where
@@ -456,8 +560,8 @@ Still to be done when setting things up at netcup:
   Only switch on the HTTPS enforcement once the certificate is in place —
   before that it takes the site offline.
 * **Create the mailboxes.** `info@impro-sturmfrei.de` now stands in the
-  Impressum, in the privacy policy, on `/kontakt/` and behind every
-  "Anfrage schicken" button. An address nobody reads is worse in an
+  Impressum, in the privacy policy, at the foot of `/buchen/`, in the
+  footer of every page and behind every "Anfrage schicken" button. An address nobody reads is worse in an
   Impressum than none at all.
 
 Still open is the social card: put an image at 1200×630 into
@@ -572,8 +676,9 @@ Both pages exist and are complete. The details come from
 * `impressum.publishPhoneInSchema` — set to `false`, for the same reason as
   the address a line above. The number used to sit in the JSON-LD without
   anyone being asked while the address was protected; that was a
-  contradiction, not a decision. It still stands in the Impressum and on
-  `/kontakt/` — just no longer machine-readable for the knowledge panel.
+  contradiction, not a decision. It still stands in the Impressum and at
+  the foot of `/buchen/` — just no longer machine-readable for the
+  knowledge panel.
   Set it to `true` if it should be there.
 * `privacy.host`, `serverLocation` — netcup GmbH, servers in Nuremberg.
   Belongs in the policy, because that is where the server logs accrue.
@@ -596,9 +701,35 @@ the server side now that PHP assembles the page: no data arises other than
 before, only the provider's access logs. That is a solid basis but not
 legal advice — have it looked over before the domain goes live.
 
-**`content/booking.json` is a draft.** Formats, durations, head counts and
-the answers under `faq` are guesses. Review them and then set
-`"reviewed": true` — until that happens, `make check` points it out.
+**`content/booking.json` is a draft.** The formats and their durations are
+guesses. Review them and then set `"reviewed": true` — until that happens,
+`make check` points it out.
+
+There are two formats in it, because the choice a booking makes is watching
+or playing along; how long a show runs is a line on its card, not a format
+of its own. Each card also names the kind of evening it is usually booked
+for — `occasions`, a list of words rather than a sentence, because that is
+the part of a card somebody scans. It stands at the foot of the card, under
+the rule and over the button, written on one line by `dot_line()`. Leave it
+out and the foot holds nothing but its button. How many there are is written down nowhere else — the heading
+over the cards counts them (`sections/booking-formats.php`), so a third
+entry says "Drei Formate" by itself. What a card's button sends is the
+enquiry mail with that format already filled into it
+(`booking_mailto()` in `lib/html.php`).
+
+Under the cards the page ends with the contact block,
+`sections/contact.php`, which this is now the only page to carry — it had
+a page of its own at `/kontakt/` and that page is gone. It is given its
+heading and its line beside its name in `lib/pages.php`. A card's button
+writes the mail for you, which is no use without a mail client or to
+somebody who would rather call, so the address and the number stand at the
+foot of the page as text.
+
+Between the cards and that block there used to be four more sections: the
+checklist of what we need on site, the questions, the paragraph on the
+price and a box with the mail in it. They are gone, and with them `needs`
+and `faq` in this file, four files in `sections/`, and everything below
+the formats in `css/14-booking.css`.
 
 ## Conventions
 

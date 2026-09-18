@@ -1,200 +1,131 @@
 /* ============================================================
-   14. BOOKING — formats, requirements, questions, enquiry
+   14. BOOKING — the two formats
 
-   The cards here deliberately carry no glass: /buchen/ is the page where
-   somebody makes a decision, and the three formats have to be
-   distinguishable from each other, not from the page. Hence an edge and a
-   fill, no backdrop-filter.
+   The page where somebody decides something, and for a long time the one
+   page whose parts did not look like the rest of the site. The formats
+   were boxes with an edge and a fill and no glass — deliberately, back
+   when there were three of them and they had to be told apart from each
+   other rather than from the page. Meanwhile every other list of things
+   one can act on — the dates, the channels, the follow cards — had
+   become the same card: a translucent surface, an edge of its own, a
+   small shadow, and the accent for the one thing on it that names rather
+   than says.
+
+   So a format is made of that too, and what tells it apart from the
+   smaller cards is what it holds and not what it is made of: a pill, a
+   name, a lead, a paragraph and a button. It is the largest of the three
+   sizes this one material comes in (see the stub in css/08-next-show.css,
+   in the other two across two pages).
+
+   The checklist, the questions, the price and the enquiry box stood under
+   the cards and their rules stood here — the page ends at the cards now.
    ============================================================ */
+
+/* --- The formats ----------------------------------------------------
+   Two cards, and the grid is written so that it does not care: auto-fit
+   makes as many tracks as fit and the cards fill them, so a third entry
+   in content/booking.json changes the row rather than this file.
+
+   26rem, up from the 20rem of the three-card row. A card holds more than
+   it did — a pill, a name, a lead, a paragraph and a footer — and two of
+   them at the page measure come out at some 36rem each, which is about
+   the reading measure and the widest a paragraph may get. Below roughly
+   54rem of content the two stack, which on a tablet is the right shape:
+   a format is a poster, and a poster wants width before it wants
+   company. */
 
 .format-grid {
   display: grid;
   gap: var(--space-lg);
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr));
 }
 
 .format {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-md);
   padding: clamp(var(--space-lg), 3vw, var(--space-xl));
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--surface);
+  backdrop-filter: blur(12px);
   box-shadow: var(--shadow-sm);
   transition: box-shadow var(--slow) var(--ease),
               background-color var(--slow) var(--ease);
 }
 
+/* It brightens and lifts its shadow, and it does NOT rise. The follow
+   card, the contact card and a row in the list of dates all step up a few
+   pixels under the pointer, and all three of them ARE the link — the whole
+   card is pressable, so the movement is a promise the card keeps. Here
+   only the button at the bottom leads anywhere; a card that rose would be
+   offering something it cannot answer for, and the text on it is meant to
+   be read and selected, not aimed at. */
 .format:hover {
   background: var(--surface-hover);
   box-shadow: var(--shadow-md);
 }
 
+/* The gaps belong to the card, so nothing inside it brings a margin of
+   its own — a paragraph's bottom margin on top of the flex gap made the
+   space under the lead larger than the one over it, for no reason a
+   reader could see. */
+.format > * {
+  margin: 0;
+}
+
+/* How long it runs, in the pill the card for the next date wears over its
+   title (css/08-next-show.css). Borrowed on purpose rather than built
+   again: the pill is this site's way of saying "this is a fact about the
+   thing below it", and a duration is exactly that. Without the pulsing
+   dot — that one belongs to a date that is coming closer; a format is not
+   getting any shorter.
+
+   align-self, because the pill is an inline-flex box in a flex column,
+   and a flex item stretches across its container by default: left alone
+   it would be a band the width of the card rather than a tag. */
 .format__duration {
-  margin: 0;
-  font-size: var(--text-eyebrow);
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--accent-text);
+  align-self: start;
 }
 
-.format__summary {
-  margin: 0;
-}
+/* --- and the end of a card: what it suits, and how to ask for it -----
 
-/* The cast line is the last one in the box and should sit at the bottom,
-   even when the text above it is shorter than in the card next to it. */
-.format__cast {
-  margin: auto 0 0;
-  padding-top: var(--space-md);
+   Pushed to the bottom of the card (margin-top: auto), so the two buttons
+   stand on one line even when one card's text runs a line longer than the
+   other's, and set off by a rule: what is above it describes the format,
+   what is below it is what to do about it and what it is for.
+
+   Two rows and not two columns, at every width. A line of occasions beside
+   the button only fits by a hair — "Teamevent · Betriebsausflug · …" and
+   "Impro zum Mitmachen anfragen" come to well over the 32rem a card has at
+   the page measure — and squeezed next to it the button wraps to a line of
+   its own anyway and stands there at the width of its label, which reads
+   as something left lying in the card rather than as what the card is for.
+   So the button takes the whole width from the start, the way the one in a
+   ticket's stub does (css/08-next-show.css), and the list of occasions
+   stands above it. */
+.format__foot {
+  display: grid;
+  gap: var(--space-md);
+  margin-top: auto;
+  padding-top: var(--space-lg);
   border-top: 1px solid var(--border);
 }
 
-/* --- What we need ---------------------------------------------------
-   A <dl>: term and explanation really are pairs here, not a list with a
-   colon inside it. */
-
-.need-grid {
-  display: grid;
-  gap: var(--space-lg) var(--space-xl);
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+/* .meta carries the size and the colour (css/03-typography.css); what is
+   left is the margin. The line sits in the footer and not directly in the
+   card, so the `.format > *` reset above does not reach it and it still
+   brings a paragraph's bottom margin — which here would be a second gap
+   under the row gap. */
+.format__occasions {
   margin: 0;
 }
 
-.need {
-  padding-left: var(--space-lg);
-  border-left: 2px solid rgb(var(--accent-rgb) / 0.35);
-}
-
-.need__item {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--heading);
-}
-
-.need__detail {
-  margin: var(--space-2xs) 0 0;
-  font-size: var(--text-meta);
-  color: var(--text-muted);
-  line-height: 1.6;
-}
-
-.need-grid__note {
-  margin-top: var(--space-xl);
-}
-
-/* --- Questions -------------------------------------------------------
-   <details>, not hand-built: the disclosure mechanism exists in the
-   browser, works without JS and is already named correctly for screen
-   readers. */
-
-.faq {
-  display: grid;
-  border-top: 1px solid var(--border);
-}
-
-.faq__item {
-  border-bottom: 1px solid var(--border);
-}
-
-.faq__item summary {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-md);
-  padding: var(--space-lg) 0;
-  font-size: var(--text-lead);
-  font-weight: 600;
-  color: var(--heading);
-  cursor: pointer;
-  list-style: none;
-}
-
-/* Away with the built-in triangle, in both engine families. */
-.faq__item summary::-webkit-details-marker {
-  display: none;
-}
-
-.faq__item summary::after {
-  content: "+";
-  flex: 0 0 auto;
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  line-height: 1;
-  color: var(--accent-text);
-  transition: transform var(--fast) var(--ease);
-}
-
-.faq__item[open] summary::after {
-  transform: rotate(45deg);
-}
-
-.faq__item summary:hover {
-  color: var(--accent-text);
-}
-
-.faq__item > p {
-  margin: 0;
-  padding-bottom: var(--space-lg);
-  max-width: 60ch;
-  color: var(--text-muted);
-}
-
-/* --- Enquiry ---------------------------------------------------------
-   Here the glass surface is allowed: this box closes the page and should
-   read like the next date — as the one thing left to do. */
-
-.cta {
-  display: grid;
-  gap: var(--space-md);
-  justify-items: center;
+/* .btn keeps its label on one line (css/05-buttons.css), which is right
+   for "Anfrage schicken" and wrong here: the label is a format's name plus
+   a word, and "Impro zum Mitmachen anfragen" is wider than a card on a
+   phone — a button that cannot break would push the page sideways. */
+.format__action {
+  white-space: normal;
   text-align: center;
-  padding: clamp(2rem, 6vw, 4rem);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  background: var(--surface);
-  backdrop-filter: blur(16px);
-  box-shadow: var(--shadow-lg);
-}
-
-.cta .lead,
-.cta__note {
-  max-width: 42ch;
-}
-
-.cta__note {
-  margin: 0;
-}
-
-/* --- Ways to get in touch -------------------------------------------
-   Four blocks, no form. A form would need a third-party service, and this
-   site values its independence more than the two clicks that would
-   save. */
-
-.contact-ways {
-  display: grid;
-  gap: var(--space-xl);
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
-}
-
-.contact-way__label {
-  margin: 0 0 var(--space-2xs);
-  font-size: var(--text-eyebrow);
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--accent-text);
-}
-
-.contact-way .lead {
-  margin: 0 0 var(--space-xs);
-  word-break: break-word;
-}
-
-.contact-way .meta {
-  margin: 0;
 }

@@ -2,6 +2,18 @@
    7. HERO
    ============================================================ */
 
+/* No ground of its own: the page's gradient runs straight through, the way
+   it does behind the heading of every subpage. What stood here was a dark
+   stage — the brick radial over the hero gradient, the hero photo again
+   behind it blurred to a wash, and a scrim over that to hold the white
+   text at contrast. All four went together: without the dark ground the
+   blur is a grey film over cream, and the scrim has nothing left to keep
+   readable.
+
+   position and isolation stay for the glow behind the photo, which sits at
+   z-index -1 and has to stay inside this section rather than slide behind
+   the page. overflow stays with it: on a narrow screen the glow reaches
+   past the gutter, and body has overflow-x: clip, not hidden. */
 .hero {
   position: relative;
   isolation: isolate;
@@ -13,39 +25,6 @@
   min-height: calc(100svh - var(--header-h));
   padding-block: var(--space-3xl);
   overflow: hidden;
-  color: var(--white);
-  background:
-    radial-gradient(90% 70% at 15% 10%, rgb(var(--brick-rgb) / 0.35), transparent 60%),
-    linear-gradient(165deg, var(--hero-top) 0%, var(--hero-mid) 55%, var(--hero-bottom) 100%);
-}
-
-/* The same photo, blurred — pure atmosphere, so the resolution does not
-   matter. Sits below the scrim. */
-.hero__backdrop {
-  position: absolute;
-  inset: -12%;
-  width: 124%;
-  height: 124%;
-  object-fit: cover;
-  filter: blur(70px) saturate(160%);
-  opacity: 0.45;
-  z-index: -2;
-  pointer-events: none;
-}
-
-/* The scrim keeps the text at full contrast, whatever the blur spits
-   out. */
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(
-    180deg,
-    rgb(var(--scrim-rgb) / 0.55) 0%,
-    rgb(var(--scrim-rgb) / 0.35) 45%,
-    rgb(var(--scrim-rgb) / 0.70) 100%
-  );
 }
 
 .hero__inner {
@@ -82,32 +61,34 @@
   object-position: center 25%;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-xl);
-  border: 1px solid rgb(var(--white-rgb) / 0.14);
+  border: 1px solid var(--border);
 }
 
-/* Warm glow behind the photo, picking up the brick. */
+/* Warm glow behind the photo, picking up the brick. Half the strength it
+   had: at 0.5 it was reading against near-black, and the same value on
+   cream is an orange halo rather than a glow. */
 .hero__figure::before {
   content: "";
   position: absolute;
   inset: -8%;
   z-index: -1;
   border-radius: var(--radius-xl);
-  background: radial-gradient(closest-side, rgb(var(--brick-rgb) / 0.5), transparent);
+  background: radial-gradient(closest-side, rgb(var(--brick-rgb) / 0.26), transparent);
   filter: blur(30px);
 }
 
-.hero .eyebrow {
-  color: var(--white);
-  opacity: 0.85;
-}
-
+/* The eyebrow, the headline and the paragraph all keep the colours they
+   have everywhere else on the page — which is why the three rules that
+   set them white are gone and only the spacing is left. */
 .hero h1 {
-  color: var(--white);
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-md);
 }
 
+/* --accent-text and not the lightened --hero-accent: that one was mixed to
+   carry on dark pixels. Same line, same job, on cream — and the same value
+   the statement on this page uses for it, see css/09-about.css. */
 .hero h1 .accent {
-  color: var(--hero-accent);
+  color: var(--accent-text);
 }
 
 .hero__text {
@@ -116,20 +97,21 @@
   max-width: var(--measure-prose);
   font-size: var(--text-lead);
   line-height: 1.55;
-  color: rgb(var(--white-rgb) / 0.90);
 }
 
 .hero .btn-row {
   margin-top: var(--space-2xl);
 }
 
-/* Cue to keep scrolling */
+/* Cue to keep scrolling — in the accent, like the eyebrow above it: it is
+   small uppercase type that has to be noticed without competing with the
+   headline, and that is the job that colour already does on this page. */
 .scroll-cue {
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
   margin-top: var(--space-2xl);
-  color: rgb(var(--white-rgb) / 0.85);
+  color: var(--accent-text);
   font-size: var(--text-meta);
   font-weight: 600;
   letter-spacing: 0.14em;
@@ -139,15 +121,18 @@
 }
 
 .scroll-cue:hover {
-  color: var(--white);
+  color: var(--accent-fill-hover);
 }
 
+/* The ring takes the text's own colour, thinned — on dark it was white at
+   0.4, and the equivalent here is the accent at a strength that reads as a
+   ring and not as a second button. */
 .scroll-cue__arrow {
   display: grid;
   place-items: center;
   width: 2rem;
   height: 2rem;
-  border: 1px solid rgb(var(--white-rgb) / 0.40);
+  border: 1px solid rgb(var(--accent-rgb) / 0.40);
   border-radius: var(--radius-pill);
   animation: bob 2.4s var(--ease) infinite;
 }
@@ -155,67 +140,4 @@
 @keyframes bob {
   0%, 100% { transform: translateY(0); }
   50%      { transform: translateY(5px); }
-}
-
-
-/* ============================================================
-   7b. PAGE HERO OF THE SUBPAGES
-
-   The band every page without a hero begins with: title and lead on the
-   same dark ground that hero and header bar carry. It lives in the same
-   file as the hero because it shares its colours and must not be
-   recoloured separately from it.
-
-   It used to be a requirement as well: the header bar was transparent over
-   the hero and needed dark pixels beneath it, or its white text stood on
-   cream. The bar now brings its own ground (see css/06-header.css) — so
-   this band is design now, and a page without it would merely be ugly, not
-   unreadable.
-   ============================================================ */
-
-.page-hero {
-  position: relative;
-  isolation: isolate;
-  padding-block: var(--space-3xl);
-  color: var(--white);
-  background:
-    radial-gradient(80% 120% at 12% 0%, rgb(var(--brick-rgb) / 0.32), transparent 62%),
-    linear-gradient(160deg, var(--hero-top) 0%, var(--hero-mid) 70%, var(--hero-bottom) 100%);
-}
-
-.page-hero .eyebrow {
-  color: var(--white);
-  opacity: 0.85;
-}
-
-.page-hero h1 {
-  color: var(--white);
-  max-width: 30ch;
-}
-
-.page-hero__lead {
-  margin-top: var(--space-lg);
-  max-width: var(--measure-prose);
-  color: rgb(var(--white-rgb) / 0.90);
-  line-height: 1.55;
-}
-
-.page-hero .btn-row {
-  margin-top: var(--space-xl);
-}
-
-/* The transition into the light page. Without the edge the band looks like
-   a cropped photo; with it, like a stage you step down from. */
-.page-hero::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 3px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgb(var(--brick-rgb) / 0.9) 30%,
-    rgb(var(--brick-rgb) / 0.9) 70%,
-    transparent
-  );
 }

@@ -3,57 +3,106 @@
    ============================================================ */
 
 /* ------------------------------------------------------------
-   The card for the next date
+   The card for the next date — a ticket
 
-   A band, not a column. Stacked and centred, the card was the tallest
-   thing on the home page: picture, pill, date, title, one line of facts
-   and two buttons, each on its own line and each waiting for the eye to
-   travel down to it. Read as a poster it is one message, and a poster is
-   wider than it is high.
+   Three panels, edge to edge, and no padding on the card itself: the
+   title image on the left, what the evening is in the middle, and on the
+   right the part you would tear off — the date, the hour and the way in,
+   behind a perforation.
 
-   So the two halves stand side by side — the title image on one side,
-   everything that is read on the other — and the card takes the page
-   measure rather than the reading one. It stands out by being the widest
-   thing on the page rather than the longest, and it keeps what made it
-   stand out before: its own surface, the border, the shadow, the pulsing
-   pill and a date at subheading size.
+   It is a band and not a column. Stacked and centred, the card was the
+   tallest thing on the home page: picture, pill, date, title, one line of
+   facts and two buttons, each waiting for the eye to travel down to it.
+   Read as a poster it is one message, and a poster is wider than it is
+   high. So it takes the page measure rather than the reading one, and it
+   stands out by being the widest thing on the page rather than the
+   longest.
 
-   flex-wrap and not a media query: what decides whether the two fit
-   beside each other is the width of the card, not the width of the
-   window — the card sits in the page measure on the home page and on
-   /termine/, but the same card in a narrower column has to make the same
-   decision. The body asks for 22rem before it will share a line, and
-   below that the two halves stack again, picture first, which is exactly
-   the old card.
+   Why a ticket and not a card with a picture on it: what the three panels
+   separate is what a reader asks in three separate moments — who is
+   playing (the picture), what the evening is (the middle), and when, and
+   how do I get in (the stub). On one surface those five lines all had the
+   same voice and the date had to shout to be found; given a column of its
+   own it is found without shouting, and the pill above the title can
+   carry how far off the evening is instead.
 
-   Vertically centred: the picture is 16:9 and the text is taller, so
-   aligning them at the top would leave the picture hanging in the corner
-   of a much taller box.
+   flex-wrap decides when the panels stop standing beside each other, and
+   it has to: a container query styles the DESCENDANTS of its container,
+   never the container itself, and the card is its own container. A rule
+   for .next-show inside .next-show's query is a rule that never runs — on
+   a phone that left the card at nowrap with all three panels squeezed
+   onto one line. The stub can be told things from in there (it is a
+   descendant); the card cannot.
+
+   So the card wraps, and the two have to agree rather than race. flex
+   breaks a line on the items' bases: 18rem of poster, 20rem of body and
+   the stub's own width, about 53rem together, and the stub is the one that
+   drops first — which is the right one to lose, being the narrowest and
+   the most self-contained. The query below then has one job, and its
+   threshold has one rule: it must sit ABOVE that width, never below it.
+   At 56rem it does, with three rem to spare for the part of the sum that
+   is a guess — the stub is a German month name in a font at a clamped
+   size. Above the threshold the bases fit and nothing wraps; below it the
+   stub is already asking for a whole line, so flex puts it on one and the
+   query has dressed it for standing there.
+
+   Get that order wrong and there is a band of a few pixels where the stub
+   has wrapped but is still dressed for standing beside the text: a narrow
+   column at the bottom left of the card, perforation down its left edge
+   and nothing to the left of it. That band was real once.
+
+   Stretched and not centred: the picture's panel and the stub run the
+   full height of the card, so the perforation is a full-height edge and
+   the picture's sky reaches both corners. What is centred is the content
+   inside each panel.
    ------------------------------------------------------------ */
 
 .next-show {
+  /* Queried at the foot of this file — the card's own width is what
+     decides whether the panels still stand beside each other, and this is
+     how it and its descendants get to ask for it. */
+  container-type: inline-size;
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: clamp(var(--space-lg), 3vw, var(--space-2xl));
-  padding: clamp(1.75rem, 4vw, 3rem);
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   background: var(--surface);
   backdrop-filter: blur(16px);
   box-shadow: var(--shadow-lg);
+  /* The panels run into the corners; the card's radius cuts them. */
+  overflow: hidden;
 }
 
-/* The half that is read. 22rem is the width below which a title in Anton
-   at h2 size breaks after every second word — asking for it as the basis
-   is what makes the card stack on a phone and stand as a band from a
-   tablet up. */
+/* The panel that is read, and the only one carrying the padding the card
+   used to carry as a whole. Its basis is what makes the card stack on a
+   phone and stand as a band from a tablet up. 20rem and not the 22rem it
+   was: the basis is also a third of the sum the query at the foot of this
+   file has to stay above, and two rem there is the margin for the part of
+   that sum nobody can measure from here. It costs the panel about six
+   pixels of width on a wide card — the free space is shared out by the
+   grow factors, not by the bases.
+
+   It grows four times as fast as the picture beside it, which is what
+   holds those two at roughly two fifths to three fifths as the card gets
+   wider. Even growth would hand the picture more than half of a wide card
+   — the bases are 26rem and 22rem, and splitting what is left over evenly
+   keeps that order. The picture is one part of the message, not the
+   largest.
+
+   Centred in its own height: with a picture beside it and a stub after
+   it, the card can be taller than the text, and the text then stands in
+   the middle of its panel rather than at the top of it. */
 .next-show__body {
-  flex: 1 1 22rem;
+  flex: 4 1 20rem;
   min-width: 0;
   display: grid;
   justify-items: start;
+  align-content: center;
   gap: var(--space-md);
+  padding: clamp(1.75rem, 3.5vw, 3rem);
 }
 
 /* The gaps are the body's, not the elements' own: a paragraph's bottom
@@ -63,8 +112,10 @@
   margin: 0;
 }
 
-/* The one exception — the buttons are the end of the card and may stand a
-   little further off than the lines that belong together above them. */
+/* The one exception — a row of buttons is the end of what is read and may
+   stand a little further off than the lines that belong together above it.
+   Only the teaser's placeholder has one now: where a date is fixed, both
+   buttons stand in the stub, under the date they belong to. */
 .next-show__body > .btn-row {
   margin-top: var(--space-xs);
 }
@@ -108,76 +159,130 @@
   max-width: 34rem;
 }
 
-/* The date on the card, well above the same line in the archive. There it
-   labels an entry in a list; here it is the one fact somebody came for, so
-   it reads at the size of a subheading — the title under it stays the
-   larger of the two, and the eye still lands on the date first because it
-   comes first and is set in the accent colour.
-
-   The wide letter-spacing it inherits from .date-line costs width: at this
-   size a long date wants the whole column, hence the tighter tracking. */
-.next-show .date-line {
-  font-size: var(--text-h3);
-  letter-spacing: 0.06em;
-}
+/* The picture's panel and the stub each have a block of their own further
+   down: what they are takes more saying than fits over a rule. */
 
 
 /* ------------------------------------------------------------
    The dates after the next one
 
-   The nearest show has the card above to itself — these read as one list,
-   hence a hairline between the rows instead of a box per date. Text left,
-   ticket button right; when the row runs out of width the button wraps
-   under the text, because beside it the title would break after every
-   second word.
+   The nearest show has the card above to itself; these are the list under
+   it — at the same measure as the card, so the two share their edges and
+   read as one column down the page. They are slabs and not reading text;
+   the reading column is for paragraphs, and there is not a paragraph among
+   them.
+
+   A surface per date, not a hairline between them. The rows used to sit on
+   the page itself, separated by a single rule — and the page under them is
+   the cream-to-sky gradient, so a date stood on the same colour as
+   everything around it and the list read as loose text rather than as
+   three things one can act on. Each row now carries what the card above
+   and the follow cards below already carry: its own translucent surface,
+   the border, a small shadow. The gradient still shows through, so the
+   rows stay part of the page — they are only lifted off it far enough to
+   be counted.
+
+   The smaller shadow and the smaller radius are what keep the list
+   subordinate to the band above it: same material, less presence, so the
+   next show stays the one poster on the page.
+
+   A row is the card's three parts rearranged, not repeated. The stamp
+   opens it, the perforation follows, then what the evening is, and the
+   ghost button closes it: wann, was, wie rein, read left to right.
+
+   Two things moved to get there, and both were settled while the list
+   still stood in the reading column, where nothing four-part fits.
+
+   The ticket button left the stub. Inside it, the stamp stood half again
+   as tall as the two lines of text beside it and every row sat in its own
+   empty space; outside, the stamp is about as tall as the text and the row
+   is the height of its content again. That holds at any width, and the
+   wider measure has not changed it.
+
+   And the title image left the row altogether. Room was the smaller half
+   of that: at six rem the three of them were the SAME picture — the
+   lighthouse lockup is most of every file in images/titles/, and the
+   guest's name beside it is the first thing to stop being legible — so
+   three marks said one thing three times. Width would give the space back
+   now; it would not make the mark worth looking at. The stamp has that
+   place.
    ------------------------------------------------------------ */
 
+/* The three columns belong to the LIST, not to each row — which is the
+   whole reason this is a grid and the rows are subgrids of it.
+
+   Laid out row by row, every row sized its own stamp, and a stamp is as
+   wide as its month: "Oktober 2026" is two letters shorter than "September
+   2026", so each row began its title at a different place and the list
+   read as three things that had been set separately. As one grid, the
+   stamp column is as wide as the widest stamp in it and every row starts
+   its title on the same line — without anyone having to name a width, and
+   at every size the type takes.
+
+   The same then goes for the ticket panel on the other side: one column,
+   one width, however long a future label turns out to be.
+
+   column-gap: 0 and the gap only between rows. The panels of a row touch
+   — each carries its own padding — and a subgrid uses its parent's column
+   gutters, so this is where that has to be said. */
 .date-list {
+  /* Queried at the foot of this block: the list is as wide as its rows.
+
+     What is asked here can only be answered by what is INSIDE here — the
+     rows and their panels. The list itself cannot be restyled from its own
+     query, however sensible the rule looks. */
+  container-type: inline-size;
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  gap: var(--space-lg);
+  grid-template-columns: auto 1fr auto;
+  row-gap: var(--space-md);
+  column-gap: 0;
 }
 
+/* A row spans the list's three columns and takes its tracks from it. The
+   panels are then placed by name below rather than in the order they
+   happen to appear: a date with no ticket has no third panel, and left to
+   place itself its text would slide into the stamp's column. */
 .date-list__item {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-md) var(--space-lg);
-  padding-bottom: var(--space-lg);
-  border-bottom: 1px solid var(--border);
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  /* No padding, and none between the panels: each of the three carries its
+     own, so each runs to the row's edges — the perforation and the panel
+     behind the ticket are full-height edges rather than lines drawn in the
+     middle of a margin. The card is built the same way. */
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-sm);
 }
 
-/* The last row closes the list — a rule under it would look like a
-   forgotten fourth date. */
-.date-list__item:last-child {
-  padding-bottom: 0;
-  border-bottom: 0;
-}
-
-/* 13rem: with the mark beside it, that is where two columns stop being
-   wider than a line of text — below it the button goes underneath. */
+/* 13rem is the width below which a title in Anton at h3 size breaks after
+   every second word. It is the basis and not a minimum: the text is the
+   only one of the three that grows, so whatever the row has over its three
+   bases ends up here. */
 .date-list__text {
-  flex: 1 1 13rem;
+  grid-column: 2;
+  /* The column that takes what the other two leave (1fr), so it is also
+     the one that has to be allowed below the width of its own content. */
+  min-width: 0;
+  /* Centred in its own height: the stamp beside it can be the taller of
+     the two, and the title would otherwise hang at the top of the row. */
+  display: grid;
+  align-content: center;
+  padding: var(--space-lg);
 }
 
-/* The title image in a row: the same picture as on the card, at the size a
-   list can carry. It keeps its shape and its radius, so a row reads as a
-   smaller relative of the card rather than a different thing. */
-.date-list__cover {
-  flex: 0 0 auto;
-  width: 6rem;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-md);
-  background: var(--surface-hover);
-}
-
+/* The date used to stand above the title as a line of its own; it is in
+   the stub now, so nothing stands above the title and its top margin is
+   one too many. */
 .date-list__title {
-  margin-block: var(--space-2xs);
+  margin: 0 0 var(--space-2xs);
 }
 
 /* ------------------------------------------------------------
@@ -202,9 +307,11 @@
                    lines. 0.98 is a display value and belongs to the short
                    headings it was set for — the section heads keep it.
 
-   The date above the title stays as it was: small, wide and in capitals is
-   what makes it read as a label rather than a second headline, and now it
-   is the only one of the two in caps, which tells them apart at a glance.
+   The date is the other way round, and stands in the stub: small, wide and
+   in capitals is what makes the weekday and the month read as the label of
+   a numeral rather than as two more headlines. So the two are never
+   confusable — one name in mixed-case Anton on the left, one date in
+   spaced capitals on the right.
 
    Only the coming dates: an archive entry is named by evenings that are
    over, whose titles are short, and they read as they always have.
@@ -216,40 +323,324 @@
   line-height: 1.1;
 }
 
-/* When the date is the headline of the row, nothing stands above it — so
-   its own top margin is one too many. */
-.date-list__title--first {
-  margin-top: 0;
-}
-
 
 /* ------------------------------------------------------------
    The title image of a coming date
 
-   One half of the band, and rounded like everything else on the card: its
-   own corners, the pill, the buttons. Not edge to edge — inside the
-   padding it reads as one element among the card's, which is what it is.
+   It fills its panel from edge to edge, and that is possible because of
+   what the files in images/titles/ are. They are not photographs but
+   title cards — the lighthouse lockup, and beside it the guest of the
+   evening — drawn on a flat ground, and that ground is #93bcd6, which is
+   --sky to within one step. So a panel in --sky and the picture inside it
+   have no seam a reader can find: the picture ends somewhere in the
+   middle of the panel and its own sky carries on to the card's edge.
 
-   A share of the card rather than a fixed width, so the picture grows with
-   the band instead of sitting in the corner of it: 30%, and never below
-   16rem (a poster smaller than that stops being readable — the guest
-   ensemble's name is in the picture) or above 22rem (beyond that it starts
-   crowding the title out of the other half).
+   What that buys: the picture may run to the edges without being cropped
+   — it simply stops. Cropping was never an option here, because the name
+   of the guest ensemble is *in* the picture, and object-fit: cover takes
+   it off the side. The card therefore used to keep the picture a fixed
+   16:9 rectangle in the middle of the padding, with its own radius and
+   its own shadow: a photo pasted onto a card, one element among several.
+   Now it is one of the card's three panels.
 
-   The band is 16:9, the shape the files in images/titles/ have, so nothing
-   of them is cropped; object-fit holds that shape should somebody drop in
-   a different one. No border of its own: the picture brings its own edge,
-   and a ring around it would be the second one inside the card's.
+   The panel stretches to the card's height, so on a card whose text runs
+   longer than the picture is tall, the extra height is sky rather than a
+   gap — which is exactly what the picture would have left behind before.
+
+   flex-grow: 1 and no max-width: once the panel stands on its own line it
+   has to reach both edges, and a max-width would leave it short of them
+   with the card's surface showing beside it.
    ------------------------------------------------------------ */
 
-.next-show__cover {
-  flex: 0 1 clamp(16rem, 30%, 22rem);
+.next-show__poster {
+  flex: 1 1 clamp(18rem, 38%, 26rem);
   min-width: 0;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  /* The card's own surface while the file loads, not a white rectangle the
-     eye reads as part of the picture. */
+  display: grid;
+  align-content: center;
+  background: var(--sky);
+}
+
+/* The radius, the shadow and the fixed 16:9 box were what made the picture
+   an element standing on the card. All three are the panel's job now, and
+   the panel has none of them. --sky does not turn with dark mode, so the
+   seam holds there too: the picture is the same bright thing in both, and
+   on the dark page it reads as the lit half of the card. */
+.next-show__cover {
+  width: 100%;
+  height: auto;
+}
+
+
+/* ------------------------------------------------------------
+   The stub
+
+   The part of a ticket you tear off: the weekday, the day, the month, the
+   hour, and the way in. It stands on the right of the card at the top of
+   /termine/ and of the teaser on the home page, and again — smaller — at
+   the end of every row in the list below them. One piece, three sizes,
+   which is what makes a date on this site recognisable as the same thing
+   wherever it appears.
+
+   The perforation is a dashed rule and not a punched hole. Real notches
+   would have to be cut out of the card with a mask, and what shows through
+   a hole is the page — which here is a gradient running from cream to sky
+   and back, so the two half-circles would have to know their own position
+   in it. A dashed line says the same thing and cannot go wrong.
+
+   --stub-day is the one thing the three sizes differ in: the numeral is
+   the whole point of the stamp, and everything around it is already as
+   small as type gets. The list sets it at the foot of this block, the card
+   raises it, and the stacked card lowers it again.
+   ------------------------------------------------------------ */
+
+.stub {
+  --stub-day: var(--text-h3);
+  flex: 0 0 auto;
+  align-self: stretch;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: var(--space-2xs);
+  padding: var(--space-md);
+  border-left: 2px dashed var(--border);
+  text-align: center;
+}
+
+/* Small, wide and in capitals above and below the numeral: that is what
+   makes the two read as the label of the date rather than as two more
+   lines of text. In the accent, like every other line on this site that
+   names rather than says something — the eyebrow, the date in the
+   archive. */
+.stub__weekday,
+.stub__month {
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.3;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+/* Anton, because it is the one fact on the card that has to be readable
+   from across the page — and a numeral in a condensed display face is what
+   a ticket, a calendar leaf and a poster all use for exactly that. */
+.stub__day {
+  font-family: var(--font-display);
+  font-size: var(--stub-day);
+  line-height: 0.9;
+  color: var(--heading);
+}
+
+/* 1.3 here and above, against the page's reading 1.7: the four lines are
+   one stamp, and at reading leading they drift apart into a little list.
+   It also keeps a row in the list from growing half as tall again. */
+.stub__time {
+  font-size: var(--text-meta);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text-muted);
+}
+
+/* The button is the end of the stamp and stands a little off it, as wide
+   as the column it closes: .btn centres its own label, and a button only
+   as wide as its word would read as something left lying beside the date
+   rather than as what the date is for. */
+.stub .btn {
+  width: 100%;
+  margin-top: var(--space-sm);
+}
+
+/* Where a second one follows it — the teaser's "Alle Termine" under the
+   ticket — it closes up. space-sm is the distance from the stamp down to
+   the buttons; repeating it between them would read as two separate
+   things rather than as the pair they are. The grid gap does the rest. */
+.stub .btn + .btn {
+  margin-top: var(--space-2xs);
+}
+
+/* On the card the stub is a panel of its own: it carries the padding the
+   card has none of, and a tint that lifts it off the surface the middle
+   panel stands on — the same white, a little more of it. */
+.next-show .stub {
+  --stub-day: clamp(3.25rem, 2rem + 4vw, 5rem);
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  /* The same wash as the stamp in a row, and for the same two reasons: a
+     stamp sits on the warm ground wherever it appears, and this is the
+     ground its type was measured against.
+
+     It was --surface-hover, which is a step of white — and on the dark
+     page that step put the weekday and the month at 4.18:1, under the 4.5
+     they need at their size. Lifting the panel with white lifts it away
+     from type that is already near the line there; the wash colours the
+     panel instead of brightening it, and the labels come back to 4.51. */
+  background: rgb(var(--accent-rgb) / 0.08);
+}
+
+/* Stacked, the stub is the full width of the card, and a perforation down
+   its left edge would be a line in the middle of nothing. It turns on its
+   side: the rule goes to the top, the stamp lies across, and the numeral
+   comes down to a size that belongs in a row rather than at the head of a
+   column.
+
+   Below this width the card is a column, and every panel in it takes the
+   whole of that column.
+
+   All three at once, and not one at a time. Left to their bases the stub
+   would drop first and the picture and the text would go on sharing the
+   line above it until they in turn ran out — a middle arrangement, a band
+   above a strip, that is neither of the two things the card is meant to
+   be and looks like neither. A card is a band or it is a column. So the
+   flip is the flip: at this width all three go to a whole line each.
+
+   56rem is a judgement and not a measurement — see the head of this file:
+   nothing breaks if it is a few rem out either way. It is about the width
+   at which the text panel, with a stamp beside it, stops being wide enough
+   for a title to stand on two lines.
+
+   baseline, so the weekday, the numeral and the month sit on one line
+   however tall each of them is. */
+@container (max-width: 56rem) {
+  .next-show__poster,
+  .next-show__body,
+  .next-show .stub {
+    flex: 1 1 100%;
+  }
+
+  /* A panel as wide as the card makes the picture as tall as the card is
+     wide: at the top of this range that is a banner of some five hundred
+     pixels for a logo and a guest's name. So it stops growing at 18rem and
+     the panel keeps the rest.
+
+     object-fit, because height is what gets capped and the width stays at
+     100%: without it the picture would be squeezed rather than scaled.
+     What contain leaves empty is the panel, and the panel is --sky, which
+     is the ground the picture is drawn on — so the letterbox is invisible
+     and the artwork simply sits in the middle of its own sky. Below a card
+     of about 32rem the cap stops applying at all and the picture fills the
+     width again. */
+  .next-show__cover {
+    max-height: 18rem;
+    object-fit: contain;
+  }
+
+  .next-show .stub {
+    --stub-day: var(--text-h2);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: var(--space-xs) var(--space-md);
+    border-left: 0;
+    border-top: 2px dashed var(--border);
+  }
+
+  .next-show .stub .btn {
+    flex: 1 0 100%;
+  }
+}
+
+/* The stub in a row: first panel, so the perforation is on its right.
+
+   Its ground is the brick, thinned until it is a wash rather than a
+   colour. The three panels of a row then read as three, which one surface
+   with two rules drawn on it did not: warm on the left where the date is,
+   the row's own in the middle where the reading is, and the brightest on
+   the right where the way in is. The same left-to-right rise the card has
+   — there the left panel is the sky the title image is drawn on, here it
+   is the accent, because a panel that small with type on it cannot carry
+   a full colour.
+
+   The accent and not more white: white would have given three steps of
+   one tone, which is a gradient and not a contrast. --accent-rgb turns
+   with dark mode, so the wash stays a wash there — 0.10 of it over the
+   row's own surface leaves every colour that sits on it (the accent of
+   the labels, the ink of the numeral, the muted grey of the hour) at the
+   contrast it was measured for.
+
+   0.08 and not more, and that number is not taste: the weekday and the
+   month are 700-weight at --text-eyebrow, which is normal-size text by
+   WCAG however bold it is, and in dark mode --accent-text on this wash
+   comes to 4.51:1 against the 4.5 it needs. At 0.10 it is 4.44. The wash
+   is as strong as the type standing on it allows. */
+.date-list__item .stub {
+  grid-column: 1;
+  padding: var(--space-lg);
+  border-left: 0;
+  border-right: 2px dashed var(--border);
+  background: rgb(var(--accent-rgb) / 0.08);
+}
+
+/* And the other end: the way in, on the brightest of the three grounds.
+
+   The button used to stand on the row like a word at the end of a
+   sentence. It is not a word, it is the one thing on the row to do — so it
+   gets the ground the card gives it, one step more surface than the row it
+   sits in, running to the row's edge.
+
+   No second dashed rule. The perforation says "tear here", which is true
+   of the stamp and not of this: it is where you buy, not a part that comes
+   off. The change of surface is edge enough, and one perforation to a row
+   keeps it the stamp's mark. */
+.date-list__action {
+  grid-column: 3;
+  display: grid;
+  place-items: center;
+  padding: var(--space-lg);
   background: var(--surface-hover);
+}
+
+/* The same turn the card makes, and turned on the same way: above this
+   width the row cannot wrap and the text takes the squeeze; below it the
+   row wraps and the stamp asks for the whole line.
+
+   38rem is a judgement, like the card's: the width below which a stamp,
+   a title and a ticket beside each other stop having room. At the page
+   measure that is reached at a window of about 660 px, so it is phones and
+   narrow windows that stack, and everything else keeps the three abreast.
+
+   Lying across, the stamp is the row's head and the rule its underside, so
+   every side is named here: the perforation on the right belongs to the
+   line above, and leaving it standing would give a stacked row two rules.
+   The button goes full width with it — beside a line of text it is the
+   only thing left on the row that would not wrap. */
+@container (max-width: 38rem) {
+  /* A row stops being a subgrid and keeps a column of its own. The list's
+     three tracks are then claimed by nobody, and it does not matter what
+     they measure: a row spans all of them either way, so it is the full
+     width of the list, and its one column is the full width of it.
+
+     The switch has to be made HERE, on the row, and not on .date-list —
+     .date-list is the container these rules are asked against, and a
+     container query styles the descendants of its container, never the
+     container itself. A rule for .date-list in here is a rule that never
+     runs: the list kept its three columns, every panel was placed in the
+     first of them, and that column was only as wide as the widest thing
+     in it — which is why the stamp and the ticket stopped short of the
+     row's edge with the 1fr column standing empty beside them. */
+  .date-list__item {
+    grid-template-columns: 1fr;
+  }
+
+  /* All of them into that one column — the named columns above would
+     otherwise have the text and the ticket open two more. */
+  .date-list__item > * {
+    grid-column: 1;
+  }
+
+  .date-list__item .stub {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: var(--space-xs) var(--space-md);
+    border-right: 0;
+    border-bottom: 2px dashed var(--border);
+  }
+
+  /* Alone on its line the panel is the width of the row, and a button
+     sitting in the middle of it would read as something dropped there.
+     .btn centres its own label, so it takes the whole width instead. */
+  .date-list__action .btn {
+    width: 100%;
+  }
 }

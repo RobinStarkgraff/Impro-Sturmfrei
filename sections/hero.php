@@ -2,6 +2,17 @@
 /* ------------------------------------------------------------
    The hero — home page only.
 
+   It stands on the page's own ground, like the heading of every subpage
+   since the header bar started bringing a ground of its own. It used to be
+   a dark stage: the photo again behind it, blurred to a wash, a scrim over
+   that to hold the contrast, and white text on top. That was the last of
+   the dark bands under the bar, and the only place on the site where the
+   page turned dark for one screen and light for the rest of the way down.
+
+   Everything that made it a hero is still here — the full window height,
+   the headline at --text-h1, the photo beside it with the brick glow, the
+   cue to keep scrolling. Only the ground below it is the page's.
+
    Photo and alt text live in content/site.json under "hero".
    ------------------------------------------------------------ */
 
@@ -12,10 +23,6 @@ $photo = asset_versioned($site['hero']['photo']);
 ?>
   <!-- ================= HERO ================= -->
   <section class="section hero" id="top">
-
-    <!-- The same photo, heavily blurred: it delivers the stage colours as
-         atmosphere, and the resolution does not matter. -->
-    <img class="hero__backdrop" src="<?= esc($photo) ?>" alt="" aria-hidden="true"/>
 
     <div class="wrap hero__inner">
 
@@ -37,7 +44,7 @@ $photo = asset_versioned($site['hero']['photo']);
 
         <div class="btn-row">
           <a class="btn btn--primary" href="<?= esc(page_link('termine')) ?>">Termine ansehen</a>
-          <a class="btn btn--on-dark" href="<?= esc(page_link('buchen')) ?>">Uns buchen</a>
+          <a class="btn btn--ghost" href="<?= esc(page_link('buchen')) ?>">Uns buchen</a>
         </div>
 
         <a class="scroll-cue" href="#naechste-show">

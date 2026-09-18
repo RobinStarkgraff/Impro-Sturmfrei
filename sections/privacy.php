@@ -35,8 +35,7 @@ $where = $serverLocation ? '; die Server stehen in ' . esc($serverLocation) : ''
 <?php endif; ?>
       <p class="lead">
         Kurz vorweg: Diese Seite setzt keine Cookies, bindet keine Schriften oder Skripte
-        von fremden Servern ein, hat kein Formular und keine Zugriffsmessung. Es gibt
-        deshalb wenig zu erklären — aber das Wenige gehört hierhin.
+        von fremden Servern ein, hat kein Formular und keine Zugriffsmessung.
       </p>
 
       <h2>Verantwortlich</h2>
@@ -106,17 +105,17 @@ $where = $serverLocation ? '; die Server stehen in ' . esc($serverLocation) : ''
         Schreibt ihr uns, verarbeiten wir eure Adresse und den Inhalt der Nachricht, um sie
         zu beantworten — Rechtsgrundlage ist Art. 6 Abs. 1 lit. b bzw. lit. f DSGVO. Wir
         behalten die Nachricht, solange wir sie für die Sache brauchen, und geben sie nicht
-        weiter. Der E-Mail-Versand selbst läuft über euren und unseren Anbieter; diese Seite
-        ist daran nicht beteiligt.
+        weiter.
       </p>
 
-      <h2>Links zu Instagram, Eventbrite und MeetUp</h2>
+      <h2>Links zu externen Seiten</h2>
 
       <p>
-        Auf dieser Seite stehen ausschließlich normale Links dorthin — keine eingebetteten
-        Inhalte, keine Buttons, die im Hintergrund Daten senden. Solange ihr nicht klickt,
-        erfährt keiner der drei Anbieter etwas von euch. Klickt ihr, gelten deren
-        Datenschutzbestimmungen; auf diese Verarbeitung haben wir keinen Einfluss.
+        Diese Seite verlinkt auf Angebote anderer Anbieter — ausschließlich als normale
+        Links, ohne eingebettete Inhalte und ohne Buttons, die im Hintergrund Daten senden.
+        Solange ihr nicht klickt, erfährt keiner dieser Anbieter etwas von euch. Klickt
+        ihr, gelten deren Datenschutzbestimmungen; auf diese Verarbeitung haben wir keinen
+        Einfluss.
       </p>
 
       <h2>Fotos von Shows</h2>
@@ -124,8 +123,7 @@ $where = $serverLocation ? '; die Server stehen in ' . esc($serverLocation) : ''
       <p>
         Im <a href="<?= esc(page_link('archiv')) ?>">Archiv</a> sind Menschen zu sehen. Diese
         Aufnahmen entstehen bei unseren Shows und werden mit Einverständnis der Abgebildeten
-        veröffentlicht. Wer sich auf einem Foto sieht und es nicht dort haben möchte,
-        schreibt uns — wir nehmen es heraus, ohne Begründung und ohne Rückfrage.
+        veröffentlicht.
       </p>
 
       <h2>Eure Rechte</h2>

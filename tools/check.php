@@ -390,7 +390,138 @@ function check_nav(callable $fail, callable $warn): void
 }
 
 /* ------------------------------------------------------------
-   6. The contract from js/classes.js
+   6. The channels off the site
+
+   content/site.json holds them: name, URL, the glyph and which role a
+   channel fills. The pages ask for roles, not for names — so a role
+   nobody holds is a button that quietly disappears, and a role two
+   channels hold is a coin toss over which one wins. Both are errors,
+   because neither is visible on the page: it looks like a page that was
+   simply built that way.
+   ------------------------------------------------------------ */
+
+function check_links(callable $fail, callable $warn, string $out): void
+{
+    // Which roles the sections actually ask for. A role added here without
+    // a channel to hold it is reported the same as one that fell out of
+    // content/site.json.
+    $roles = [
+        'tickets' => 'the shop a date without a ticket link of its own falls back to — ' .
+            'without it the ticket buttons on / and /termine/ stay away',
+        'announcements' => 'the channel the follow cards offer and the pages send people ' .
+            'to — without it those go quiet',
+    ];
+
+    $holders = array_fill_keys(array_keys($roles), []);
+
+    foreach (links() as $key => $entry) {
+        $where = "content/site.json: the channel \"$key\"";
+
+        foreach (['name', 'url'] as $field) {
+            if (empty($entry[$field])) $fail("$where has no \"$field\"");
+        }
+
+        // These links leave the site, and ext() in lib/html.php writes them
+        // into the page as they stand. A relative path would land on a page
+        // of this site that does not exist.
+        if (!empty($entry['url']) && !preg_match('#^https?://#', $entry['url'])) {
+            $fail("$where points at \"{$entry['url']}\" — a channel needs a full URL with https://");
+        }
+
+        if ($entry['icon']) {
+            if (!is_file("$out/images/icons/{$entry['icon']}.svg")) {
+                $fail("$where names the glyph \"{$entry['icon']}\", public/images/icons/{$entry['icon']}.svg does not exist");
+            }
+        } else {
+            $warn("$where has no \"icon\" — its follow card and its footer line stay text while the others carry a glyph");
+        }
+
+        // Written into the markup as style="--brand: …", so anything that is
+        // not a colour lands in the page as it stands.
+        if ($entry['brand'] && !preg_match('/^#[0-9a-fA-F]{6}$/', $entry['brand'])) {
+            $fail("$where has \"brand\": \"{$entry['brand']}\" — that has to be a six-digit hex colour like \"#e4405f\"");
+        }
+
+        foreach ($entry['roles'] as $role) {
+            if (!array_key_exists($role, $holders)) {
+                $warn("$where holds the role \"$role\", which no page asks for");
+                continue;
+            }
+
+            $holders[$role][] = $key;
+        }
+    }
+
+    foreach ($roles as $role => $what) {
+        $held = $holders[$role];
+
+        if (!$held) {
+            $fail("content/site.json: no channel holds the role \"$role\" — $what");
+        } elseif (count($held) > 1) {
+            $fail(
+                'content/site.json: ' . implode(' and ', array_map(fn(string $k) => "\"$k\"", $held)) .
+                " both hold the role \"$role\" — it belongs to one of them"
+            );
+        }
+    }
+}
+
+/* ------------------------------------------------------------
+   6b. The glyphs
+
+   Two kinds of place name one, and this used to know only the first. A
+   channel names its glyph in content/site.json — the one on its follow
+   card and in its footer line. A section names one itself: the mail and
+   the phone in the contact block (sections/contact.php), where the glyph
+   belongs to the way and not to a channel.
+
+   Both are read, and both directions are checked: a name with no file
+   behind it is an error, because icon() answers it with an empty string —
+   the glyph is simply not there and the page looks as if it had been built
+   that way. A file nobody names is the opposite and only worth a note.
+
+   In a section the name has to stand as a literal to be found, in one of
+   the two shapes this site writes it: icon('mail') where a glyph is asked
+   for on the spot, and 'icon' => 'mail' where a section assembles its
+   parts as a list first and renders them in one loop. A third shape would
+   go unseen — and would then show up as a leftover file, which is the
+   note that points back here.
+   ------------------------------------------------------------ */
+
+function check_icons(callable $fail, callable $warn, string $out): void
+{
+    // The channels: their names are checked against the folder by
+    // check_links() above, which is where a channel's other fields are
+    // checked too. Here they only count as named.
+    $named = array_values(array_filter(array_column(links(), 'icon')));
+
+    foreach (glob(SITE_ROOT . '/sections/*.php') ?: [] as $file) {
+        $pattern = "/(?:\\bicon\\(\\s*|'icon'\\s*=>\\s*)'([^']+)'/";
+        preg_match_all($pattern, (string) file_get_contents($file), $found);
+
+        foreach ($found[1] as $name) {
+            $named[] = $name;
+
+            if (!is_file("$out/images/icons/$name.svg")) {
+                $fail(
+                    'sections/' . basename($file) . " names the glyph \"$name\", " .
+                    "public/images/icons/$name.svg does not exist"
+                );
+            }
+        }
+    }
+
+    foreach (glob("$out/images/icons/*.svg") ?: [] as $file) {
+        $name = basename($file, '.svg');
+
+        if (!in_array($name, $named, true)) {
+            $warn("nobody names public/images/icons/$name.svg — left over?");
+        }
+    }
+}
+
+/* ------------------------------------------------------------
+   7. The contract from js/classes.js
 
    State classes and hooks live there once; CSS and markup have to know
    them. The source is read with a pattern — an import as before is not
@@ -445,7 +576,7 @@ function check_contract(array $rendered, callable $fail, callable $warn, string 
 }
 
 /* ------------------------------------------------------------
-   7. Sections nobody calls
+   8. Sections nobody calls
 
    Not an error, but worth a note: a file in sections/ that does not appear
    in lib/pages.php is never served. A missing section already shows up
@@ -467,7 +598,7 @@ function check_sections(callable $warn): void
 
     // lib/render.php calls the first four for every page, so they appear in
     // no list. The rest are called by another section: nav-items from header
-    // and footer, follow-cards from follow and dates, legal-gap from
+    // and footer, follow-cards from follow, legal-gap from
     // impressum and privacy.
     $always = [
         'head', 'header', 'footer', 'lightbox',
@@ -484,7 +615,7 @@ function check_sections(callable $warn): void
 }
 
 /* ------------------------------------------------------------
-   8. The dates themselves
+   9. The dates themselves
 
    Whether an evening is announced or archived follows from its date — and
    so does what its block owes. The two lists below are that difference
@@ -496,8 +627,8 @@ function check_sections(callable $warn): void
 
    What changes the morning after a show is what the evening itself
    produced — the photos start being asked for — and what it used up:
-   hour, ticket link, price and note were all for planning an evening
-   somebody could still go to. Date, title and venue are wanted on both
+   hour, ticket link and price were all for planning an evening somebody
+   could still go to. Date, title and venue are wanted on both
    sides and can therefore never go missing in the crossing.
    ------------------------------------------------------------ */
 
@@ -507,10 +638,10 @@ const SHOW_REQUIRED = [
     // evening somebody could still go to is a detail.
     //
     // A played one is asked for the general part and its pictures — which
-    // are not in the file but in its folder. Hour, ticket link, price and
-    // note were for planning; whatever stands in the block may stay there,
-    // but none of it is asked for again.
-    'upcoming' => ['date', 'title', 'venue', 'time', 'cover', 'ticketUrl', 'price', 'note'],
+    // are not in the file but in its folder. Hour, ticket link and price
+    // were for planning; whatever stands in the block may stay there, but
+    // none of it is asked for again.
+    'upcoming' => ['date', 'title', 'venue', 'time', 'cover', 'ticketUrl', 'price'],
     'past' => ['date', 'title', 'venue', 'photos'],
 ];
 
@@ -526,10 +657,9 @@ const SHOW_FIELD_SECTION = [
     'cover' => 'upcoming',
     'ticketUrl' => 'upcoming',
     'price' => 'upcoming',
-    'note' => 'upcoming',
 ];
 
-/** "note" → "upcoming.note", the path to write in a message. */
+/** "time" → "upcoming.time", the path to write in a message. */
 function show_field_path(string $field): string
 {
     return isset(SHOW_FIELD_SECTION[$field]) ? SHOW_FIELD_SECTION[$field] . ".$field" : $field;
@@ -545,12 +675,10 @@ const SHOW_FIELD_WHY = [
         'the evening appears on',
     'time' => 'the hour, as "20:00"; without it the announcement has a day but no time ' .
         'of day, and the JSON-LD no startDate worth the name',
-    'ticketUrl' => 'without it the ticket button lands on the whole Eventbrite list instead ' .
-        'of on this evening',
+    'ticketUrl' => 'without it the ticket button lands on the whole programme of whichever ' .
+        'shop holds the "tickets" role in content/site.json, instead of on this evening',
     'price' => 'a number in euros, 0 for "Eintritt frei"; Google counts an offer without ' .
         'a price as incomplete and drops the event',
-    'note' => 'the line under the price on /termine/: "Einlass ab 19:00", "Nur ' .
-        'Barzahlung", whatever an evening needs said that has no field of its own',
     'cover' => 'the title image standing in until the evening has photos of its own: a ' .
         'file from public/images/titles/ with an "alt" of its own, heading the card on the ' .
         'home page and on /termine/',
@@ -628,7 +756,7 @@ function check_shows(callable $fail, callable $warn): void
 }
 
 /* ------------------------------------------------------------
-   8. Open points in the content
+   10. Open points in the content
    ------------------------------------------------------------ */
 
 function report_content_gaps(callable $fail, callable $warn, string $out): void
@@ -690,8 +818,9 @@ function report_content_gaps(callable $fail, callable $warn, string $out): void
 
     // While the small icons are missing, every page serves the full-size logo
     // as the favicon, as the home-screen icon and as the 52 px mark in the
-    // header bar (asset_or in lib/paths.php catches it).
-    $icons = ['images/logo/favicon.png', 'images/logo/apple-touch-icon.png', 'images/logo/logo-mark.jpg'];
+    // header bar (asset_or in lib/paths.php catches it). All three are scales
+    // of images/logo/lighthouse.png: make mark, then make icons.
+    $icons = ['images/logo/favicon.png', 'images/logo/apple-touch-icon.png', 'images/logo/logo-mark.png'];
     $missing_icons = array_values(array_filter($icons, fn(string $i) => !is_file("$out/$i")));
 
     if ($missing_icons) {
@@ -704,8 +833,8 @@ function report_content_gaps(callable $fail, callable $warn, string $out): void
 
     if (!booking()['reviewed']) {
         $warn(
-            'content/booking.json: "reviewed" is false — formats, durations, head counts and ' .
-            'the answers under faq are drafts and have not been reviewed by anyone yet.'
+            'content/booking.json: "reviewed" is false — the formats, their durations and ' .
+            'the occasions they name are drafts and have not been reviewed by anyone yet.'
         );
     }
 }
@@ -722,6 +851,8 @@ check_title_images($fail, $warn, $out);
 check_anchors($rendered, $fail);
 check_images_and_links($rendered, $fail);
 check_nav($fail, $warn);
+check_links($fail, $warn, $out);
+check_icons($fail, $warn, $out);
 check_contract($rendered, $fail, $warn, $out);
 check_sections($warn);
 check_shows($fail, $warn);

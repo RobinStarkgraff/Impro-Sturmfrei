@@ -3,22 +3,24 @@
 
    The header bar is a section of its own, not a veil over the hero: its
    own height (--header-h, which <body> keeps free as padding-top), its own
-   dark ground from the hero palette, and at the bottom the same brick edge
-   that ends the header band of the subpages.
+   dark ground from the hero palette, and a brick edge at the bottom.
 
    It used to be transparent over the hero and only turned opaque after 40
    px of scrolling. That tied every page without a hero to a dark band
    below it — otherwise white bar text stood on cream. That coupling is
-   gone: the bar brings its own ground.
+   gone: the bar brings its own ground, and the bands below it are gone
+   with it — the hero on the home page last, which stands on the page's own
+   ground now like every subpage heading. So the bar is the one dark thing
+   on the site, and --hero-top and --hero-mid below are its colours rather
+   than a family it belongs to.
    ============================================================ */
 
 .site-header {
   position: fixed;
   inset: 0 0 auto 0;
   z-index: 50;
-  /* The same base colours as the hero and the header band: the bar belongs
-     to the family of dark bands at the top of the page — as a member of it
-     in its own right. */
+  /* The colours the dark bands at the top of the page were built from,
+     when there were several. */
   background:
     radial-gradient(70% 200% at 6% 0%, rgb(var(--brick-rgb) / 0.30), transparent 68%),
     linear-gradient(165deg, var(--hero-top) 0%, var(--hero-mid) 100%);
@@ -26,8 +28,8 @@
   transition: box-shadow var(--slow) var(--ease);
 }
 
-/* The brick edge at the bottom — the same signal for "a band ends here" as
-   on .page-hero, just a little quieter. */
+/* The brick edge at the bottom — the signal for "the dark band ends here",
+   and the one line of brick every page carries at the same spot. */
 .site-header::after {
   content: "";
   position: absolute;
@@ -78,6 +80,31 @@
   border-radius: var(--radius-pill);
   object-fit: cover;
   box-shadow: 0 0 0 1px rgb(var(--white-rgb) / 0.35);
+  transition: transform var(--fast) var(--ease),
+              box-shadow var(--fast) var(--ease);
+}
+
+.brand__name {
+  transition: color var(--fast) var(--ease);
+}
+
+/* The wordmark is the way back to the home page — so it has to answer when
+   you point at it. Both halves answer together, in the bar's own language:
+   the mark leans out of the row and swaps its thin white ring for a brick
+   one, the text takes the same lightened brick the nav uses for the page
+   you are on. Nothing moves in the layout — transform and colour only, so
+   the bar's height stays untouched. */
+.brand:hover .brand__mark,
+.brand:focus-visible .brand__mark {
+  transform: scale(1.06) rotate(-4deg);
+  box-shadow:
+    0 0 0 2px rgb(var(--brick-rgb) / 0.85),
+    0 6px 18px rgb(var(--brick-rgb) / 0.40);
+}
+
+.brand:hover .brand__name,
+.brand:focus-visible .brand__name {
+  color: var(--hero-accent);
 }
 
 .nav-list {

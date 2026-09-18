@@ -1,0 +1,124 @@
+/* ============================================================
+   17. CONTACT — the block holding the two ways to reach us
+
+   One block, and nothing in it to press. It held two whole-card links
+   before, and that was the wrong promise: a card on this site is a thing
+   you press, and what lay behind these two was a mail client opening — or,
+   on a desktop, a dialler that is not there. The facts are here to be read
+   and kept, not followed.
+
+   The fill is --surface, the same one the format cards on /buchen/ wear —
+   which is also where this block now stands a second time, at the foot of
+   that page. It was an accent wash first and a cream one after that, and
+   both were answers to a question this site had already settled: a block
+   standing on the gradient wears the surface, and there is one surface.
+
+   Which is not a contradiction of the paragraph above. What says "press
+   me" here is never the fill — the formats on /buchen/ wear it and are
+   articles nobody can click — but what moves: the lift on hover, the
+   arrow stepping aside, the whole card being a link. This block has none
+   of the three, and that is what makes it a thing to read.
+   ============================================================ */
+
+/* --surface, and nothing around it. The format cards on /buchen/ carry an
+   edge and a small shadow as well, and they have a reason to: two of them
+   stand side by side, and each has to be told apart from its neighbour as
+   much as from the page. This block has no neighbour: it is the last thing
+   on /buchen/, a full column wide where the cards above it are half of one
+   — so the fill alone is what lifts it off the gradient, and an edge would
+   only draw a box around a block that is already as wide as the column it
+   stands in.
+
+   No backdrop-filter either: on both pages there is nothing behind this
+   block but the page's own gradient, and blurring a gradient produces the
+   same gradient. The cards on /buchen/ blur because photographs pass under
+   them on the way up the page; down here the photographs are above it.
+
+   The labels inside are --accent-text on this fill, which is the pairing
+   the duration line on a /buchen/ format already uses — 7.3:1 on the
+   light page, 4.8:1 on the dark one. */
+.contact-panel {
+  display: grid;
+  gap: var(--space-xl);
+  padding: clamp(var(--space-lg), 3.5vw, var(--space-2xl));
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+/* The line of text under the facts. Its margin is the panel's gap, not its
+   own — a paragraph's bottom margin on top of the gap would put more air
+   below the sentence than the panel has anywhere else, and here that
+   margin would fall between the sentence and the panel's own padding,
+   where it reads as the block having a loose bottom edge. */
+.contact-panel__text {
+  margin: 0;
+  font-size: var(--text-lead);
+  line-height: 1.55;
+}
+
+/* One beneath the other, at every width. They stood side by side in two
+   auto-fit tracks before, which made them a table of two things to weigh
+   against each other — and there is nothing to weigh here: they are two
+   ways to reach the same people, read one after the other. Stacked, they
+   also share their left edge with the sentence below them, so the whole
+   block is one column of text rather than a pair of columns with a
+   paragraph bolted underneath.
+
+   It stays a grid, with no track named at all — a single column is what a
+   grid does by default, and the gap is what this is for. The gap belongs
+   between the two pairs and not inside them: --space-2xs is what holds a
+   value under its label (.contact-detail__value further down), --space-lg
+   is what holds one pair off the next. Two <p> elements could not keep
+   those two distances apart without one of them fighting a margin. */
+.contact-details {
+  display: grid;
+  gap: var(--space-lg);
+  margin: 0;
+}
+
+/* Small, wide and in capitals, like every other line on this site that
+   names rather than says something — the eyebrow, the date in the archive,
+   the weekday on a ticket stub.
+
+   A flex row and not plain text, because the glyph stands in it: inline it
+   would sit on the text's baseline and hang below the capitals, which in a
+   line letter-spaced this wide reads as a stray mark rather than as part of
+   the label. */
+.contact-detail__label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+/* .icon is 1em (css/02-base.css), so this is the glyph's size — a little
+   over the label's own, because a stroked square at cap height reads
+   smaller than the letters beside it. The stroke keeps the weight it has
+   on the follow cards: scaled with the glyph it would thin out here, where
+   the glyph is a third of the size it is there. */
+.contact-detail__glyph {
+  font-size: 1.125rem;
+  stroke-width: 1.7;
+}
+
+/* The fact itself, and deliberately not in Anton: the display face names
+   things on this site, and an address is not a name but the thing itself.
+   Semibold at lead size is as loud as it needs to be under a label in
+   capitals.
+
+   break-word, because "info@impro-sturmfrei.de" is a single unbreakable
+   word wider than half a narrow column — and the column is at its
+   narrowest on a phone, which is also where the whole address has to
+   survive being read off a screen held in one hand. */
+.contact-detail__value {
+  margin: var(--space-2xs) 0 0;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--heading);
+  overflow-wrap: break-word;
+}

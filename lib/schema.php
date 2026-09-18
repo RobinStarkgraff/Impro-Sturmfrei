@@ -166,7 +166,7 @@ function theater_group(): array
         'description' => $site['meta']['schemaDescription'],
         'email' => $site['email'],
         'address' => group_address(),
-        'sameAs' => array_values(array_map(fn(array $entry) => $entry['url'], $site['links'])),
+        'sameAs' => array_values(array_map(fn(array $entry) => $entry['url'], links())),
     ];
 
     if ($home = canonical('index')) $group['url'] = $home;
