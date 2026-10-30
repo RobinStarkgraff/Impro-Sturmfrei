@@ -115,6 +115,17 @@
         "ticketUrl": "https://www.eventbrite.de/e/1998546957750",
         "price": 0
       }
+    },
+    {
+      "date": "2026-12-18",
+      "title": "Sturmfrei im Kulturschloss",
+      "venue": "Kulturschloss Wandsbek",
+      "upcoming": {
+        "cover": { "file": "Sturmfrei_2026-12-18.jpg", "alt": "Gruppenfoto: vier lachende Impro-Spieler Arm in Arm vor einem schwarzen Bühnenvorhang, darüber die Zeilen „18.12.2026“ und „19:30“, darunter „Kulturschloss Wandsbek“ und in großen Lettern „Impro Show“, rechts in einem hellblauen Kreis das Sturmfrei-Logo mit dem Leuchtturm" },
+        "time": "19:30",
+        "ticketUrl": "https://www.eventbrite.de/e/2004005320861",
+        "price": 0
+      }
     }
   ]
 }
