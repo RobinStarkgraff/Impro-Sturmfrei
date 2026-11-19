@@ -12,11 +12,17 @@
 # lighthouse is the one element that still reads at 32 px, and it does not
 # repeat the wordmark that stands right next to it in the header bar.
 #
-# Three files are produced, all plain scales of the square master:
+# Three files are produced, all scales of the square master:
 #
-#   images/logo/favicon.png           32 px   browser tab
+#   images/logo/favicon.png           32 px   browser tab, cut round
 #   images/logo/apple-touch-icon.png 180 px   home screen on iOS
 #   images/logo/logo-mark.png        128 px   the mark in the header bar
+#
+# The favicon is round to match the mark in the header bar, which CSS rounds
+# with border-radius — a browser tab has no CSS, so the circle is in the file
+# and the corners are transparent. The home-screen icon stays square on
+# purpose: iOS rounds it itself and fills transparent corners with black. The
+# mark stays square too, the stylesheet already takes care of it.
 #
 #   bash tools/make-icons.sh
 #
@@ -63,6 +69,16 @@ if command -v magick >/dev/null 2>&1 || command -v convert >/dev/null 2>&1; then
     "$IM" "$SOURCE" -auto-orient -gravity center -resize "$2x$2^" \
       -extent "$2x$2" -strip "$1"
   }
+  # The circle is drawn at eight times the size and scaled down with the
+  # image, so its edge comes out smooth rather than stepped.
+  round() { # $1 = target, $2 = edge length
+    local big=$(( $2 * 8 )) c=$(( $2 * 4 ))
+    "$IM" "$SOURCE" -auto-orient -gravity center -resize "${big}x${big}^" \
+      -extent "${big}x${big}" \
+      \( -size "${big}x${big}" xc:black -fill white -draw "circle $c,$c $c,0" \) \
+      -alpha off -compose CopyOpacity -composite \
+      -resize "$2x$2" -strip "PNG32:$1"
+  }
 elif command -v sips >/dev/null 2>&1; then
   TOOL="sips (macOS)"
   square() {
@@ -88,6 +104,15 @@ elif command -v sips >/dev/null 2>&1; then
       mv "$tmp" "$target"
     fi
   }
+  # sips can scale but not mask, so the favicon comes out square here. It
+  # says so loudly, because the one in the repo is round and this undoes it.
+  round() {
+    square "$@"
+    echo "Note: sips cannot cut the favicon round — $1 is square now."
+    echo "      For the round one: brew install imagemagick, or run make icons"
+    echo "      in the devcontainer (Pillow)."
+    echo
+  }
 elif python3 -c "import PIL" >/dev/null 2>&1; then
   TOOL="Pillow"
   square() {
@@ -103,6 +128,22 @@ else:
     img.save(dest, "JPEG", quality=88, optimize=True, progressive=True)
 PY
   }
+  # The circle is drawn at eight times the size and scaled down, so its edge
+  # comes out smooth rather than stepped.
+  round() { # $1 = target, $2 = edge length
+    python3 - "$SOURCE" "$1" "$2" <<'PY'
+import sys
+from PIL import Image, ImageDraw, ImageOps
+src, dest, edge = sys.argv[1], sys.argv[2], int(sys.argv[3])
+img = ImageOps.exif_transpose(Image.open(src)).convert("RGB")
+img = ImageOps.fit(img, (edge, edge), Image.LANCZOS, centering=(0.5, 0.5))
+big = edge * 8
+mask = Image.new("L", (big, big), 0)
+ImageDraw.Draw(mask).ellipse((0, 0, big - 1, big - 1), fill=255)
+img.putalpha(mask.resize((edge, edge), Image.LANCZOS))
+img.save(dest, "PNG", optimize=True)
+PY
+  }
 else
   echo "No image tool found."
   echo "  macOS:  sips is basically always there — otherwise: brew install imagemagick"
@@ -115,7 +156,7 @@ echo "Tool:   $TOOL"
 echo "Source: $SOURCE"
 echo
 
-square "$DIR/favicon.png" 32
+round "$DIR/favicon.png" 32
 square "$DIR/apple-touch-icon.png" 180
 square "$DIR/logo-mark.png" 128
 
