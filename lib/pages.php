@@ -32,8 +32,9 @@ function pages(): array
 
     $site = site();
     $brand = $site['brand'];
-    // Counted, not read: which evenings are past follows from their date.
-    $played = count(past_shows());
+    // Counted, not read: which evenings are past follows from their date,
+    // and the archive counts only those it shows — the ones with photos.
+    $played = count(archived_shows());
 
     return $pages = [
         'index' => [

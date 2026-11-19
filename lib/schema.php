@@ -221,7 +221,7 @@ function structured_data(string $slug, array $page): array
     }
 
     if (in_array('past', $schema, true)) {
-        foreach (past_shows() as $show) $graph[] = theater_event($show);
+        foreach (archived_shows() as $show) $graph[] = theater_event($show);
     }
 
     if ($crumbs = breadcrumbs($slug, $page)) $graph[] = $crumbs;

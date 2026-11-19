@@ -20,21 +20,21 @@
    the photos are the content of this page, and now the caption is the day
    and its name.
 
-   Which evenings appear here, past_shows() in lib/data.php decides by
-   their date — newest first, and there is nothing to move by hand.
+   Which evenings appear here, archived_shows() in lib/data.php decides:
+   played ones, by their date, that have photos in their folder — newest
+   first, and there is nothing to move by hand.
 
    Only the evening's own photos: the title image belongs to a date still
    to come, standing in for pictures that do not exist yet. Here they do.
 
-   An evening played the night before therefore turns up without any: its
-   date and title stand there without a slider under them. It keeps its
-   article because it did take place, and the page saying so is better than
-   the page passing over it until somebody has sorted through the pictures.
+   An evening without any stays off this page entirely, rather than
+   standing here as a date and a title with nothing under them. It turns
+   up by itself once its pictures are in the folder.
    ------------------------------------------------------------ */
 
 $articles = [];
 
-foreach (past_shows() as $show) {
+foreach (archived_shows() as $show) {
     $when = date_de($show['date']);
     $photos = show_photos($show);
 

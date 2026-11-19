@@ -179,6 +179,18 @@ function past_shows(): array
 }
 
 /**
+ * The shows the archive shows: the played ones with photos in their folder.
+ *
+ * An evening without pictures stays out of /archiv/ altogether — no date
+ * and title standing there with nothing under them — and turns up by
+ * itself once its folder fills. Same order as past_shows().
+ */
+function archived_shows(): array
+{
+    return array_values(array_filter(past_shows(), fn(array $show) => (bool) show_photos($show)));
+}
+
+/**
  * The shows from the file that have a usable date.
  *
  * Everything downstream compares dates, and a block without one (or with a

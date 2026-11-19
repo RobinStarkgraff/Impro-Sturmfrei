@@ -622,11 +622,14 @@ function check_sections(callable $warn): void
    written down: an evening still to come has to be bookable, one already
    played has to be shown.
 
-   Errors, not notes: a date the site announces without an hour, or an
-   archive entry without its pictures, is a gap a visitor walks into.
+   Errors, not notes: a date the site announces without an hour is a gap a
+   visitor walks into.
 
-   What changes the morning after a show is what the evening itself
-   produced — the photos start being asked for — and what it used up:
+   The photos of a played evening are not asked for: one without them is
+   simply left out of the archive (archived_shows() in lib/data.php) and
+   appears there once its folder fills — nothing a visitor walks into.
+
+   What changes the morning after a show is what the evening used up:
    hour, ticket link and price were all for planning an evening somebody
    could still go to. Date, title and venue are wanted on both
    sides and can therefore never go missing in the crossing.
@@ -637,12 +640,11 @@ const SHOW_REQUIRED = [
     // the general part and every field of its own half. Nothing about an
     // evening somebody could still go to is a detail.
     //
-    // A played one is asked for the general part and its pictures — which
-    // are not in the file but in its folder. Hour, ticket link and price
-    // were for planning; whatever stands in the block may stay there, but
-    // none of it is asked for again.
+    // A played one is asked for the general part only. Hour, ticket link and
+    // price were for planning; whatever stands in the block may stay there,
+    // but none of it is asked for again.
     'upcoming' => ['date', 'title', 'venue', 'time', 'cover', 'ticketUrl', 'price'],
-    'past' => ['date', 'title', 'venue', 'photos'],
+    'past' => ['date', 'title', 'venue'],
 ];
 
 /**
@@ -682,18 +684,13 @@ const SHOW_FIELD_WHY = [
     'cover' => 'the title image standing in until the evening has photos of its own: a ' .
         'file from public/images/titles/ with an "alt" of its own, heading the card on the ' .
         'home page and on /termine/',
-    'photos' => 'the folder public/images/shows/<date>/ is empty or not there yet. Put the ' .
-        'evening\'s pictures in it (and shrink them with `make images-apply`) — the archive ' .
-        'builds its slider out of whatever lies in there, and until then the evening stands ' .
-        'in the archive without one',
 ];
 
 /**
  * Is this field missing from the block?
  *
  * Not empty() across the board: 0 is a price ("Eintritt frei") and would
- * count as absent — and the photos are not in the file at all, so for them
- * the question goes to the folder.
+ * count as absent.
  */
 function show_field_missing(array $show, string $field): bool
 {
@@ -705,9 +702,6 @@ function show_field_missing(array $show, string $field): bool
 
     return match ($field) {
         'price' => !isset($where['price']) || !is_numeric($where['price']),
-        // Not a field in the file at all: the photos are the contents of
-        // public/images/shows/<date>/, and the folder is asked.
-        'photos' => !show_photos($show),
         // A cover is the entry plus the file it names — half of it is not a
         // cover but a broken image.
         'cover' => empty($where['cover']['file']),
@@ -739,13 +733,6 @@ function check_shows(callable $fail, callable $warn): void
             if ($field === 'date' || !show_field_missing($show, $field)) continue;
 
             $why = str_replace('<date>', $date, SHOW_FIELD_WHY[$field]);
-
-            // The photos are the one thing not written in the file, so the
-            // message does not send anybody into it: it names the folder.
-            if ($field === 'photos') {
-                $fail('The show on ' . date_de($date) . " $state and has no photos — $why");
-                continue;
-            }
 
             $fail(
                 'content/shows.json: the show on ' . date_de($date) . " $state and has no " .
